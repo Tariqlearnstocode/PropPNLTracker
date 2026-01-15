@@ -1,4 +1,4 @@
-import { stripe } from './client';
+import { stripe, isStripeConfigured } from './client';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getMeterId } from './meter';
@@ -8,7 +8,13 @@ import Stripe from 'stripe';
  * Get or create a Stripe customer for a user
  * Checks subscription table first, then users table, then creates new customer
  */
-export async function getOrCreateStripeCustomer(userId: string, email: string) {
+export async function getOrCreateStripeCustomer(userId: string, email: string, name?: string | null) {
+  // If Stripe is not configured, return null
+  if (!isStripeConfigured() || !stripe) {
+    console.log('Stripe not configured, skipping customer creation');
+    return null;
+  }
+
   const supabase = await createClient();
 
   // First, check if user has a subscription (subscription table is source of truth)
@@ -23,7 +29,7 @@ export async function getOrCreateStripeCustomer(userId: string, email: string) {
   if (subscription?.stripe_customer_id) {
     // Verify customer still exists in Stripe
     try {
-      const customer = await stripe.customers.retrieve(
+      const customer = await stripe!.customers.retrieve(
         subscription.stripe_customer_id
       );
       if (!customer.deleted) {
@@ -50,7 +56,7 @@ export async function getOrCreateStripeCustomer(userId: string, email: string) {
   if (user?.stripe_customer_id) {
     // Verify customer still exists in Stripe
     try {
-      const customer = await stripe.customers.retrieve(
+      const customer = await stripe!.customers.retrieve(
         user.stripe_customer_id
       );
       if (!customer.deleted) {
@@ -65,12 +71,19 @@ export async function getOrCreateStripeCustomer(userId: string, email: string) {
 
   // No existing customer found - create new one
   console.log(`Creating new Stripe customer for user ${userId}`);
-  const customer = await stripe.customers.create({
+  const customerData: Stripe.CustomerCreateParams = {
     email,
     metadata: {
       user_id: userId,
     },
-  });
+  };
+  
+  // Add name if provided
+  if (name) {
+    customerData.name = name;
+  }
+  
+  const customer = await stripe!.customers.create(customerData);
 
   // Store in database (users table)
   // Use admin client to bypass RLS for updating stripe_customer_id
@@ -125,6 +138,10 @@ export async function reportVerificationUsage(
     // Value must be in payload per meter configuration (value_settings.event_payload_key: 'value')
     // Stripe requires all payload values to be strings
     // Stripe also requires stripe_customer_id in the payload to identify the customer
+    if (!stripe) {
+      console.log('Stripe not configured, skipping meter event');
+      return null;
+    }
     const meterEvent = await stripe.billing.meterEvents.create({
       event_name: 'verification.created',
       identifier: verificationId, // Unique per verification to prevent duplicate errors
@@ -167,6 +184,9 @@ export async function createOneTimePayment(
   verificationId: string,
   amount: number
 ) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
@@ -192,6 +212,10 @@ export async function createOneTimePayment(
 export async function getSubscriptionItemId(
   subscriptionId: string
 ): Promise<string | null> {
+  if (!stripe) {
+    console.log('Stripe not configured, cannot get subscription item');
+    return null;
+  }
   try {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
@@ -235,6 +259,10 @@ export async function getCurrentPeriodUsage(
       periodEnd = new Date(dbSubscription.current_period_end);
     } else {
       // Fallback: fetch from Stripe API if database doesn't have dates
+      if (!stripe) {
+        console.warn('Stripe not configured, cannot fetch subscription from API');
+        return 0;
+      }
       const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
       const periodStartTimestamp = (stripeSubscription as any).current_period_start;
       const periodEndTimestamp = (stripeSubscription as any).current_period_end;
@@ -279,6 +307,9 @@ export async function getCurrentPeriodUsage(
  * Note: This function may not be used since we're not using usage-based billing
  */
 export async function getUsageSummary(subscriptionId: string) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured');
+  }
   try {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     const meterId = await getMeterId();

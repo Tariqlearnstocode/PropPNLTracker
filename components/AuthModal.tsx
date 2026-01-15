@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { sanitizeCompanyName } from '@/utils/sanitize';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
 
@@ -19,7 +18,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);
@@ -30,6 +29,9 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
       setMode(initialMode);
       setError('');
       setResetEmailSent(false);
+      setName('');
+      setEmail('');
+      setPassword('');
     }
   }, [isOpen, initialMode]);
 
@@ -41,44 +43,36 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
     setLoading(true);
 
     try {
-      // Sanitize company name before signup
-      const sanitizedCompanyName = companyName ? sanitizeCompanyName(companyName) : null;
-      
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            company_name: sanitizedCompanyName
+            name: name.trim() || null
           }
         }
       });
 
       if (signUpError) throw signUpError;
 
-      // Create Stripe customer for the new user
+      // Create Stripe customer for the new user (async, don't wait)
+      // The name will be retrieved from user metadata by the API endpoint
       if (signUpData.user) {
-        try {
-          const response = await fetch('/api/stripe/create-customer', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId: signUpData.user.id,
-              email: signUpData.user.email || email,
-            }),
-          });
-          
-          if (!response.ok) {
-            console.error('Failed to create Stripe customer, but user account was created');
-            // Don't fail sign up if Stripe customer creation fails
-            // Customer will be created lazily on first payment
-          }
-        } catch (stripeError) {
+        // Don't await - let it run in background
+        fetch('/api/stripe/create-customer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: signUpData.user.id,
+            email: signUpData.user.email || email,
+          }),
+        }).catch((stripeError) => {
           console.error('Error creating Stripe customer:', stripeError);
           // Don't fail sign up if Stripe customer creation fails
-        }
+          // Customer will be created lazily on first payment
+        });
       }
 
       // Success - modal will close via onAuthStateChange in AuthContext
@@ -144,7 +138,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
     setError('');
     setEmail('');
     setPassword('');
-    setCompanyName('');
+    setName('');
     setResetEmailSent(false);
     setMode(initialMode);
     onClose();
@@ -160,7 +154,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
             </h2>
             <p className="text-sm text-gray-500 mt-1">
               {mode === 'signup' 
-                ? 'Sign up to create your verification request' 
+                ? 'Get started tracking your prop firm PNL' 
                 : mode === 'signin'
                 ? 'Sign in to continue'
                 : 'Enter your email to receive a password reset link'}
@@ -193,16 +187,17 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
           
           {mode === 'signup' && (
             <div>
-              <label htmlFor="company-name" className="block text-sm font-medium text-gray-700 mb-1">
-                Company Name (optional)
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                Name
               </label>
               <input
-                id="company-name"
+                id="name"
                 type="text"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="ABC Properties"
+                placeholder="John Doe"
+                autoComplete="name"
               />
             </div>
           )}

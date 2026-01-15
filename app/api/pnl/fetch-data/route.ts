@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
           // Check if report already exists for this account
           const { data: existingReport } = await supabaseAdmin
             .from('pnl_reports')
-            .select('id')
+            .select('id, report_token')
             .eq('user_id', user.id)
             .eq('account_id', account.id)
             .single();
@@ -200,27 +200,30 @@ export async function POST(request: NextRequest) {
           };
 
           let reportId: string;
+          let reportToken: string;
           if (existingReport) {
             // Update existing report
             const { data, error } = await supabaseAdmin
               .from('pnl_reports')
               .update(reportData)
               .eq('id', existingReport.id)
-              .select('id')
+              .select('id, report_token')
               .single();
             
             if (error) throw error;
             reportId = data.id;
+            reportToken = data.report_token;
           } else {
             // Create new report
             const { data, error } = await supabaseAdmin
               .from('pnl_reports')
               .insert(reportData)
-              .select('id')
+              .select('id, report_token')
               .single();
             
             if (error) throw error;
             reportId = data.id;
+            reportToken = data.report_token;
           }
 
           // Store/update connected account
@@ -241,7 +244,12 @@ export async function POST(request: NextRequest) {
             console.error('Error storing connected account:', accountError);
           }
 
-          return { account_id: account.id, report_id: reportId, success: true };
+          return { 
+            account_id: account.id, 
+            report_id: reportId, 
+            report_token: reportToken,
+            success: true 
+          };
         } catch (error: any) {
           console.error(`Error storing report for account ${account.id}:`, error);
           return { account_id: account.id, success: false, error: error.message };
@@ -277,10 +285,21 @@ export async function POST(request: NextRequest) {
     
     const disconnectedCount = disconnectResults.filter(r => r.success).length;
 
+    // Return success with the first report token for redirect
+    // Since users typically connect one account at a time, we return the first report token
+    const firstReport = reportResults.find((r: any) => r.success && r.report_token);
+    
     return NextResponse.json({ 
       success: true,
       report_count: successCount,
       total_accounts: accounts.length,
+      reportToken: firstReport?.report_token || null, // Return first report token for redirect
+      accounts: reportResults.map((r: any) => ({
+        account_id: r.account_id,
+        report_id: r.report_id,
+        report_token: r.report_token,
+        success: r.success,
+      })),
       pnl_report: pnlReport,
     });
   } catch (error: any) {

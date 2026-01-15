@@ -1,16 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileCheck, User, LogOut, Settings } from 'lucide-react';
+import { FileCheck, User, LogOut, Settings, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function GlobalNavbar() {
   const pathname = usePathname();
   const { user, supabase } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const [reportToken, setReportToken] = useState<string | null>(null);
   
+  // Fetch user's report token
+  useEffect(() => {
+    if (user) {
+      fetch('/api/user/report-token')
+        .then(res => res.json())
+        .then(data => {
+          if (data.reportToken) {
+            setReportToken(data.reportToken);
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching report token:', err);
+        });
+    } else {
+      setReportToken(null);
+    }
+  }, [user]);
+
   // Don't show navbar on verify pages
   if (pathname?.startsWith('/verify/')) {
     return null;
@@ -46,6 +65,15 @@ export default function GlobalNavbar() {
           <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <>
+                {reportToken && !pathname?.startsWith('/report/') && (
+                  <Link
+                    href={`/report/${reportToken}`}
+                    className="flex items-center gap-2 px-3 sm:px-4 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50 rounded-lg border border-emerald-200 transition-colors flex-shrink-0"
+                  >
+                    <BarChart3 className="w-4 h-4" />
+                    <span className="hidden sm:inline">View Report</span>
+                  </Link>
+                )}
                 <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 text-sm text-gray-600 bg-gray-50 rounded-lg">
                   <User className="w-4 h-4 flex-shrink-0" />
                   <span className="hidden sm:inline truncate max-w-[120px] md:max-w-none">{user.email}</span>

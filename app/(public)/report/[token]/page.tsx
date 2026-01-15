@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ReportContent from './ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
@@ -26,12 +27,21 @@ interface PNLReportRow {
 export default async function ReportPage({ params }: PageProps) {
   const { token } = await params;
   const supabase = await createClient();
+  
+  // Require authentication - check if user is logged in
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (!user || authError) {
+    // Redirect to landing page if not authenticated
+    redirect('/');
+  }
 
-  // Fetch PNL report by token
+  // Fetch PNL report by token - ensure user owns this report
   const { data: report, error } = await supabase
     .from('pnl_reports')
     .select('*')
     .eq('report_token', token)
+    .eq('user_id', user.id) // Ensure user owns this report
     .single();
 
   if (error || !report) {
@@ -49,9 +59,9 @@ export default async function ReportPage({ params }: PageProps) {
           </p>
           <Link 
             href="/"
-            className="inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+            className="inline-block px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
           >
-            Go to Dashboard
+            Go Home
           </Link>
         </div>
       </div>

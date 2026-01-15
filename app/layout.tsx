@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import GlobalNavbar from '@/components/GlobalNavbar';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/server';
+import { AuthModalWrapper } from '@/components/AuthModalWrapper';
 import 'styles/main.css';
 
 const title = 'Prop Firm PNL Tracker';
@@ -62,6 +63,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             {children}
           </main>
           <Footer />
+          <AuthModalWrapper />
           <Suspense>
             <Toaster />
           </Suspense>

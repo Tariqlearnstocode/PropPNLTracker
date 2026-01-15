@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { stripe } from '@/lib/stripe/client';
+import { stripe, isStripeConfigured } from '@/lib/stripe/client';
 import { getOrCreateStripeCustomer } from '@/lib/stripe/helpers';
 import { validatePriceIds } from '@/lib/stripe/prices';
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isStripeConfigured() || !stripe) {
+      return NextResponse.json(
+        { error: 'Stripe is not configured. Please set up Stripe to use this feature.' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -25,11 +32,20 @@ export async function POST(request: NextRequest) {
 
     const prices = validatePriceIds();
 
-    // Get or create Stripe customer
+    // Get or create Stripe customer (include name from user metadata)
+    const name = user.user_metadata?.name || null;
     const customerId = await getOrCreateStripeCustomer(
       user.id,
-      user.email || ''
+      user.email || '',
+      name
     );
+
+    if (!customerId) {
+      return NextResponse.json(
+        { error: 'Failed to create or retrieve Stripe customer' },
+        { status: 500 }
+      );
+    }
 
     // Determine recurring price based on plan
     const recurringPriceId =
