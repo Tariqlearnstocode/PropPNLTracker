@@ -26,6 +26,7 @@ const PROP_FIRM_NAMES = [
   'oneup trader',
   'blu sky',
   'bluesky',
+  'bulenox',
   'elite trader funding',
   'city traders',
   'citytrader',
