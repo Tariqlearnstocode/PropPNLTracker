@@ -3,9 +3,21 @@ import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { checkRateLimit } from '@/utils/rate-limit';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
+import { getActiveSubscription } from '@/lib/stripe/helpers';
 import https from 'https';
 
 const TELLER_API_URL = 'https://api.teller.io';
+
+// ============ CONFIGURATION ============
+// Auto-refresh frequency for subscription users
+// Change this to 'weekly' or 'monthly' as needed
+const AUTO_REFRESH_FREQUENCY: 'weekly' | 'monthly' = 'monthly';
+
+// Transaction sync overlap (days)
+// Teller recommends 7-10 days to capture transactions that shift dates when moving from pending to posted
+// See: https://teller.io/docs/api/account/transactions#list-transactions
+const SYNC_OVERLAP_DAYS = 7; // Change to 1-10 as needed (Teller recommends 7-10)
+// ========================================
 
 /**
  * Teller API requires Basic Auth with access_token as username and empty password
@@ -143,16 +155,53 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    // 3. Fetch transactions for each account (last 12 months)
-    const twelveMonthsAgo = new Date();
-    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-    const startDate = twelveMonthsAgo.toISOString().split('T')[0];
-    const endDate = new Date().toISOString().split('T')[0];
+    // 3. Check if user has active subscription
+    const subscription = await getActiveSubscription(user.id);
+    const hasSubscription = !!subscription;
 
+    // 4. Get last_synced_at for all accounts (for merge mode)
+    const accountIds = accounts.map((acc: any) => acc.id);
+    const { data: connectedAccounts } = await supabaseAdmin
+      .from('connected_accounts')
+      .select('account_id, last_synced_at')
+      .eq('user_id', user.id)
+      .in('account_id', accountIds);
+
+    const lastSyncedMap = new Map<string, string>();
+    connectedAccounts?.forEach((ca: any) => {
+      if (ca.last_synced_at) {
+        lastSyncedMap.set(ca.account_id, ca.last_synced_at);
+      }
+    });
+
+    // 5. Fetch transactions for each account
+    // For subscription users with existing reports: fetch from last_synced_at - 1 day (merge mode)
+    // For new reports or non-subscription users: fetch last 12 months (full fetch)
     let allTransactions: any[] = [];
+    const endDate = new Date().toISOString().split('T')[0];
+    const defaultStartDate = (() => {
+      const twelveMonthsAgo = new Date();
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+      return twelveMonthsAgo.toISOString().split('T')[0];
+    })();
 
     for (const account of accounts) {
       try {
+        // Determine start date for this account
+        let startDate: string;
+        if (hasSubscription && lastSyncedMap.has(account.id)) {
+          // Merge mode: fetch from last_synced_at - SYNC_OVERLAP_DAYS
+          // Teller recommends 7-10 days overlap to capture transactions that shift dates when posting
+          const lastSynced = new Date(lastSyncedMap.get(account.id)!);
+          lastSynced.setDate(lastSynced.getDate() - SYNC_OVERLAP_DAYS);
+          startDate = lastSynced.toISOString().split('T')[0];
+          console.log(`Account ${account.id}: merge mode, fetching from ${startDate} (${SYNC_OVERLAP_DAYS} day overlap)`);
+        } else {
+          // Full fetch mode: last 12 months
+          startDate = defaultStartDate;
+          console.log(`Account ${account.id}: full fetch, fetching from ${startDate}`);
+        }
+
         const txnRes = await tellerFetch(
           `${TELLER_API_URL}/accounts/${account.id}/transactions?start_date=${startDate}&end_date=${endDate}`,
           { headers }
@@ -166,35 +215,94 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. Prepare raw data
+    // Use earliest start date for the overall date range
+    const overallStartDate = hasSubscription && lastSyncedMap.size > 0
+      ? (() => {
+          const dates = Array.from(lastSyncedMap.values()).map(d => {
+            const date = new Date(d);
+            date.setDate(date.getDate() - SYNC_OVERLAP_DAYS);
+            return date;
+          });
+          const earliest = new Date(Math.min(...dates.map(d => d.getTime())));
+          return earliest.toISOString().split('T')[0];
+        })()
+      : defaultStartDate;
+
+    // 6. Prepare raw data
     const rawTellerData = {
       accounts: accountsWithBalances,
       transactions: allTransactions,
       fetched_at: new Date().toISOString(),
-      date_range: { start: startDate, end: endDate },
+      date_range: { start: overallStartDate, end: endDate },
       provider: 'teller' as const,
     };
 
-    // 5. Calculate PNL report
-    const pnlReport = calculatePNLReport(rawTellerData);
-
-    // 6. Store in database (for each account, create a report)
+    // 7. Store in database (for each account, create or update report)
     const reportResults = await Promise.all(
       accounts.map(async (account: any) => {
         try {
           // Check if report already exists for this account
           const { data: existingReport } = await supabaseAdmin
             .from('pnl_reports')
-            .select('id, report_token')
+            .select('id, report_token, raw_teller_data, manual_assignments')
             .eq('user_id', user.id)
             .eq('account_id', account.id)
             .single();
 
+          let finalRawData = rawTellerData;
+          let finalManualAssignments = existingReport?.manual_assignments || {};
+
+          // If subscription user with existing report: merge transactions
+          if (hasSubscription && existingReport && existingReport.raw_teller_data) {
+            const existingData = existingReport.raw_teller_data as any;
+            const existingTransactions = existingData.transactions || [];
+            const newTransactions = rawTellerData.transactions || [];
+
+            // Merge transactions: combine old + new, dedupe by transaction ID
+            const transactionMap = new Map<string, any>();
+            
+            // Add existing transactions first
+            existingTransactions.forEach((txn: any) => {
+              transactionMap.set(txn.id, txn);
+            });
+            
+            // Add/update with new transactions (newer data takes precedence)
+            newTransactions.forEach((txn: any) => {
+              transactionMap.set(txn.id, txn);
+            });
+
+            // Convert back to array
+            const mergedTransactions = Array.from(transactionMap.values());
+            
+            // Sort by date (newest first)
+            mergedTransactions.sort((a, b) => {
+              const dateA = new Date(a.date || a.created_at || 0).getTime();
+              const dateB = new Date(b.date || b.created_at || 0).getTime();
+              return dateB - dateA;
+            });
+
+            finalRawData = {
+              ...rawTellerData,
+              transactions: mergedTransactions,
+              // Update date range to reflect full dataset
+              date_range: {
+                start: existingData.date_range?.start || overallStartDate,
+                end: endDate,
+              },
+            };
+
+            console.log(`Merged ${existingTransactions.length} existing + ${newTransactions.length} new = ${mergedTransactions.length} total transactions`);
+          }
+
+          // Calculate PNL report with merged data and preserved manual assignments
+          const pnlReport = calculatePNLReport(finalRawData, finalManualAssignments);
+
           const reportData = {
             user_id: user.id,
             account_id: account.id,
-            raw_teller_data: rawTellerData,
+            raw_teller_data: finalRawData,
             pnl_data: pnlReport,
+            manual_assignments: finalManualAssignments, // Explicitly preserve
             status: 'completed',
             updated_at: new Date().toISOString(),
           };
@@ -227,6 +335,7 @@ export async function POST(request: NextRequest) {
           }
 
           // Store/update connected account
+          // Clear needs_refresh flag after successful sync
           const { error: accountError } = await supabaseAdmin
             .from('connected_accounts')
             .upsert({
@@ -234,7 +343,10 @@ export async function POST(request: NextRequest) {
               account_id: account.id,
               account_name: account.name,
               account_type: account.type,
+              enrollment_id: account.enrollment_id || null, // Store enrollment_id if available
+              enrollment_status: 'connected',
               last_synced_at: new Date().toISOString(),
+              needs_refresh: false, // Clear refresh flag after successful sync
               updated_at: new Date().toISOString(),
             }, {
               onConflict: 'user_id,account_id',
@@ -259,9 +371,9 @@ export async function POST(request: NextRequest) {
 
     const successCount = reportResults.filter(r => r.success).length;
 
-    // 7. Delete account connections (Teller charges per active enrollment)
-    // Note: For subscriptions with weekly updates, we might want to keep connections
-    // For now, we'll disconnect to save costs
+    // 8. Delete account connections (Teller charges per active enrollment)
+    // Note: For subscription users, we disconnect after manual refresh
+    // Auto-refresh will require re-authentication (handled separately)
     console.log(`Disconnecting ${accounts.length} account(s) from Teller...`);
     
     const disconnectResults = await Promise.all(
@@ -300,7 +412,6 @@ export async function POST(request: NextRequest) {
         report_token: r.report_token,
         success: r.success,
       })),
-      pnl_report: pnlReport,
     });
   } catch (error: any) {
     console.error('Error fetching PNL data:', error);
