@@ -24,15 +24,17 @@ const AUTO_REFRESH_FREQUENCY: 'weekly' | 'monthly' = 'monthly';
  * For now, this is a skeleton that identifies users who need refresh.
  * Full implementation will require one of the above access token strategies.
  * 
- * Security: This endpoint should be protected (e.g., require API key or run in secure environment)
+ * Security: When CRON_SECRET is set, requests must include Authorization: Bearer <CRON_SECRET>.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Optional: Verify this is called from a trusted source (cron job)
-    // const authHeader = request.headers.get('authorization');
-    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    const cronSecret = process.env.CRON_SECRET;
+    if (cronSecret) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader !== `Bearer ${cronSecret}`) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    }
 
     // Get all users with active subscriptions
     const { data: subscriptions, error: subError } = await supabaseAdmin

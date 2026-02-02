@@ -1,30 +1,7 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
 import { ArrowRight, TrendingUp, Check, Wallet, BarChart3, Shield, Zap, Lock, Clock, FileText, Users, Database, LineChart, RefreshCw, Share2, X } from 'lucide-react';
 
-export default async function LandingPage() {
-  // Check if user is authenticated - if so, redirect to their report or connect page
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (user) {
-    // User is authenticated - check if they have a report
-    const { data: reportsData } = await supabase
-      .from('pnl_reports')
-      .select('report_token')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (reportsData && reportsData.length > 0 && reportsData[0].report_token) {
-      // User has a report - redirect to it
-      redirect(`/report/${reportsData[0].report_token}`);
-    } else {
-      // No report yet - redirect to connect page
-      redirect('/connect');
-    }
-  }
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-terminal-bg">
       {/* Hero Section */}

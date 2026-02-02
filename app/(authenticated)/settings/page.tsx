@@ -12,10 +12,8 @@ import {
   Wallet,
   Trash2,
   Plus,
-  ArrowRight,
   AlertTriangle,
   Calendar,
-  FileText,
   Loader2,
   BarChart3
 } from 'lucide-react';
@@ -246,20 +244,11 @@ export default function SettingsPage() {
 
         {/* Connected Accounts Section */}
         <div className="bg-terminal-card rounded-xl border border-terminal-border p-6 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-profit-dim rounded-lg flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-profit" />
-              </div>
-              <h2 className="text-xl font-semibold text-terminal-text">Connected Bank Accounts</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-profit-dim rounded-lg flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-profit" />
             </div>
-            <Link
-              href="/connect"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg text-sm transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Account
-            </Link>
+            <h2 className="text-xl font-semibold text-terminal-text">Connected Bank Accounts</h2>
           </div>
 
           {loading ? (
@@ -298,24 +287,6 @@ export default function SettingsPage() {
                         )}
                       </div>
                       <div className="space-y-1 text-sm text-terminal-muted">
-                        <p className="flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          {account.reportCount} report{account.reportCount !== 1 ? 's' : ''}
-                        </p>
-                        {account.reports.length > 0 && (
-                          <div className="flex items-center gap-2 flex-wrap mt-2">
-                            {account.reports.map((report, idx) => (
-                              <Link
-                                key={report.report_token}
-                                href={`/report/${report.report_token}`}
-                                className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-profit/20 text-profit rounded hover:bg-profit-dim transition-colors"
-                              >
-                                View Report
-                                <ArrowRight className="w-3 h-3" />
-                              </Link>
-                            ))}
-                          </div>
-                        )}
                         <p className="flex items-center gap-2">
                           <Calendar className="w-4 h-4" />
                           Last synced: {formatDate(account.last_synced_at)}

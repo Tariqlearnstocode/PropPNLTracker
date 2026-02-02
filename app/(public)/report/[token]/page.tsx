@@ -4,7 +4,6 @@ import Link from 'next/link';
 import ReportContent from './ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
 import type { PNLReport } from '@/lib/pnl-calculations';
-import { getActiveSubscription } from '@/lib/stripe/helpers';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getURL } from '@/utils/helpers';
 import type { Metadata } from 'next';
@@ -252,26 +251,19 @@ export default async function ReportPage({ params }: PageProps) {
     );
   }
 
-  // Check if user has active subscription
-  const subscription = await getActiveSubscription(user.id);
-  const hasSubscription = !!subscription;
-
-  // Get connected account info for refresh capability
+  // Get connected account info for refresh capability (Sync button)
   let canRefreshDaily = false;
   let lastRefreshAttempt: string | null = null;
+  const { data: connectedAccount } = await supabaseAdmin
+    .from('connected_accounts')
+    .select('can_refresh_daily, last_refresh_attempt')
+    .eq('user_id', user.id)
+    .eq('account_id', reportData.account_id)
+    .single();
 
-  if (hasSubscription) {
-    const { data: connectedAccount } = await supabaseAdmin
-      .from('connected_accounts')
-      .select('can_refresh_daily, last_refresh_attempt')
-      .eq('user_id', user.id)
-      .eq('account_id', reportData.account_id)
-      .single();
-
-    if (connectedAccount) {
-      canRefreshDaily = connectedAccount.can_refresh_daily || false;
-      lastRefreshAttempt = connectedAccount.last_refresh_attempt || null;
-    }
+  if (connectedAccount) {
+    canRefreshDaily = connectedAccount.can_refresh_daily || false;
+    lastRefreshAttempt = connectedAccount.last_refresh_attempt || null;
   }
 
   return (
