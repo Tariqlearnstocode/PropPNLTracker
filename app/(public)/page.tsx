@@ -1,96 +1,94 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { ArrowRight, TrendingUp, Check, Wallet, BarChart3, Shield, Zap, Lock, Clock, FileText, Users, Database, LineChart, RefreshCw, Share2, X } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees | Topstep, FTMO, Rise',
+  description:
+    'Track your prop firm P&L automatically. Connect your bank—we track payouts and fees from Topstep, FTMO, The5ers, Rise and more. Your true profit and loss in ~60 seconds. No spreadsheets.',
+  openGraph: {
+    title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees',
+    description:
+      'Track prop firm payouts and fees from Topstep, FTMO, Rise and more. Bank-verified P&L in ~60 seconds. No manual entry.',
+  },
+};
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-terminal-bg">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-terminal-bg pt-24 pb-20 sm:pt-32 sm:pb-28">
+      {/* Hero — minimal copy, two-column: message left, dashboard right */}
+      <section
+        className="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-20"
+        style={{ background: 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 30%, #0a0a0f 100%)' }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-terminal-text mb-6 leading-[1.1] tracking-tight">
-              1-Click Bank-Verified
-              <span className="block mt-2">Prop P&L</span>
-            </h1>
-            <p className="text-xl sm:text-2xl text-terminal-text max-w-2xl mx-auto mb-4 leading-relaxed">
-              Stop guessing your profitability. Connect your bank, track every payout and fee, and see your real numbers in seconds.
-            </p>
-            <p className="text-base text-terminal-muted max-w-2xl mx-auto mb-8">
-              We automatically match payouts + fees from Topstep, FTMO, The5ers, Rise, Wise and more.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
-              <Link
-                href="/connect"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-md text-base transition-colors"
-              >
-                Connect Your Bank – It's Free
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/pricing"
-                className="inline-flex items-center px-6 py-3 bg-terminal-card hover:bg-terminal-card-hover text-terminal-muted hover:text-terminal-text font-medium rounded-md text-base border border-terminal-border transition-colors"
-              >
-                See Example Report
-              </Link>
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left: headline + CTA only */}
+            <div className="text-center lg:text-left">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
+                Prop firm P&L—
+                <span className="block mt-2 text-profit">bank-verified.</span>
+              </h1>
+              <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
+                Connect your bank. We track payouts and fees from Topstep, FTMO, The5ers, Rise and more—your true profit and loss in ~60 seconds.
+              </p>
+              <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
+                No spreadsheets. No manual entry. One connection.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
+                <Link
+                  href="/connect"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
+                >
+                  Connect Your Bank – Free
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center px-5 py-2.5 font-mono text-xs font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors"
+                >
+                  View Plans
+                </Link>
+              </div>
+              <p className="text-xs text-terminal-muted font-mono">
+                No card required · Cancel anytime
+              </p>
+              {/* Trust + SEO: security + supported firms */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 mt-8 text-xs text-terminal-muted font-mono">
+                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Teller</span>
+                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Read-only</span>
+                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Encrypted</span>
+                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Topstep, FTMO, Rise, Wise</span>
+              </div>
             </div>
-            <p className="text-sm text-terminal-muted italic">
-              No manual entry. No spreadsheets. No BS.
-            </p>
-            <p className="text-sm text-terminal-muted mt-2">
-              Weekly updates on Pro. Cancel anytime.
-            </p>
-          </div>
 
-          {/* Trust Bar */}
-          <div className="max-w-4xl mx-auto mb-16">
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 px-4 py-4 bg-terminal-card rounded-lg border border-terminal-border">
-              <div className="flex items-center gap-2 text-sm text-terminal-text">
-                <Check className="w-4 h-4 text-profit" />
-                <span>Bank connected via Teller</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-terminal-text">
-                <Check className="w-4 h-4 text-profit" />
-                <span>Credentials never stored</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-terminal-text">
-                <Check className="w-4 h-4 text-profit" />
-                <span>Read-only access</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-terminal-text">
-                <Check className="w-4 h-4 text-profit" />
-                <span>Encrypted & private</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Product Screenshot Area */}
-          <div className="mt-12 rounded-lg border border-terminal-border bg-terminal-card overflow-hidden">
-            <div className="bg-terminal-card border-b border-terminal-border px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-terminal-muted"></div>
-                <div className="w-2 h-2 rounded-full bg-terminal-muted"></div>
-                <div className="w-2 h-2 rounded-full bg-terminal-muted"></div>
-              </div>
-              <div className="text-sm text-terminal-muted font-mono">prop-firm-pnl-tracker.com</div>
-            </div>
-            <div className="p-12 bg-terminal-bg">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-terminal-card rounded border border-terminal-border p-6">
-                  <div className="text-2xl font-semibold text-terminal-text mb-1">$12,450</div>
-                  <div className="text-sm text-terminal-muted">Total PNL</div>
+            {/* Right: dashboard preview = visual break, less wall of text */}
+            <div className="rounded-lg border border-profit/20 bg-terminal-card overflow-hidden shadow-xl">
+              <div className="bg-terminal-card border-b border-terminal-border px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
                 </div>
-                <div className="bg-terminal-card rounded border border-terminal-border p-6">
-                  <div className="text-2xl font-semibold text-terminal-text mb-1">8</div>
-                  <div className="text-sm text-terminal-muted">Prop Firms</div>
-                </div>
-                <div className="bg-terminal-card rounded border border-terminal-border p-6">
-                  <div className="text-2xl font-semibold text-terminal-text mb-1">24</div>
-                  <div className="text-sm text-terminal-muted">Months Tracked</div>
-                </div>
+                <div className="text-xs text-terminal-muted font-mono">prop-firm-pnl-tracker.com</div>
               </div>
-              <div className="bg-terminal-card rounded border border-terminal-border p-8">
-                <div className="h-64 bg-terminal-bg rounded border border-terminal-border flex items-center justify-center">
-                  <LineChart className="w-20 h-20 text-terminal-muted" />
+              <div className="p-6 sm:p-8 bg-terminal-bg">
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
+                    <div className="text-xl font-semibold text-terminal-text">$12,450</div>
+                    <div className="text-xs text-terminal-muted">Total PNL</div>
+                  </div>
+                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
+                    <div className="text-xl font-semibold text-terminal-text">8</div>
+                    <div className="text-xs text-terminal-muted">Firms</div>
+                  </div>
+                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
+                    <div className="text-xl font-semibold text-terminal-text">24</div>
+                    <div className="text-xs text-terminal-muted">Months</div>
+                  </div>
+                </div>
+                <div className="bg-terminal-card rounded border border-terminal-border p-6 h-48 flex items-center justify-center">
+                  <LineChart className="w-16 h-16 text-terminal-muted" />
                 </div>
               </div>
             </div>
@@ -99,7 +97,7 @@ export default function LandingPage() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-24 bg-terminal-bg border-t border-terminal-border">
+      <section className="py-24 bg-terminal-bg border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight text-center">
@@ -107,13 +105,13 @@ export default function LandingPage() {
               <span className="block mt-2">Bank accounts don't.</span>
             </h2>
             <p className="text-lg text-terminal-text mb-8 text-center max-w-2xl mx-auto">
-              Most prop traders think they are profitable until they calculate the cost of resets, challenge fees, and platform subscriptions.
+              Real money slips through when you guess. Resets, challenge fees, and subscriptions add up—most traders don&apos;t run the numbers until it&apos;s too late.
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-12">
               <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
                 <div className="text-lg font-semibold text-terminal-text mb-2">Too many firms</div>
                 <p className="text-terminal-text text-sm">
-                  Tracking FTMO, TopStep, and MyForexFunds in one place is a nightmare.
+                  Tracking multiple prop firms in one place is a nightmare.
                 </p>
               </div>
               <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
@@ -139,80 +137,83 @@ export default function LandingPage() {
       </section>
 
       {/* Solution Section */}
-      <section className="py-24 bg-terminal-card border-t border-terminal-border">
+      <section className="py-24 bg-terminal-card border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
               One click → Real P&L
             </h2>
-            <p className="text-lg text-terminal-text mb-8">
-              Connect your bank account and instantly get:
+            <p className="text-lg text-terminal-muted mb-8">
+              Connect your bank. Get the numbers that actually matter—so you can stop guessing and start deciding.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
-              <div className="text-lg font-semibold text-terminal-text mb-2">Total payouts received</div>
-              <p className="text-terminal-text text-sm">All prop firm payouts in one place</p>
+              <div className="text-lg font-semibold text-terminal-text mb-2">Total payouts</div>
+              <p className="text-terminal-text text-sm">Every dollar that hit your account—one place</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
-              <div className="text-lg font-semibold text-terminal-text mb-2">Total prop firm fees paid</div>
-              <p className="text-terminal-text text-sm">Every challenge fee and subscription tracked</p>
+              <div className="text-lg font-semibold text-terminal-text mb-2">Total fees paid</div>
+              <p className="text-terminal-text text-sm">Resets, challenges, subs—so you see true cost</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
-              <div className="text-lg font-semibold text-terminal-text mb-2">Net profit / loss</div>
-              <p className="text-terminal-text text-sm">The real number, bank-verified</p>
+              <div className="text-lg font-semibold text-terminal-text mb-2">Net P&L</div>
+              <p className="text-terminal-text text-sm">The number that matters. Bank-verified.</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Monthly breakdown</div>
-              <p className="text-terminal-text text-sm">See your performance over time</p>
+              <p className="text-terminal-text text-sm">Spot trends and see when you actually made money</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Profit per firm</div>
-              <p className="text-terminal-text text-sm">Know which firms are actually profitable</p>
+              <p className="text-terminal-text text-sm">Which firms pay off—and which don&apos;t</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
-              <div className="text-lg font-semibold text-terminal-text mb-2">Bank verified</div>
-              <p className="text-terminal-text text-sm">Fully automated. No manual entry.</p>
+              <div className="text-lg font-semibold text-terminal-text mb-2">Zero manual entry</div>
+              <p className="text-terminal-text text-sm">Bank-linked. Automatic. No spreadsheets.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-terminal-bg border-t border-terminal-border">
+      <section className="py-24 bg-terminal-bg border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16">
-            <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
-              Built for the Professional Prop Trader
+            <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-4 leading-tight">
+              Built for prop traders who want the truth
             </h2>
+            <p className="text-lg text-terminal-muted">
+              One dashboard. Real bank data. No spreadsheets.
+            </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
               <Zap className="w-8 h-8 text-profit mb-4" />
-              <h3 className="text-xl font-semibold text-terminal-text mb-3">Automated Matching</h3>
+              <h3 className="text-xl font-semibold text-terminal-text mb-3">Auto-categorized</h3>
               <p className="text-terminal-text">
-                We recognize deposits from Rise, Wise, and Stripe, and categorize them as Payouts vs. Fees automatically.
+                Payouts vs. fees—we recognize Rise, Wise, Stripe and tag them so you don&apos;t have to.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
               <Users className="w-8 h-8 text-accent-blue mb-4" />
-              <h3 className="text-xl font-semibold text-terminal-text mb-3">Multi-Account Support</h3>
+              <h3 className="text-xl font-semibold text-terminal-text mb-3">Multi-account</h3>
               <p className="text-terminal-text">
-                Aggregate up to 5 different bank accounts into one unified dashboard.
+                Up to 5 bank accounts in one view—see your full picture without switching tabs.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
               <Share2 className="w-8 h-8 text-accent-purple mb-4" />
-              <h3 className="text-xl font-semibold text-terminal-text mb-3">Shareable Stats</h3>
+              <h3 className="text-xl font-semibold text-terminal-text mb-3">Shareable link</h3>
               <p className="text-terminal-text">
-                Generate a public link to prove your bank-verified P&L to investors or your community.
+                One link to prove bank-verified P&L. Investors and followers see the real numbers.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
               <FileText className="w-8 h-8 text-accent-amber mb-4" />
-              <h3 className="text-xl font-semibold text-terminal-text mb-3">One-Click Export</h3>
+              <h3 className="text-xl font-semibold text-terminal-text mb-3">Export for taxes</h3>
               <p className="text-terminal-text">
-                Need your data for taxes? Export everything to CSV or PDF in one tap.
+                CSV or PDF in one tap—hand it to your accountant and done.
               </p>
             </div>
           </div>
@@ -250,7 +251,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 bg-terminal-card border-t border-terminal-border">
+      <section className="py-24 bg-terminal-card border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mb-16 text-center">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
@@ -275,7 +276,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Sync</h3>
               <p className="text-terminal-text">
-                Our engine automatically identifies payouts from Rise, Wise, and 50+ prop firms.
+                Our engine automatically identifies payouts from Rise, Wise, and other major prop firms.
               </p>
             </div>
 
@@ -289,11 +290,21 @@ export default function LandingPage() {
               </p>
             </div>
           </div>
+          <div className="mt-12 text-center">
+            <p className="text-terminal-muted mb-4">Takes about 60 seconds. Your next step: connect your bank.</p>
+            <Link
+              href="/connect"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+            >
+              Connect Your Bank – Free
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Shareable Link Feature */}
-      <section className="py-24 bg-terminal-bg border-t border-terminal-border">
+      <section className="py-24 bg-terminal-bg border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -302,28 +313,28 @@ export default function LandingPage() {
                 <span className="block mt-2">without screenshots</span>
               </h2>
               <p className="text-lg text-terminal-text mb-8 leading-relaxed">
-                Generate a public P&L link that shows total payouts, total fees, net profit, and monthly breakdown.
+                Proof beats promises. A public link shows your real payouts, fees, and net P&L—no screenshots, no doubt.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-terminal-text">Traders sharing performance online</div>
-                    <div className="text-terminal-text text-sm">Prove your bank-verified results to your community</div>
+                    <div className="font-medium text-terminal-text">Build trust publicly</div>
+                    <div className="text-terminal-text text-sm">Show followers and investors bank-verified results</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-terminal-text">Proof for coaching / mentorship</div>
-                    <div className="text-terminal-text text-sm">Build credibility with verified P&L data</div>
+                    <div className="font-medium text-terminal-text">Coaching & mentorship</div>
+                    <div className="text-terminal-text text-sm">Credibility when you need to prove your track record</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="font-medium text-terminal-text">Accountability partners</div>
-                    <div className="text-terminal-text text-sm">Share your progress with trusted partners</div>
+                    <div className="font-medium text-terminal-text">Accountability</div>
+                    <div className="text-terminal-text text-sm">Share progress with partners—one link, always current</div>
                   </div>
                 </div>
               </div>
@@ -359,39 +370,39 @@ export default function LandingPage() {
       </section>
 
       {/* Security */}
-      <section className="py-24 bg-terminal-card border-t border-terminal-border">
+      <section className="py-24 bg-terminal-card border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
-              Secure. Private. Bank-Level Encryption.
+              You stay in control
             </h2>
             <p className="text-lg text-terminal-text leading-relaxed">
-              We never store your bank credentials. We use read-only API access to visualize your data so you can focus on the charts.
+              Your credentials never touch our servers. We use Teller (same tech as tax and finance apps)—read-only, so we can&apos;t move money or see your password.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
               <Lock className="w-8 h-8 text-profit mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Read-only access</h3>
+              <h3 className="text-lg font-semibold text-terminal-text mb-2">Read-only</h3>
               <p className="text-terminal-text text-sm">
-                We only read your transaction data. No ability to move money or make payments.
+                We read transactions only. No withdrawals, no transfers, no payments—ever.
               </p>
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
               <Shield className="w-8 h-8 text-profit mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Encrypted data</h3>
+              <h3 className="text-lg font-semibold text-terminal-text mb-2">Encrypted</h3>
               <p className="text-terminal-text text-sm">
-                All data is encrypted at rest and in transit following industry best practices.
+                Data encrypted at rest and in transit. Same standards banks use.
               </p>
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
               <Wallet className="w-8 h-8 text-profit mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">No stored credentials</h3>
+              <h3 className="text-lg font-semibold text-terminal-text mb-2">No stored logins</h3>
               <p className="text-terminal-text text-sm">
-                Your bank credentials are never stored. Direct API connection via Teller.
+                We never store your bank login. Connect via Teller; disconnect anytime.
               </p>
             </div>
           </div>
@@ -399,14 +410,14 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-24 bg-terminal-bg border-t border-terminal-border">
+      <section className="py-24 bg-terminal-bg border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
-              Pick how you want to track
+              Start free. Upgrade when you&apos;re ready.
             </h2>
-            <p className="text-lg text-terminal-text">
-              Simple plans. No confusion.
+            <p className="text-lg text-terminal-muted">
+              No credit card for the free report. Cancel Pro anytime.
             </p>
           </div>
 
@@ -440,7 +451,7 @@ export default function LandingPage() {
                 href="/connect"
                 className="block w-full text-center px-4 py-2 bg-terminal-bg hover:bg-terminal-card-hover text-terminal-muted hover:text-terminal-text border-2 border-terminal-border rounded-md text-sm font-medium transition-colors"
               >
-                Try for Free
+                Connect Your Bank – Free
               </Link>
             </div>
 
@@ -451,9 +462,9 @@ export default function LandingPage() {
               </div>
               <div className="mb-6">
                 <div className="text-3xl font-bold text-terminal-text mb-2">$14.99<span className="text-lg font-normal text-terminal-muted">/mo</span></div>
-                <div className="text-sm text-terminal-muted mb-1">or $79/year</div>
+                <div className="text-sm text-terminal-muted mb-1">or $79/year (save ~$100)</div>
                 <div className="text-lg font-semibold text-terminal-text mb-2">Pro</div>
-                <div className="text-sm text-terminal-muted">Auto updates. Full tracking.</div>
+                <div className="text-sm text-terminal-muted">Weekly sync. Always up to date. Cancel anytime.</div>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
@@ -486,7 +497,7 @@ export default function LandingPage() {
               <div className="mb-6">
                 <div className="text-3xl font-bold text-terminal-text mb-2">$19.99</div>
                 <div className="text-lg font-semibold text-terminal-text mb-2">One-Time Pull</div>
-                <div className="text-sm text-terminal-text">No subscription. Perfect for taxes.</div>
+                <div className="text-sm text-terminal-text">One payment. No subscription. Ideal for tax time.</div>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
@@ -518,28 +529,34 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 bg-terminal-card border-t border-terminal-border">
+      <section className="py-24 bg-terminal-card border-t border-profit/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-12 text-center">
             FAQ
           </h2>
           <div className="space-y-8">
             <div>
+              <h3 className="text-lg font-semibold text-terminal-text mb-2">Do I need a credit card for the free report?</h3>
+              <p className="text-terminal-text">
+                No. Connect your bank, get your report. No card required. Add Pro later if you want weekly updates.
+              </p>
+            </div>
+            <div>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Does this connect to my prop firm accounts?</h3>
               <p className="text-terminal-text">
-                No — we connect to your bank. We track real payouts and real fees.
+                No—we connect to your bank. We track real payouts and real fees from your account.
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Is this secure?</h3>
               <p className="text-terminal-text">
-                Yes. We use Teller. Your login is never stored. Connection is read-only.
+                Yes. We use Teller (used by tax and finance apps). Read-only connection—we never see your password or store it. You can disconnect anytime.
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">What firms do you support?</h3>
               <p className="text-terminal-text">
-                Most major firms + payout processors including Rise and Wise.
+                We support most major prop firms and payout processors—including Rise, Wise, Topstep, FTMO, and The5ers.
               </p>
             </div>
             <div>
@@ -551,28 +568,34 @@ export default function LandingPage() {
             <div>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Can I cancel?</h3>
               <p className="text-terminal-text">
-                Yes — cancel anytime.
+                Yes. Cancel Pro anytime—no questions asked. Your free report stays.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 bg-terminal-bg border-t border-terminal-border">
+      {/* CTA — gradient bookend with navbar */}
+      <section
+        className="py-24 border-t border-profit/20"
+        style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
-            Stop using spreadsheets.
-            <span className="block mt-2">Automate your PNL tracking.</span>
+            Stop guessing. Know your numbers.
+            <span className="block mt-2 text-profit">Connect your bank → see your P&L.</span>
           </h2>
-          <p className="text-xl text-terminal-text mb-10 max-w-2xl mx-auto">
-            Connect your bank account and start tracking your prop firm PNL automatically. No credit card required to start.
+          <p className="text-xl text-terminal-text mb-6 max-w-2xl mx-auto">
+            Real P&L in ~60 seconds. No credit card. Cancel anytime.
+          </p>
+          <p className="text-sm text-terminal-muted mb-8 max-w-xl mx-auto font-mono">
+            Sign up → connect bank → get your report. That&apos;s it.
           </p>
           <Link
             href="/connect"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-md text-base transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
           >
-            Get started
+            Connect Your Bank – Free
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

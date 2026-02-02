@@ -33,12 +33,12 @@ export default function GlobalNavbar() {
       <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <span className="relative flex h-6 w-6">
                 <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
               </span>
               <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
-            </div>
+            </Link>
             <span className="text-terminal-border hidden sm:inline">·</span>
             <span className="text-sm font-mono text-terminal-muted truncate hidden sm:inline">
               {displayName ? `${displayName} shared their trading report with you` : "You're viewing a shared trading report"}
@@ -101,40 +101,37 @@ export default function GlobalNavbar() {
     );
   }
 
-  const navBg = 'bg-terminal-bg';
-
-  // Unauthenticated: landing page nav
+  // Unauthenticated: landing page nav — same styling as authenticated (gradient, profit accent)
   const handleOpenAuthModal = (mode: 'signin' | 'signup') => {
     window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode } }));
   };
 
   const isViewingSharedReport = pathname?.startsWith('/share/');
   const primaryCtaLabel = isViewingSharedReport ? 'Get my report free' : 'Get Started';
+  const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
   return (
-    <header className={`${navBg} border-b border-terminal-border sticky top-0 z-40`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 py-3">
-          <Link href="/" className="flex items-center gap-2 min-w-0">
-            <span className="relative flex h-6 w-6 flex-shrink-0">
-              <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
-            </span>
-            <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">Prop PNL</span>
-          </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              onClick={() => handleOpenAuthModal('signin')}
-              className="px-3 sm:px-4 py-1.5 text-sm text-terminal-muted hover:text-terminal-text rounded-lg border border-terminal-border hover:bg-terminal-card-hover transition-colors"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => handleOpenAuthModal('signup')}
-              className="px-3 sm:px-4 py-1.5 bg-profit hover:bg-profit/90 text-terminal-bg text-sm font-medium rounded-lg transition-colors"
-            >
-              {primaryCtaLabel}
-            </button>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <span className="relative flex h-6 w-6">
+            <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+          </span>
+          <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
+        </Link>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => handleOpenAuthModal('signin')}
+            className={barButtonClass}
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => handleOpenAuthModal('signup')}
+            className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-terminal-bg transition-colors flex-shrink-0 whitespace-nowrap"
+          >
+            {primaryCtaLabel}
+          </button>
         </div>
       </div>
     </header>
