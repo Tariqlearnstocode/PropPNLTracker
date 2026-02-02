@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { PNLReport, formatDate, formatMonth, calculateTradingStats, calculatePerFirmBreakdown } from '@/lib/pnl-calculations';
 import { safeNumber, exportToCSV, exportToPDF } from '@/lib/report-utils';
 
@@ -28,9 +28,9 @@ import { useFirmFilter } from '@/components/report/hooks/useFirmFilter';
 // Public view conversion components
 import { ConversionPopup } from '@/components/report/public/ConversionPopup';
 import { PublicInlineCTA } from '@/components/report/public/PublicInlineCTA';
-import { SharedReportBanner } from '@/components/report/public/SharedReportBanner';
 import { TransactionsTeaser } from '@/components/report/public/TransactionsTeaser';
 import { AuthModal } from '@/components/AuthModal';
+import { useReportNav } from '@/contexts/ReportNavContext';
 
 interface Props {
   report: {
@@ -51,6 +51,7 @@ interface Props {
 
 export default function ReportContent({ report, pnlData, canRefreshDaily = false, lastRefreshAttempt = null, isPublicView = false }: Props) {
   const { summary, monthlyBreakdown, perFirmBreakdown, transactions, accounts } = pnlData;
+  const { setReportNav } = useReportNav();
   const [activeTab, setActiveTab] = useState<'overview' | 'firms' | 'transactions' | 'analytics'>('overview');
   const [transactionView, setTransactionView] = useState<'payouts' | 'purchases' | 'needs-assignment' | 'find-missing'>('payouts');
   const [selectedTransactionIds, setSelectedTransactionIds] = useState<Set<string>>(new Set());
@@ -61,7 +62,18 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const [displayName, setDisplayName] = useState(report.display_name || '');
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  const handleGetStarted = () => setAuthModalOpen(true);
+  const handleGetStarted = useCallback(() => setAuthModalOpen(true), []);
+
+  // When public view, feed navbar (SharedReportBanner-style) via context so GlobalNavbar can render it
+  useEffect(() => {
+    if (isPublicView) {
+      setReportNav({
+        displayName: displayName || report.display_name || null,
+        onGetStarted: handleGetStarted,
+      });
+      return () => setReportNav(null);
+    }
+  }, [isPublicView, displayName, report.display_name, setReportNav, handleGetStarted]);
 
   // Use custom hooks
   const dateRange = useDateRange(monthlyBreakdown);
@@ -274,10 +286,6 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   return (
     <div className="min-h-screen text-terminal-text" style={{ backgroundColor: '#0a0a0f' }}>
       <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]" style={{ backgroundColor: '#0e0e14' }}>
-        <SharedReportBanner
-          displayName={displayName || report.display_name}
-          onGetStarted={handleGetStarted}
-        />
         <ReportHeader
           report={report}
           accounts={accounts}
@@ -296,7 +304,7 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
           onExportMonthlySummary={handleExportMonthlySummary}
           onExportFirmBreakdown={handleExportFirmBreakdown}
           onExportPDF={handleExportPDF}
-          needsAssignmentCount={0}
+          needsAssignmentCount={isPublicView ? 0 : needsAssignmentTransactions.length}
           tabs={['Overview', 'Firms', 'Transactions', 'Analytics']}
           activeTab={
             activeTab === 'overview' ? 'Overview' :
@@ -313,12 +321,13 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
             };
             setActiveTab(tabMap[tab] || 'overview');
           }}
-          canRefreshDaily={true}
-          lastRefreshAttempt={null}
-          onRefreshData={handleRefreshData}
+          canRefreshDaily={!isPublicView}
+          lastRefreshAttempt={isPublicView ? null : lastRefreshAttempt}
+          onRefreshData={isPublicView ? undefined : handleRefreshData}
           displayName={displayName}
-          onGetStarted={handleGetStarted}
-          shareUrl={typeof window !== 'undefined' ? `${window.location.origin}/share/${report.report_token}` : ''}
+          onGetStarted={isPublicView ? handleGetStarted : undefined}
+          shareUrl={typeof window !== 'undefined' ? (isPublicView ? window.location.href : `${window.location.origin}/share/${report.report_token}`) : ''}
+          isPublicView={isPublicView}
         />
       </div>
 

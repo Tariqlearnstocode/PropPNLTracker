@@ -8,6 +8,7 @@ import { MainContentWrapper } from '@/components/MainContentWrapper';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/server';
 import { AuthModalWrapper } from '@/components/AuthModalWrapper';
+import { ReportNavProvider } from '@/contexts/ReportNavContext';
 import 'styles/main.css';
 
 const title = 'Prop Firm PNL Tracker';
@@ -64,13 +65,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       </head>
       <body className="bg-[#0a0a0f] min-h-screen flex flex-col">
         <AuthProvider initialUser={user}>
-          <GlobalNavbar />
-          <MainContentWrapper>
-            <main id="skip" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </MainContentWrapper>
+          <ReportNavProvider>
+            <GlobalNavbar />
+            <MainContentWrapper>
+              <main id="skip" className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </MainContentWrapper>
+          </ReportNavProvider>
           <AuthModalWrapper />
           <Suspense>
             <Toaster />

@@ -4,63 +4,86 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useReportNav } from '@/contexts/ReportNavContext';
 
 export default function GlobalNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, supabase } = useAuth();
+  const { reportNav } = useReportNav();
 
-  // Don't show navbar on verify, share, or report pages — report header is the nav (same scroll behavior as shareable link)
-  if (pathname?.startsWith('/verify/') || pathname?.startsWith('/share/') || pathname?.startsWith('/report/')) {
+  // On /share/ (public report view): show SharedReportBanner-style navbar
+  if (pathname?.startsWith('/share/')) {
+    const displayName = reportNav?.displayName ?? null;
+    const onGetStarted = reportNav?.onGetStarted ?? (() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } })));
+    return (
+      <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="relative flex h-5 w-5">
+                <Image src="/logo.svg" alt="" width={20} height={20} className="object-contain" />
+              </span>
+              <span className="text-xs font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
+            </div>
+            <span className="text-terminal-border hidden sm:inline">·</span>
+            <span className="text-xs font-mono text-terminal-muted truncate hidden sm:inline">
+              {displayName ? `${displayName} shared their trading report with you` : "You're viewing a shared trading report"}
+            </span>
+          </div>
+          <button
+            onClick={onGetStarted}
+            className="px-3 py-1 text-[11px] font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-md transition-colors flex-shrink-0 whitespace-nowrap"
+          >
+            Create yours free
+          </button>
+        </div>
+      </header>
+    );
+  }
+
+  // Don't show navbar on verify only (report page gets authenticated navbar with settings/profile)
+  if (pathname?.startsWith('/verify/')) {
     return null;
   }
 
-  const navBg = 'bg-terminal-bg';
-
-  // Authenticated: slim top bar
+  // Authenticated: same gradient + layout as SharedReportBanner, but with Settings/Sign Out on the right
   if (user) {
     const handleSignOut = async () => {
       await supabase.auth.signOut();
       router.push('/');
     };
 
-    return (
-      <header className={`${navBg} border-b border-terminal-border sticky top-0 z-40`}>
-        <div className="w-full px-4 sm:px-6">
-          <div className="flex items-center justify-between h-12">
-            {/* Left: Logo + app name — replace /logo.svg with your logo */}
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <span className="relative flex h-6 w-6 flex-shrink-0">
-                <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
-              </span>
-              <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">
-                Prop PNL
-              </span>
-            </Link>
+    const barButtonClass = 'px-3 py-1 text-[11px] font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-md transition-colors flex-shrink-0 whitespace-nowrap';
 
-            {/* Right: email, settings, sign out */}
-            <div className="flex items-center gap-4">
-              <span className="text-terminal-muted text-xs font-mono hidden sm:inline truncate max-w-[180px]">
-                {user.email}
+    return (
+      <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className="relative flex h-5 w-5">
+                <Image src="/logo.svg" alt="" width={20} height={20} className="object-contain" />
               </span>
-              <Link
-                href="/settings"
-                className="text-terminal-muted hover:text-terminal-text text-xs font-mono transition-colors"
-              >
-                Settings
-              </Link>
-              <button
-                onClick={handleSignOut}
-                className="text-terminal-muted hover:text-terminal-text text-xs font-mono transition-colors"
-              >
-                Sign Out
-              </button>
+              <span className="text-xs font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
             </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="text-terminal-muted text-[11px] font-mono hidden sm:inline truncate max-w-[180px]">
+              {user.email}
+            </span>
+            <Link href="/settings" className={barButtonClass}>
+              Settings
+            </Link>
+            <button onClick={handleSignOut} className={barButtonClass}>
+              Sign Out
+            </button>
           </div>
         </div>
       </header>
     );
   }
+
+  const navBg = 'bg-terminal-bg';
 
   // Unauthenticated: landing page nav
   const handleOpenAuthModal = (mode: 'signin' | 'signup') => {

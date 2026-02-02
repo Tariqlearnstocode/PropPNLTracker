@@ -6,6 +6,7 @@ import { formatDate } from '@/lib/pnl-calculations';
 import { CombinedDateSelector } from './CombinedDateSelector';
 import { FirmFilter } from './FirmFilter';
 import { ExportDropdown } from './ExportDropdown';
+import { ExportBlockedPopup } from '@/components/report/public/ExportBlockedPopup';
 import { useToast } from '@/components/ui/Toasts/use-toast';
 
 interface ReportHeaderProps {
@@ -37,9 +38,10 @@ interface ReportHeaderProps {
   lastRefreshAttempt?: string | null;
   onRefreshData?: () => Promise<void>;
   displayName?: string;
-  onGetStarted: () => void;
+  onGetStarted?: () => void;
   /** URL to copy when sharing (owner: /share/{token}, viewer: current page URL) */
   shareUrl?: string;
+  isPublicView?: boolean;
 }
 
 export function ReportHeader({
@@ -70,10 +72,12 @@ export function ReportHeader({
   displayName = '',
   onGetStarted,
   shareUrl = '',
+  isPublicView = false,
 }: ReportHeaderProps) {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [exportBlockedOpen, setExportBlockedOpen] = useState(false);
 
   const handleShare = useCallback(async () => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
@@ -92,24 +96,40 @@ export function ReportHeader({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({
-        title: 'Copy failed',
-        description: 'Could not copy the link to clipboard.',
-        variant: 'destructive',
-      });
+      // Copy failed — no toast
     }
-  }, [toast, shareUrl]);
+  }, [shareUrl]);
 
-  // Check if already refreshed today
-  const hasRefreshedToday = lastRefreshAttempt ? (() => {
-    const lastRefresh = new Date(lastRefreshAttempt);
-    const now = new Date();
-    return (
-      lastRefresh.getUTCFullYear() === now.getUTCFullYear() &&
-      lastRefresh.getUTCMonth() === now.getUTCMonth() &&
-      lastRefresh.getUTCDate() === now.getUTCDate()
-    );
-  })() : false;
+  // Check if already refreshed today (rate limit: once per UTC day)
+  const lastRefreshDate = lastRefreshAttempt ? new Date(lastRefreshAttempt) : null;
+  const now = new Date();
+  const hasRefreshedToday = lastRefreshDate ? (
+    lastRefreshDate.getUTCFullYear() === now.getUTCFullYear() &&
+    lastRefreshDate.getUTCMonth() === now.getUTCMonth() &&
+    lastRefreshDate.getUTCDate() === now.getUTCDate()
+  ) : false;
+
+  // "X ago" and "next refresh at" for when already refreshed today
+  const refreshedAgoText = lastRefreshDate ? (() => {
+    const ms = now.getTime() - lastRefreshDate.getTime();
+    const mins = Math.floor(ms / 60000);
+    const hours = Math.floor(ms / 3600000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} min ago`;
+    if (hours < 24) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+    return formatDate(lastRefreshAttempt!);
+  })() : '';
+  const nextRefreshAt = lastRefreshDate ? (() => {
+    const next = new Date(lastRefreshDate);
+    next.setUTCDate(next.getUTCDate() + 1);
+    next.setUTCHours(0, 0, 0, 0);
+    return next.toLocaleString('en-US', { timeZone: 'UTC', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' UTC';
+  })() : '';
+  const alreadyRefreshedMessage = hasRefreshedToday && refreshedAgoText && nextRefreshAt
+    ? `Refreshed ${refreshedAgoText}. Next refresh at ${nextRefreshAt}.`
+    : hasRefreshedToday
+      ? 'Already refreshed today.'
+      : '';
 
   const handleRefresh = async () => {
     if (!onRefreshData || isRefreshing || hasRefreshedToday) return;
@@ -171,12 +191,14 @@ export function ReportHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={onGetStarted}
-              className="px-4 py-1.5 text-xs font-mono font-medium rounded-lg bg-profit text-terminal-bg hover:bg-profit/90 transition-colors"
-            >
-              Get my report free
-            </button>
+            {isPublicView && onGetStarted && (
+              <button
+                onClick={onGetStarted}
+                className="px-4 py-1.5 text-xs font-mono font-medium rounded-lg bg-profit text-terminal-bg hover:bg-profit/90 transition-colors"
+              >
+                Get my report free
+              </button>
+            )}
             <button
               onClick={handleShare}
               title="Copy link"
@@ -189,19 +211,28 @@ export function ReportHeader({
               <Link className="w-3 h-3" />
               {copied ? 'Copied!' : 'Share'}
             </button>
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing || hasRefreshedToday}
-              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono rounded transition-colors ${
-                isRefreshing || hasRefreshedToday
-                  ? 'text-terminal-muted/50 cursor-not-allowed'
-                  : 'text-profit hover:bg-profit-dim'
-              }`}
-              title={hasRefreshedToday ? `Already refreshed today` : 'Refresh transaction data'}
-            >
-              <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Syncing...' : 'Sync'}
-            </button>
+            {!isPublicView && (
+              <>
+                <button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing || hasRefreshedToday}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono rounded transition-colors ${
+                    isRefreshing || hasRefreshedToday
+                      ? 'text-terminal-muted/50 cursor-not-allowed'
+                      : 'text-profit hover:bg-profit-dim'
+                  }`}
+                  title={hasRefreshedToday ? alreadyRefreshedMessage : 'Refresh transaction data'}
+                >
+                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? 'Syncing...' : 'Sync'}
+                </button>
+                {hasRefreshedToday && refreshedAgoText && nextRefreshAt && (
+                  <span className="text-[10px] font-mono text-terminal-muted hidden sm:inline max-w-[200px] truncate" title={alreadyRefreshedMessage}>
+                    Refreshed {refreshedAgoText} · Next at {nextRefreshAt}
+                  </span>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -225,12 +256,12 @@ export function ReportHeader({
             />
 
             <ExportDropdown
-              onExportTransactions={onExportTransactions}
-              onExportPurchases={onExportPurchases}
-              onExportPayouts={onExportPayouts}
-              onExportMonthlySummary={onExportMonthlySummary}
-              onExportFirmBreakdown={onExportFirmBreakdown}
-              onExportPDF={onExportPDF}
+              onExportTransactions={isPublicView ? () => setExportBlockedOpen(true) : onExportTransactions}
+              onExportPurchases={isPublicView ? () => setExportBlockedOpen(true) : onExportPurchases}
+              onExportPayouts={isPublicView ? () => setExportBlockedOpen(true) : onExportPayouts}
+              onExportMonthlySummary={isPublicView ? () => setExportBlockedOpen(true) : onExportMonthlySummary}
+              onExportFirmBreakdown={isPublicView ? () => setExportBlockedOpen(true) : onExportFirmBreakdown}
+              onExportPDF={isPublicView ? () => setExportBlockedOpen(true) : onExportPDF}
             />
           </div>
         </div>
@@ -266,6 +297,14 @@ export function ReportHeader({
           })}
         </div>
       </div>
+
+      {isPublicView && (
+        <ExportBlockedPopup
+          open={exportBlockedOpen}
+          onClose={() => setExportBlockedOpen(false)}
+          onGetStarted={onGetStarted}
+        />
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
-import { getActiveSubscription } from '@/lib/stripe/helpers';
 import { decryptToken } from '@/utils/teller-token-encryption';
 import https from 'https';
 
@@ -95,15 +94,6 @@ export async function POST(request: NextRequest) {
     }
 
     const { account_id } = await request.json();
-
-    // Check if user has active subscription
-    const subscription = await getActiveSubscription(user.id);
-    if (!subscription) {
-      return NextResponse.json(
-        { error: 'Active subscription required for daily refresh' },
-        { status: 403 }
-      );
-    }
 
     // Get connected accounts for this user that can refresh daily
     const { data: connectedAccounts, error: accountsError } = await supabaseAdmin
