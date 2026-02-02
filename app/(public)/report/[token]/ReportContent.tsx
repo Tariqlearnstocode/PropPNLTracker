@@ -25,6 +25,13 @@ import { useManualAssignments } from '@/components/report/hooks/useManualAssignm
 import { useDateRange } from '@/components/report/hooks/useDateRange';
 import { useFirmFilter } from '@/components/report/hooks/useFirmFilter';
 
+// Public view conversion components
+import { ConversionPopup } from '@/components/report/public/ConversionPopup';
+import { PublicInlineCTA } from '@/components/report/public/PublicInlineCTA';
+import { SharedReportBanner } from '@/components/report/public/SharedReportBanner';
+import { TransactionsTeaser } from '@/components/report/public/TransactionsTeaser';
+import { AuthModal } from '@/components/AuthModal';
+
 interface Props {
   report: {
     id: string;
@@ -52,6 +59,9 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const [bulkAssignModalOpen, setBulkAssignModalOpen] = useState(false);
   const [ctaDismissed, setCtaDismissed] = useState(false);
   const [displayName, setDisplayName] = useState(report.display_name || '');
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const handleGetStarted = () => setAuthModalOpen(true);
 
   // Use custom hooks
   const dateRange = useDateRange(monthlyBreakdown);
@@ -262,49 +272,55 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const selectedTransaction = transactions.find(t => t.id === selectedTransactionForAssignment) || null;
 
   return (
-    <div className="min-h-screen bg-terminal-bg text-terminal-text">
-      <ReportHeader
-        report={report}
-        accounts={accounts}
-        startDate={dateRange.startDate}
-        endDate={dateRange.endDate}
-        onStartDateChange={dateRange.setStartDate}
-        onEndDateChange={dateRange.setEndDate}
-        onDatePreset={dateRange.setDatePreset}
-        allFirmNames={firmFilter.allFirmNames}
-        selectedFirms={firmFilter.selectedFirms}
-        onToggleFirm={firmFilter.toggleFirm}
-        onClearFirms={() => firmFilter.setSelectedFirms([])}
-        onExportTransactions={handleExportTransactions}
-        onExportPurchases={handleExportPurchases}
-        onExportPayouts={handleExportPayouts}
-        onExportMonthlySummary={handleExportMonthlySummary}
-        onExportFirmBreakdown={handleExportFirmBreakdown}
-        onExportPDF={handleExportPDF}
-        needsAssignmentCount={isPublicView ? 0 : needsAssignmentTransactions.length}
-        tabs={isPublicView ? ['Overview', 'Firms', 'Analytics'] : ['Overview', 'Firms', 'Transactions', 'Analytics']}
-        activeTab={
-          activeTab === 'overview' ? 'Overview' :
-          activeTab === 'firms' ? 'Firms' :
-          activeTab === 'transactions' ? 'Transactions' :
-          'Analytics'
-        }
-        onTabChange={(tab) => {
-          const tabMap: Record<string, 'overview' | 'firms' | 'transactions' | 'analytics'> = {
-            'Overview': 'overview',
-            'Firms': 'firms',
-            'Transactions': 'transactions',
-            'Analytics': 'analytics',
-          };
-          setActiveTab(tabMap[tab] || 'overview');
-        }}
-        canRefreshDaily={isPublicView ? false : canRefreshDaily}
-        lastRefreshAttempt={isPublicView ? null : lastRefreshAttempt}
-        onRefreshData={isPublicView ? undefined : (canRefreshDaily ? handleRefreshData : undefined)}
-        isPublicView={isPublicView}
-        displayName={displayName}
-        onSaveDisplayName={isPublicView ? undefined : handleSaveDisplayName}
-      />
+    <div className="min-h-screen text-terminal-text" style={{ backgroundColor: '#0a0a0f' }}>
+      <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]" style={{ backgroundColor: '#0e0e14' }}>
+        <SharedReportBanner
+          displayName={displayName || report.display_name}
+          onGetStarted={handleGetStarted}
+        />
+        <ReportHeader
+          report={report}
+          accounts={accounts}
+          startDate={dateRange.startDate}
+          endDate={dateRange.endDate}
+          onStartDateChange={dateRange.setStartDate}
+          onEndDateChange={dateRange.setEndDate}
+          onDatePreset={dateRange.setDatePreset}
+          allFirmNames={firmFilter.allFirmNames}
+          selectedFirms={firmFilter.selectedFirms}
+          onToggleFirm={firmFilter.toggleFirm}
+          onClearFirms={() => firmFilter.setSelectedFirms([])}
+          onExportTransactions={handleExportTransactions}
+          onExportPurchases={handleExportPurchases}
+          onExportPayouts={handleExportPayouts}
+          onExportMonthlySummary={handleExportMonthlySummary}
+          onExportFirmBreakdown={handleExportFirmBreakdown}
+          onExportPDF={handleExportPDF}
+          needsAssignmentCount={0}
+          tabs={['Overview', 'Firms', 'Transactions', 'Analytics']}
+          activeTab={
+            activeTab === 'overview' ? 'Overview' :
+            activeTab === 'firms' ? 'Firms' :
+            activeTab === 'transactions' ? 'Transactions' :
+            'Analytics'
+          }
+          onTabChange={(tab) => {
+            const tabMap: Record<string, 'overview' | 'firms' | 'transactions' | 'analytics'> = {
+              'Overview': 'overview',
+              'Firms': 'firms',
+              'Transactions': 'transactions',
+              'Analytics': 'analytics',
+            };
+            setActiveTab(tabMap[tab] || 'overview');
+          }}
+          canRefreshDaily={true}
+          lastRefreshAttempt={null}
+          onRefreshData={handleRefreshData}
+          displayName={displayName}
+          onGetStarted={handleGetStarted}
+          shareUrl={typeof window !== 'undefined' ? `${window.location.origin}/share/${report.report_token}` : ''}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
 
@@ -366,29 +382,53 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
         {/* Main Content */}
         <TabbedSection>
           {activeTab === 'overview' && (
-            <OverviewTab
-              filteredMonthlyBreakdown={dateRange.filteredMonthlyBreakdown}
-              filteredFirmBreakdown={firmFilter.filteredFirmBreakdown}
-              allFirmBreakdown={dateFilteredFirmBreakdown}
-              tradingStats={tradingStats}
-              displayPNL={displayPNL}
-              displayDeposits={displayDeposits}
-              displayFees={displayFees}
-              selectedFirmsCount={firmFilter.selectedFirms.length}
-              totalFirmsCount={dateFilteredFirmBreakdown.length}
-            />
+            <>
+              <OverviewTab
+                filteredMonthlyBreakdown={dateRange.filteredMonthlyBreakdown}
+                filteredFirmBreakdown={firmFilter.filteredFirmBreakdown}
+                allFirmBreakdown={dateFilteredFirmBreakdown}
+                tradingStats={tradingStats}
+                displayPNL={displayPNL}
+                displayDeposits={displayDeposits}
+                displayFees={displayFees}
+                selectedFirmsCount={firmFilter.selectedFirms.length}
+                totalFirmsCount={dateFilteredFirmBreakdown.length}
+              />
+              {isPublicView && (
+                <PublicInlineCTA
+                  message="Want to see your own P&L breakdown like this?"
+                  ctaText="Get your report"
+                  onGetStarted={handleGetStarted}
+                />
+              )}
+            </>
           )}
 
           {activeTab === 'firms' && (
-            <FirmsTab
-              filteredFirmBreakdown={firmFilter.filteredFirmBreakdown}
-              allFirmBreakdown={dateFilteredFirmBreakdown}
-              selectedFirms={firmFilter.selectedFirms}
-              onToggleFirm={firmFilter.toggleFirm}
-            />
+            <>
+              <FirmsTab
+                filteredFirmBreakdown={firmFilter.filteredFirmBreakdown}
+                allFirmBreakdown={dateFilteredFirmBreakdown}
+                selectedFirms={firmFilter.selectedFirms}
+                onToggleFirm={firmFilter.toggleFirm}
+              />
+              {isPublicView && (
+                <PublicInlineCTA
+                  message="Compare your own firm performance side by side"
+                  ctaText="Track my firms"
+                  onGetStarted={handleGetStarted}
+                />
+              )}
+            </>
           )}
 
           {activeTab === 'transactions' && (
+            isPublicView ? (
+              <TransactionsTeaser
+                transactionCount={transactions.length}
+                onGetStarted={handleGetStarted}
+              />
+            ) : (
             <TransactionsTab
               transactionsWithAssignments={filteredTransactions}
               manualAssignments={manualAssignments}
@@ -425,10 +465,20 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
               transactionView={transactionView}
               onTransactionViewChange={setTransactionView}
             />
+            )
           )}
 
           {activeTab === 'analytics' && (
-            <AnalyticsTab tradingStats={tradingStats} />
+            <>
+              <AnalyticsTab tradingStats={tradingStats} />
+              {isPublicView && (
+                <PublicInlineCTA
+                  message="Get these analytics for your own trading data"
+                  ctaText="Analyze my trades"
+                  onGetStarted={handleGetStarted}
+                />
+              )}
+            </>
           )}
         </TabbedSection>
 
@@ -463,20 +513,28 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
         </div>
       </div>
 
-      {/* CTA Banner for public viewers only */}
+      {/* Upgraded CTA Banner for public viewers */}
       {isPublicView && !ctaDismissed && (
-        <div className="fixed bottom-0 inset-x-0 z-50 border-t border-terminal-border bg-terminal-card/80 backdrop-blur-sm">
+        <div className="fixed bottom-0 inset-x-0 z-50 border-t border-profit/20 bg-terminal-card/95 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-            <p className="text-xs text-terminal-muted font-mono">
-              Track your own prop trading P&L
-            </p>
+            <div className="flex items-center gap-3 min-w-0">
+              <p className="text-xs text-terminal-text font-mono font-medium">
+                {displayName
+                  ? `Get your own P&L report like ${displayName}. Free — no card.`
+                  : 'See your own P&L breakdown — connect your bank in 60 seconds'
+                }
+              </p>
+              <span className="text-[10px] text-terminal-muted font-mono hidden sm:inline flex-shrink-0">
+                Free · No credit card
+              </span>
+            </div>
             <div className="flex items-center gap-3 flex-shrink-0">
-              <a
-                href="/"
-                className="px-3 py-1.5 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-md transition-colors"
+              <button
+                onClick={handleGetStarted}
+                className="px-4 py-1.5 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-md transition-colors"
               >
-                Get Started
-              </a>
+                Get Started Free
+              </button>
               <button
                 onClick={() => setCtaDismissed(true)}
                 className="p-1 text-terminal-muted hover:text-terminal-text transition-colors"
@@ -489,6 +547,23 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
             </div>
           </div>
         </div>
+      )}
+
+      {/* Scroll-triggered conversion popup */}
+      {isPublicView && (
+        <ConversionPopup
+          displayName={displayName || report.display_name}
+          onGetStarted={handleGetStarted}
+        />
+      )}
+
+      {/* Auth modal for in-page sign-up */}
+      {isPublicView && (
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          initialMode="signup"
+        />
       )}
     </div>
   );

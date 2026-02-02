@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -9,10 +10,12 @@ export default function GlobalNavbar() {
   const router = useRouter();
   const { user, supabase } = useAuth();
 
-  // Don't show navbar on verify pages
-  if (pathname?.startsWith('/verify/')) {
+  // Don't show navbar on verify, share, or report pages — report header is the nav (same scroll behavior as shareable link)
+  if (pathname?.startsWith('/verify/') || pathname?.startsWith('/share/') || pathname?.startsWith('/report/')) {
     return null;
   }
+
+  const navBg = 'bg-terminal-bg';
 
   // Authenticated: slim top bar
   if (user) {
@@ -22,14 +25,13 @@ export default function GlobalNavbar() {
     };
 
     return (
-      <header className="bg-terminal-bg border-b border-terminal-border sticky top-0 z-40">
+      <header className={`${navBg} border-b border-terminal-border sticky top-0 z-40`}>
         <div className="w-full px-4 sm:px-6">
           <div className="flex items-center justify-between h-12">
-            {/* Left: App name with green dot */}
+            {/* Left: Logo + app name — replace /logo.svg with your logo */}
             <Link href="/dashboard" className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-profit opacity-75 animate-ping" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+              <span className="relative flex h-6 w-6 flex-shrink-0">
+                <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
               </span>
               <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">
                 Prop PNL
@@ -65,14 +67,16 @@ export default function GlobalNavbar() {
     window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode } }));
   };
 
+  const isViewingSharedReport = pathname?.startsWith('/share/');
+  const primaryCtaLabel = isViewingSharedReport ? 'Get my report free' : 'Get Started';
+
   return (
-    <header className="bg-terminal-bg border-b border-terminal-border sticky top-0 z-40">
+    <header className={`${navBg} border-b border-terminal-border sticky top-0 z-40`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2 min-w-0">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-profit opacity-75 animate-ping" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+            <span className="relative flex h-6 w-6 flex-shrink-0">
+              <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
             </span>
             <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">Prop PNL</span>
           </Link>
@@ -87,7 +91,7 @@ export default function GlobalNavbar() {
               onClick={() => handleOpenAuthModal('signup')}
               className="px-3 sm:px-4 py-1.5 bg-profit hover:bg-profit/90 text-terminal-bg text-sm font-medium rounded-lg transition-colors"
             >
-              Get Started
+              {primaryCtaLabel}
             </button>
           </div>
         </div>

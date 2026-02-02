@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { RefreshCw, Circle, Link, Pencil } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { RefreshCw, Circle, Link } from 'lucide-react';
 import { formatDate } from '@/lib/pnl-calculations';
 import { CombinedDateSelector } from './CombinedDateSelector';
 import { FirmFilter } from './FirmFilter';
@@ -36,9 +36,10 @@ interface ReportHeaderProps {
   canRefreshDaily?: boolean;
   lastRefreshAttempt?: string | null;
   onRefreshData?: () => Promise<void>;
-  isPublicView?: boolean;
   displayName?: string;
-  onSaveDisplayName?: (name: string) => void;
+  onGetStarted: () => void;
+  /** URL to copy when sharing (owner: /share/{token}, viewer: current page URL) */
+  shareUrl?: string;
 }
 
 export function ReportHeader({
@@ -66,19 +67,16 @@ export function ReportHeader({
   canRefreshDaily = false,
   lastRefreshAttempt = null,
   onRefreshData,
-  isPublicView = false,
   displayName = '',
-  onSaveDisplayName,
+  onGetStarted,
+  shareUrl = '',
 }: ReportHeaderProps) {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [nameDraft, setNameDraft] = useState(displayName);
-  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}/share/${report.report_token}`;
+    const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
 
     if (navigator.share) {
       try {
@@ -100,36 +98,7 @@ export function ReportHeader({
         variant: 'destructive',
       });
     }
-  }, [toast, report.report_token]);
-
-  const handleStartEditing = useCallback(() => {
-    setNameDraft(displayName);
-    setIsEditingName(true);
-  }, [displayName]);
-
-  const handleSaveName = useCallback(() => {
-    setIsEditingName(false);
-    const trimmed = nameDraft.trim();
-    if (trimmed !== displayName) {
-      onSaveDisplayName?.(trimmed);
-    }
-  }, [nameDraft, displayName, onSaveDisplayName]);
-
-  const handleNameKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSaveName();
-    } else if (e.key === 'Escape') {
-      setIsEditingName(false);
-      setNameDraft(displayName);
-    }
-  }, [handleSaveName, displayName]);
-
-  useEffect(() => {
-    if (isEditingName && nameInputRef.current) {
-      nameInputRef.current.focus();
-      nameInputRef.current.select();
-    }
-  }, [isEditingName]);
+  }, [toast, shareUrl]);
 
   // Check if already refreshed today
   const hasRefreshedToday = lastRefreshAttempt ? (() => {
@@ -165,47 +134,29 @@ export function ReportHeader({
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-terminal-bg/95 backdrop-blur-md border-b border-terminal-border">
-      {/* Row 1: Status bar */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-2">
-        {/* Display name row — public view shows name prominently, owner can edit */}
-        {(isPublicView && displayName) && (
-          <div className="mb-1.5">
-            <h1 className="text-sm font-semibold text-terminal-text tracking-tight">
-              {displayName}&apos;s Trading Report
-            </h1>
-          </div>
-        )}
-        {!isPublicView && (
-          <div className="mb-1.5">
-            {isEditingName ? (
-              <input
-                ref={nameInputRef}
-                value={nameDraft}
-                onChange={(e) => setNameDraft(e.target.value)}
-                onBlur={handleSaveName}
-                onKeyDown={handleNameKeyDown}
-                placeholder="Your trading name"
-                maxLength={40}
-                className="bg-transparent border-b border-profit/50 text-sm font-semibold text-terminal-text placeholder:text-terminal-muted/50 outline-none w-48 py-0.5"
-              />
+    <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]" style={{ backgroundColor: '#0e0e14' }}>
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5">
+        <div className="mb-3 opacity-0 animate-fade-in stagger-1">
+          <h1 className="font-display font-semibold tracking-tight text-terminal-text text-xl md:text-2xl">
+            {displayName ? (
+              <>
+                <span>{displayName}&apos;s Trading </span>
+                <span className="text-profit">Report</span>
+              </>
             ) : (
-              <button
-                onClick={handleStartEditing}
-                className="flex items-center gap-1.5 group"
-              >
-                <span className="text-sm font-semibold text-terminal-text/80 group-hover:text-terminal-text transition-colors">
-                  {displayName || 'Set display name'}
-                </span>
-                <Pencil className="w-3 h-3 text-terminal-muted/50 group-hover:text-terminal-muted transition-colors" />
-              </button>
+              <>
+                <span>Trading </span>
+                <span className="text-profit">Report</span>
+              </>
             )}
-          </div>
-        )}
-        <div className="flex items-center justify-between">
+          </h1>
+        </div>
+        <div className="flex items-center justify-between flex-wrap gap-3 opacity-0 animate-fade-in stagger-2">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <Circle className="w-2 h-2 fill-profit text-profit" />
+              <span className="relative flex h-2 w-2 animate-pulse">
+                <Circle className="w-2 h-2 fill-profit text-profit drop-shadow-[0_0_6px_rgba(0,230,118,0.4)]" />
+              </span>
               <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">
                 Live
               </span>
@@ -220,26 +171,41 @@ export function ReportHeader({
           </div>
 
           <div className="flex items-center gap-2">
-            {canRefreshDaily && (
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing || hasRefreshedToday}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono rounded transition-colors ${
-                  isRefreshing || hasRefreshedToday
-                    ? 'text-terminal-muted/50 cursor-not-allowed'
-                    : 'text-profit hover:bg-profit-dim'
-                }`}
-                title={hasRefreshedToday ? `Already refreshed today` : 'Refresh transaction data'}
-              >
-                <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
-                {isRefreshing ? 'Syncing...' : 'Sync'}
-              </button>
-            )}
+            <button
+              onClick={onGetStarted}
+              className="px-4 py-1.5 text-xs font-mono font-medium rounded-lg bg-profit text-terminal-bg hover:bg-profit/90 transition-colors"
+            >
+              Get my report free
+            </button>
+            <button
+              onClick={handleShare}
+              title="Copy link"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono font-medium rounded-lg border transition-colors ${
+                copied
+                  ? 'border-profit/50 text-profit bg-profit/10'
+                  : 'border-terminal-border text-terminal-muted hover:text-terminal-text hover:border-terminal-border-light'
+              }`}
+            >
+              <Link className="w-3 h-3" />
+              {copied ? 'Copied!' : 'Share'}
+            </button>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing || hasRefreshedToday}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono rounded transition-colors ${
+                isRefreshing || hasRefreshedToday
+                  ? 'text-terminal-muted/50 cursor-not-allowed'
+                  : 'text-profit hover:bg-profit-dim'
+              }`}
+              title={hasRefreshedToday ? `Already refreshed today` : 'Refresh transaction data'}
+            >
+              <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Syncing...' : 'Sync'}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Row 2: Controls */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-2">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <FirmFilter
@@ -266,27 +232,11 @@ export function ReportHeader({
               onExportFirmBreakdown={onExportFirmBreakdown}
               onExportPDF={onExportPDF}
             />
-
-            {!isPublicView && (
-              <button
-                onClick={handleShare}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono font-medium rounded-lg transition-colors ${
-                  copied
-                    ? 'bg-profit/20 text-profit border border-profit/30'
-                    : 'bg-profit text-terminal-bg hover:bg-profit/90'
-                }`}
-                title="Copy shareable link"
-              >
-                <Link className="w-3 h-3" />
-                {copied ? 'Copied!' : 'Share'}
-              </button>
-            )}
           </div>
         </div>
       </div>
 
-      {/* Row 3: Tabs */}
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto border-t border-terminal-border opacity-0 animate-fade-in stagger-3">
         <div className="flex items-center gap-0 px-4 md:px-6 overflow-x-auto dark-scroll">
           {tabs.map((tab) => {
             const isActive = activeTab === tab;
