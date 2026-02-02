@@ -238,172 +238,118 @@ export async function POST(request: NextRequest) {
       provider: 'teller' as const,
     };
 
-    // 7. Store in database (for each account, create or update report)
-    const reportResults = await Promise.all(
-      accounts.map(async (account: any) => {
+    // 7. One report per user: get or create single report, then upsert connected_accounts
+    const { data: existingReport } = await supabaseAdmin
+      .from('pnl_reports')
+      .select('id, report_token, raw_teller_data, manual_assignments')
+      .eq('user_id', user.id)
+      .single();
+
+    let finalRawData = rawTellerData;
+    let finalManualAssignments: Record<string, string> = (existingReport?.manual_assignments as Record<string, string>) || {};
+
+    if (existingReport?.raw_teller_data) {
+      const existingData = existingReport.raw_teller_data as any;
+      const existingTransactions = existingData.transactions || [];
+      const newTransactions = rawTellerData.transactions || [];
+
+      const transactionMap = new Map<string, any>();
+      existingTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
+      newTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
+      const mergedTransactions = Array.from(transactionMap.values());
+      mergedTransactions.sort((a, b) => {
+        const dateA = new Date(a.date || a.created_at || 0).getTime();
+        const dateB = new Date(b.date || b.created_at || 0).getTime();
+        return dateB - dateA;
+      });
+
+      const existingAccounts = existingData.accounts || [];
+      const accountMap = new Map<string, any>();
+      existingAccounts.forEach((acc: any) => accountMap.set(acc.id, acc));
+      (rawTellerData.accounts || []).forEach((acc: any) => accountMap.set(acc.id, acc));
+      const mergedAccounts = Array.from(accountMap.values());
+
+      finalRawData = {
+        ...rawTellerData,
+        accounts: mergedAccounts,
+        transactions: mergedTransactions,
+        date_range: {
+          start: existingData.date_range?.start || overallStartDate,
+          end: endDate,
+        },
+      };
+      console.log(`Merged ${existingTransactions.length} existing + ${newTransactions.length} new = ${mergedTransactions.length} total transactions`);
+    }
+
+    const pnlReport = calculatePNLReport(finalRawData, finalManualAssignments);
+    const reportPayload = {
+      user_id: user.id,
+      account_id: null,
+      raw_teller_data: finalRawData,
+      pnl_data: pnlReport,
+      manual_assignments: finalManualAssignments,
+      status: 'completed',
+      updated_at: new Date().toISOString(),
+    };
+
+    let reportToken: string;
+    if (existingReport) {
+      const { data, error } = await supabaseAdmin
+        .from('pnl_reports')
+        .update(reportPayload)
+        .eq('id', existingReport.id)
+        .select('report_token')
+        .single();
+      if (error) throw error;
+      reportToken = data.report_token;
+    } else {
+      const { data, error } = await supabaseAdmin
+        .from('pnl_reports')
+        .insert(reportPayload)
+        .select('report_token')
+        .single();
+      if (error) throw error;
+      reportToken = data.report_token;
+    }
+
+    for (const account of accounts) {
+      const accountUpdateData: any = {
+        user_id: user.id,
+        account_id: account.id,
+        account_name: account.name,
+        account_type: account.type,
+        enrollment_id: account.enrollment_id || null,
+        enrollment_status: 'connected',
+        last_synced_at: new Date().toISOString(),
+        needs_refresh: false,
+        updated_at: new Date().toISOString(),
+      };
+      if (access_token) {
         try {
-          // Check if report already exists for this account
-          const { data: existingReport } = await supabaseAdmin
-            .from('pnl_reports')
-            .select('id, report_token, raw_teller_data, manual_assignments')
-            .eq('user_id', user.id)
-            .eq('account_id', account.id)
-            .single();
-
-          let finalRawData = rawTellerData;
-          let finalManualAssignments = existingReport?.manual_assignments || {};
-
-          // If subscription user with existing report: merge transactions
-          if (hasSubscription && existingReport && existingReport.raw_teller_data) {
-            const existingData = existingReport.raw_teller_data as any;
-            const existingTransactions = existingData.transactions || [];
-            const newTransactions = rawTellerData.transactions || [];
-
-            // Merge transactions: combine old + new, dedupe by transaction ID
-            const transactionMap = new Map<string, any>();
-            
-            // Add existing transactions first
-            existingTransactions.forEach((txn: any) => {
-              transactionMap.set(txn.id, txn);
-            });
-            
-            // Add/update with new transactions (newer data takes precedence)
-            newTransactions.forEach((txn: any) => {
-              transactionMap.set(txn.id, txn);
-            });
-
-            // Convert back to array
-            const mergedTransactions = Array.from(transactionMap.values());
-            
-            // Sort by date (newest first)
-            mergedTransactions.sort((a, b) => {
-              const dateA = new Date(a.date || a.created_at || 0).getTime();
-              const dateB = new Date(b.date || b.created_at || 0).getTime();
-              return dateB - dateA;
-            });
-
-            finalRawData = {
-              ...rawTellerData,
-              transactions: mergedTransactions,
-              // Update date range to reflect full dataset
-              date_range: {
-                start: existingData.date_range?.start || overallStartDate,
-                end: endDate,
-              },
-            };
-
-            console.log(`Merged ${existingTransactions.length} existing + ${newTransactions.length} new = ${mergedTransactions.length} total transactions`);
-          }
-
-          // Calculate PNL report with merged data and preserved manual assignments
-          const pnlReport = calculatePNLReport(finalRawData, finalManualAssignments);
-
-          const reportData = {
-            user_id: user.id,
-            account_id: account.id,
-            raw_teller_data: finalRawData,
-            pnl_data: pnlReport,
-            manual_assignments: finalManualAssignments, // Explicitly preserve
-            status: 'completed',
-            updated_at: new Date().toISOString(),
-          };
-
-          let reportId: string;
-          let reportToken: string;
-          if (existingReport) {
-            // Update existing report
-            const { data, error } = await supabaseAdmin
-              .from('pnl_reports')
-              .update(reportData)
-              .eq('id', existingReport.id)
-              .select('id, report_token')
-              .single();
-            
-            if (error) throw error;
-            reportId = data.id;
-            reportToken = data.report_token;
-          } else {
-            // Create new report
-            const { data, error } = await supabaseAdmin
-              .from('pnl_reports')
-              .insert(reportData)
-              .select('id, report_token')
-              .single();
-            
-            if (error) throw error;
-            reportId = data.id;
-            reportToken = data.report_token;
-          }
-
-          // Store/update connected account
-          // Clear needs_refresh flag after successful sync
-          // For subscription users: encrypt and store access token for daily refresh
-          const accountUpdateData: any = {
-            user_id: user.id,
-            account_id: account.id,
-            account_name: account.name,
-            account_type: account.type,
-            enrollment_id: account.enrollment_id || null, // Store enrollment_id if available
-            enrollment_status: 'connected',
-            last_synced_at: new Date().toISOString(),
-            needs_refresh: false, // Clear refresh flag after successful sync
-            updated_at: new Date().toISOString(),
-          };
-
-          // Store access token and enable daily refresh for all users (Sync works without subscription)
-          if (access_token) {
-            try {
-              accountUpdateData.encrypted_access_token = encryptToken(access_token);
-              accountUpdateData.token_encrypted_at = new Date().toISOString();
-              accountUpdateData.can_refresh_daily = true;
-            } catch (error: any) {
-              console.error(`Error encrypting token for account ${account.id}:`, error);
-            }
-          }
-
-          const { error: accountError } = await supabaseAdmin
-            .from('connected_accounts')
-            .upsert(accountUpdateData, {
-              onConflict: 'user_id,account_id',
-            });
-
-          if (accountError) {
-            console.error('Error storing connected account:', accountError);
-          }
-
-          return { 
-            account_id: account.id, 
-            report_id: reportId, 
-            report_token: reportToken,
-            success: true 
-          };
+          accountUpdateData.encrypted_access_token = encryptToken(access_token);
+          accountUpdateData.token_encrypted_at = new Date().toISOString();
+          accountUpdateData.can_refresh_daily = true;
         } catch (error: any) {
-          console.error(`Error storing report for account ${account.id}:`, error);
-          return { account_id: account.id, success: false, error: error.message };
+          console.error(`Error encrypting token for account ${account.id}:`, error);
         }
-      })
-    );
+      }
+      const { error: accountError } = await supabaseAdmin
+        .from('connected_accounts')
+        .upsert(accountUpdateData, { onConflict: 'user_id,account_id' });
+      if (accountError) console.error('Error storing connected account:', accountError);
+    }
 
-    const successCount = reportResults.filter(r => r.success).length;
-
-    // 8. Keep all enrollments active so Sync (daily refresh) works for every connected user.
-    // Teller charges per active enrollment; we no longer disconnect after fetch.
     console.log(`Keeping ${accounts.length} enrollment(s) active for refresh`);
 
-    // Return success with the first report token for redirect
-    // Since users typically connect one account at a time, we return the first report token
-    const firstReport = reportResults.find((r: any) => r.success && r.report_token);
-    
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      report_count: successCount,
+      report_count: 1,
       total_accounts: accounts.length,
-      reportToken: firstReport?.report_token || null, // Return first report token for redirect
-      accounts: reportResults.map((r: any) => ({
-        account_id: r.account_id,
-        report_id: r.report_id,
-        report_token: r.report_token,
-        success: r.success,
+      reportToken,
+      accounts: accounts.map((acc: any) => ({
+        account_id: acc.id,
+        report_token: reportToken,
+        success: true,
       })),
     });
   } catch (error: any) {

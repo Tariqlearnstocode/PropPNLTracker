@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { calculatePNLReport } from '@/lib/pnl-calculations';
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -19,7 +20,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Verify the account belongs to the user
     const { data: account, error: accountError } = await supabase
       .from('connected_accounts')
       .select('id, account_id')
@@ -34,19 +34,40 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Delete all reports associated with this account
-    const { error: reportsError } = await supabase
+    const { data: report, error: reportError } = await supabase
       .from('pnl_reports')
-      .delete()
+      .select('id, raw_teller_data, manual_assignments')
       .eq('user_id', user.id)
-      .eq('account_id', account_id);
+      .single();
 
-    if (reportsError) {
-      console.error('Error deleting reports:', reportsError);
-      // Continue even if reports deletion fails
+    if (!reportError && report?.raw_teller_data) {
+      const raw = report.raw_teller_data as any;
+      const transactions = (raw.transactions || []).filter((t: any) => t.account_id !== account_id);
+      const accounts = (raw.accounts || []).filter((a: any) => a.id !== account_id);
+      const manualAssignments = (report.manual_assignments as Record<string, string>) || {};
+      const removedTxnIds = new Set((raw.transactions || []).filter((t: any) => t.account_id === account_id).map((t: any) => t.id));
+      const filteredManual = { ...manualAssignments };
+      removedTxnIds.forEach((id) => delete filteredManual[id]);
+
+      const updatedRaw = {
+        ...raw,
+        transactions,
+        accounts,
+        fetched_at: new Date().toISOString(),
+      };
+      const pnlData = calculatePNLReport(updatedRaw, filteredManual);
+
+      await supabase
+        .from('pnl_reports')
+        .update({
+          raw_teller_data: updatedRaw,
+          pnl_data: pnlData,
+          manual_assignments: filteredManual,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', report.id);
     }
 
-    // Delete the connected account
     const { error: deleteError } = await supabase
       .from('connected_accounts')
       .delete()
@@ -61,9 +82,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Account and associated reports deleted successfully' 
+    return NextResponse.json({
+      success: true,
+      message: 'Account and associated data removed successfully',
     });
   } catch (error: any) {
     console.error('Error in DELETE /api/accounts/delete:', error);

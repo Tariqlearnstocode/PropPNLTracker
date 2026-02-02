@@ -236,12 +236,11 @@ export async function POST(request: NextRequest) {
 
           const newTransactions = await txnRes.json();
 
-          // Get existing report
+          // Get user's single report (one report per user)
           const { data: existingReport } = await supabaseAdmin
             .from('pnl_reports')
             .select('id, report_token, raw_teller_data, manual_assignments')
             .eq('user_id', user.id)
-            .eq('account_id', account.id)
             .single();
 
           if (!existingReport) {
@@ -252,37 +251,28 @@ export async function POST(request: NextRequest) {
             };
           }
 
-          // Merge transactions with existing data
           const existingData = existingReport.raw_teller_data as any;
           const existingTransactions = existingData.transactions || [];
 
-          // Merge transactions: combine old + new, dedupe by transaction ID
           const transactionMap = new Map<string, any>();
-          
-          // Add existing transactions first
-          existingTransactions.forEach((txn: any) => {
-            transactionMap.set(txn.id, txn);
-          });
-          
-          // Add/update with new transactions (newer data takes precedence)
-          newTransactions.forEach((txn: any) => {
-            transactionMap.set(txn.id, txn);
-          });
-
-          // Convert back to array
+          existingTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
+          newTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
           const mergedTransactions = Array.from(transactionMap.values());
-          
-          // Sort by date (newest first)
           mergedTransactions.sort((a, b) => {
             const dateA = new Date(a.date || a.created_at || 0).getTime();
             const dateB = new Date(b.date || b.created_at || 0).getTime();
             return dateB - dateA;
           });
 
-          // Prepare merged raw data
+          const existingAccounts = existingData.accounts || [];
+          const accountMap = new Map<string, any>();
+          existingAccounts.forEach((acc: any) => accountMap.set(acc.id, acc));
+          accountMap.set(accountWithBalances.id, accountWithBalances);
+          const mergedAccounts = Array.from(accountMap.values());
+
           const mergedRawData = {
             ...existingData,
-            accounts: [accountWithBalances],
+            accounts: mergedAccounts,
             transactions: mergedTransactions,
             fetched_at: new Date().toISOString(),
             date_range: {

@@ -122,44 +122,32 @@ async function handleTransactionsProcessed(payload: any) {
 
   console.log(`transactions.processed: ${transactions?.length || 0} new transactions for account ${account_id}`);
 
-  // Find the user and report for this account
-  const { data: report } = await supabaseAdmin
-    .from('pnl_reports')
-    .select('user_id, account_id, id')
-    .eq('account_id', account_id)
-    .single();
-
-  if (!report) {
-    console.log(`No report found for account ${account_id}, skipping auto-refresh`);
-    return;
-  }
-
-  // Check if user has active subscription
-  const subscription = await getActiveSubscription(report.user_id);
-  if (!subscription) {
-    console.log(`User ${report.user_id} does not have active subscription, skipping auto-refresh`);
-    return;
-  }
-
-  console.log(`User ${report.user_id} has subscription, queuing auto-refresh for account ${account_id}`);
-
-  // Check if account has stored encrypted token for refresh
   const { data: connectedAccount } = await supabaseAdmin
     .from('connected_accounts')
-    .select('encrypted_access_token, can_refresh_daily, account_id')
-    .eq('user_id', report.user_id)
+    .select('user_id, encrypted_access_token, can_refresh_daily')
     .eq('account_id', account_id)
     .single();
 
-  // If account has encrypted token and can refresh daily, mark as needing refresh
-  // User can manually trigger refresh via refresh button
-  if (connectedAccount?.encrypted_access_token && connectedAccount.can_refresh_daily) {
+  if (!connectedAccount) {
+    console.log(`No connected account found for ${account_id}, skipping`);
+    return;
+  }
+
+  const userId = connectedAccount.user_id;
+  const subscription = await getActiveSubscription(userId);
+  if (!subscription) {
+    console.log(`User ${userId} does not have active subscription, skipping auto-refresh`);
+    return;
+  }
+
+  console.log(`User ${userId} has subscription, queuing auto-refresh for account ${account_id}`);
+
+  if (connectedAccount.encrypted_access_token && connectedAccount.can_refresh_daily) {
     console.log(`Account ${account_id} has stored token, marking for refresh`);
   } else {
     console.log(`Account ${account_id} does not have stored token or cannot refresh daily`);
   }
-  
-  // Update connected_accounts to mark that new data is available
+
   const { error: updateError } = await supabaseAdmin
     .from('connected_accounts')
     .update({
@@ -167,7 +155,7 @@ async function handleTransactionsProcessed(payload: any) {
       last_webhook_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
-    .eq('user_id', report.user_id)
+    .eq('user_id', userId)
     .eq('account_id', account_id);
 
   if (updateError) {
@@ -176,7 +164,6 @@ async function handleTransactionsProcessed(payload: any) {
     console.log(`Marked account ${account_id} as needing refresh`);
   }
 
-  // Store webhook event for audit/debugging
   try {
     await supabaseAdmin
       .from('teller_webhook_events')
@@ -184,7 +171,7 @@ async function handleTransactionsProcessed(payload: any) {
         event_type: 'transactions.processed',
         event_id: payload.event_id || null,
         account_id,
-        user_id: report.user_id,
+        user_id: userId,
         payload: payload,
         processed: false, // Will be true once we implement full auto-refresh
         created_at: new Date().toISOString(),
