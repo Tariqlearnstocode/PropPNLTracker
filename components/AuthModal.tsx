@@ -145,49 +145,49 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden">
-        <div className="p-6 border-b border-gray-100 flex items-start justify-between">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-terminal-card rounded-2xl max-w-md w-full mx-4 overflow-hidden border border-terminal-border">
+        <div className="p-6 border-b border-terminal-border flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-terminal-text">
               {mode === 'signup' ? 'Create your account' : mode === 'signin' ? 'Welcome back' : 'Reset password'}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              {mode === 'signup' 
-                ? 'Get started tracking your prop firm PNL' 
+            <p className="text-sm text-terminal-muted mt-1">
+              {mode === 'signup'
+                ? 'Get started tracking your prop firm PNL'
                 : mode === 'signin'
                 ? 'Sign in to continue'
                 : 'Enter your email to receive a password reset link'}
             </p>
           </div>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+          <button onClick={handleClose} className="text-terminal-muted hover:text-terminal-text">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form 
+        <form
           onSubmit={
-            mode === 'signup' ? handleSignUp : 
-            mode === 'signin' ? handleSignIn : 
+            mode === 'signup' ? handleSignUp :
+            mode === 'signin' ? handleSignIn :
             handlePasswordReset
-          } 
+          }
           className="p-6 space-y-4"
         >
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+            <div className="p-3 bg-loss-dim border border-loss/30 rounded-lg text-sm text-loss">
               {error}
             </div>
           )}
 
           {resetEmailSent && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-600">
+            <div className="p-3 bg-profit-dim border border-profit/30 rounded-lg text-sm text-profit">
               Password reset email sent! Check your inbox and click the link to reset your password.
             </div>
           )}
-          
+
           {mode === 'signup' && (
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-terminal-text mb-1">
                 Name
               </label>
               <input
@@ -195,15 +195,15 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 bg-terminal-bg border border-terminal-border rounded-lg text-terminal-text focus:outline-none focus:ring-2 focus:ring-profit/30 focus:border-transparent"
                 placeholder="John Doe"
                 autoComplete="name"
               />
             </div>
           )}
-          
+
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-terminal-text mb-1">
               Email
             </label>
             <input
@@ -211,16 +211,16 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              className="w-full px-3 py-2.5 bg-terminal-bg border border-terminal-border rounded-lg text-terminal-text focus:outline-none focus:ring-2 focus:ring-profit/30 focus:border-transparent"
               placeholder="you@example.com"
               autoComplete="email"
               required
             />
           </div>
-          
+
           {mode !== 'reset' && (
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-terminal-text mb-1">
                 Password
               </label>
               <input
@@ -228,7 +228,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-3 py-2.5 bg-terminal-bg border border-terminal-border rounded-lg text-terminal-text focus:outline-none focus:ring-2 focus:ring-profit/30 focus:border-transparent"
                 placeholder={mode === 'signup' ? 'Create a password' : 'Your password'}
                 autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 required
@@ -240,7 +240,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
           <button
             type="submit"
             disabled={loading || resetEmailSent}
-            className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-300 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {mode === 'signup' ? 'Create Account' : mode === 'signin' ? 'Sign In' : 'Send Reset Link'}
@@ -248,13 +248,13 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
         </form>
 
         <div className="px-6 pb-6 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-terminal-muted">
             {mode === 'signup' ? (
               <>
                 Already have an account?{' '}
                 <button
                   onClick={() => { setMode('signin'); setError(''); }}
-                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  className="text-profit hover:text-profit/80 font-medium"
                 >
                   Sign in
                 </button>
@@ -264,14 +264,14 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
                 Don&apos;t have an account?{' '}
                 <button
                   onClick={() => { setMode('signup'); setError(''); }}
-                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  className="text-profit hover:text-profit/80 font-medium"
                 >
                   Create one
                 </button>
                 {' · '}
                 <button
                   onClick={() => { setMode('reset'); setError(''); }}
-                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  className="text-profit hover:text-profit/80 font-medium"
                 >
                   Forgot password?
                 </button>
@@ -281,7 +281,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
                 Remember your password?{' '}
                 <button
                   onClick={() => { setMode('signin'); setError(''); setResetEmailSent(false); }}
-                  className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  className="text-profit hover:text-profit/80 font-medium"
                 >
                   Sign in
                 </button>

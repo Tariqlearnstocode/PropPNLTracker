@@ -1,4 +1,6 @@
-import { stripe } from './client';
+import { stripe as _stripe } from './client';
+
+const stripe = _stripe!;
 
 /**
  * Create products and prices in Stripe

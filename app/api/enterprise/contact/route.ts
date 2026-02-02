@@ -3,12 +3,13 @@ import { Resend } from 'resend';
 import { sanitizeEmail, escapeHtml } from '@/utils/sanitize';
 import { checkRateLimit, getClientIP } from '@/utils/rate-limit';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || 'Prop Firm PNL Tracker <noreply@yourdomain.com>';
-const ENTERPRISE_EMAIL = process.env.ENTERPRISE_EMAIL || process.env.FROM_EMAIL || 'enterprise@yourdomain.com';
-const CALENDLY_LINK = process.env.CALENDLY_LINK || 'https://calendly.com/your-calendly-link';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const FROM_EMAIL = process.env.FROM_EMAIL || 'Prop Firm PNL Tracker <noreply@yourdomain.com>';
+  const ENTERPRISE_EMAIL = process.env.ENTERPRISE_EMAIL || process.env.FROM_EMAIL || 'enterprise@yourdomain.com';
+  const CALENDLY_LINK = process.env.CALENDLY_LINK || 'https://calendly.com/your-calendly-link';
   try {
     // Rate limiting: 3 contact form submissions per hour per IP (public endpoint)
     const clientIP = getClientIP(request);

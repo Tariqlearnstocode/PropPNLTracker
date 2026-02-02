@@ -61,7 +61,7 @@ export default function ConnectPage() {
           title: 'Success!',
           description: 'Bank account connected and PNL report generated.',
         });
-        
+
         // Redirect to the report page (users typically have one report)
         if (data.reportToken) {
           router.push(`/report/${data.reportToken}`);
@@ -129,49 +129,49 @@ export default function ConnectPage() {
   // Show loading state if not authenticated (will redirect)
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-profit mx-auto mb-4" />
+          <p className="text-terminal-muted">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-terminal-bg">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-terminal-text mb-4">
             Connect Your Bank Account
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Securely connect your bank account to automatically track all prop firm payouts and fees. 
+          <p className="text-lg text-terminal-muted max-w-2xl mx-auto">
+            Securely connect your bank account to automatically track all prop firm payouts and fees.
             Get instant, accurate PNL reports.
           </p>
         </div>
 
         {/* Main Connect Card */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-12 mb-8">
+        <div className="bg-terminal-card rounded-xl border border-terminal-border p-8 sm:p-12 mb-8">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Wallet className="w-10 h-10 text-emerald-600" />
+            <div className="w-20 h-20 bg-profit-dim rounded-full flex items-center justify-center mx-auto mb-6">
+              <Wallet className="w-10 h-10 text-profit" />
             </div>
-            
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+
+            <h2 className="text-2xl font-bold text-terminal-text mb-4">
               1 Click. Bank Verified Stats!!!
             </h2>
-            
-            <p className="text-gray-600 mb-8">
-              We'll securely connect to your bank account and automatically analyze all transactions 
+
+            <p className="text-terminal-muted mb-8">
+              We'll securely connect to your bank account and automatically analyze all transactions
               to identify prop firm payouts and fees. Your bank credentials are never stored.
             </p>
 
             <button
               onClick={handleConnectBank}
               disabled={connecting || !ready || !tellerConfig}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-lg transition-colors shadow-lg hover:shadow-xl mb-6"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-profit text-terminal-bg font-semibold rounded-lg hover:bg-profit/90 disabled:opacity-50 disabled:cursor-not-allowed text-lg transition-colors mb-6"
             >
               {connecting ? (
                 <>
@@ -188,53 +188,53 @@ export default function ConnectPage() {
             </button>
 
             {!ready && tellerConfig && (
-              <p className="text-sm text-gray-500">Initializing secure connection...</p>
+              <p className="text-sm text-terminal-muted">Initializing secure connection...</p>
             )}
           </div>
         </div>
 
         {/* Info Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-emerald-600" />
+          <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
+            <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
+              <Shield className="w-6 h-6 text-profit" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Secure & Private</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-terminal-text mb-2">Secure & Private</h3>
+            <p className="text-sm text-terminal-muted">
               Bank credentials are never stored. Direct API connection via Teller.
             </p>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-              <TrendingUp className="w-6 h-6 text-emerald-600" />
+          <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
+            <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
+              <TrendingUp className="w-6 h-6 text-profit" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Automatic Tracking</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-terminal-text mb-2">Automatic Tracking</h3>
+            <p className="text-sm text-terminal-muted">
               Automatically detects prop firm transactions from 50+ firms.
             </p>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-              <Check className="w-6 h-6 text-emerald-600" />
+          <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
+            <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
+              <Check className="w-6 h-6 text-profit" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Instant Reports</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-terminal-text mb-2">Instant Reports</h3>
+            <p className="text-sm text-terminal-muted">
               Get your PNL report immediately after connecting.
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-terminal-muted">
           <p>
             By connecting your bank account, you agree to our{' '}
-            <Link href="/security" className="text-emerald-600 hover:text-emerald-700 underline">
+            <Link href="/security" className="text-profit hover:text-profit/90 underline">
               security
             </Link>{' '}
             and{' '}
-            <Link href="/disclaimers" className="text-emerald-600 hover:text-emerald-700 underline">
+            <Link href="/disclaimers" className="text-profit hover:text-profit/90 underline">
               disclaimers
             </Link>
             .

@@ -1,4 +1,6 @@
-import { stripe } from './client';
+import { stripe as _stripe } from './client';
+
+const stripe = _stripe!;
 
 /**
  * Create or get the verifications meter

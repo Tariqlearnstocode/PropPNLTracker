@@ -1,9 +1,11 @@
 import { Resend } from 'resend';
 import { escapeHtml } from './sanitize';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
-const FROM_EMAIL = process.env.FROM_EMAIL || 'Income Verifier <noreply@yourdomain.com>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'Prop PNL <noreply@yourdomain.com>';
 
 export interface SendVerificationEmailParams {
   to: string;
@@ -43,7 +45,7 @@ export async function sendVerificationEmail(params: SendVerificationEmailParams)
   const safeTo = escapeHtml(to);
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [to],
       subject: `${requestedByName} has requested your income verification`,
@@ -127,7 +129,7 @@ export async function sendCompletionEmail(params: SendCompletionEmailParams) {
   const safeRequestedByName = escapeHtml(requestedByName);
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [to],
       subject: `Income verification completed for ${individualName}`,
@@ -201,7 +203,7 @@ export async function sendReminderEmail(params: SendReminderEmailParams) {
   const safeTo = escapeHtml(to);
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: [to],
       subject: `Reminder: Complete your income verification (${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} remaining)`,

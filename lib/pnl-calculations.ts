@@ -52,6 +52,11 @@ const PROP_FIRM_NAMES = [
   'traders edge',
   'funded trader',
   'take profit trader',
+  'my funded futures',
+  'myfundedfutures',
+  'myfundedfutures.com',
+  'myfundedfutures.com',
+
   
   // Futures Space - New additions
   'my funded futures',
@@ -430,14 +435,15 @@ function classifyPropFirmTransaction(name: string, isIncome: boolean): Transacti
  */
 function groupByMonth(transactions: TransactionWithMatch[]): Record<string, TransactionWithMatch[]> {
   const grouped: Record<string, TransactionWithMatch[]> = {};
-  
+
   transactions.forEach((t) => {
-    const date = new Date(t.date);
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    // Use string splitting to avoid UTC timezone shift (same approach as calculateDailyPNL)
+    const dateStr = t.date.split('T')[0]; // "YYYY-MM-DD"
+    const monthKey = dateStr.substring(0, 7); // "YYYY-MM"
     if (!grouped[monthKey]) grouped[monthKey] = [];
     grouped[monthKey].push(t);
   });
-  
+
   return grouped;
 }
 
@@ -486,7 +492,7 @@ function calculateMonthlyBreakdown(transactions: TransactionWithMatch[]): Monthl
       fees,
       netPNL,
       runningTotal,
-      transactionCount: monthTransactions.length,
+      transactionCount: monthTransactions.filter(t => t.match.type === 'deposit' || t.match.type === 'fee').length,
     };
   });
   
@@ -496,7 +502,7 @@ function calculateMonthlyBreakdown(transactions: TransactionWithMatch[]): Monthl
 /**
  * Calculate per-firm PNL breakdown
  */
-function calculatePerFirmBreakdown(transactions: TransactionWithMatch[]): FirmPNL[] {
+export function calculatePerFirmBreakdown(transactions: TransactionWithMatch[]): FirmPNL[] {
   const firmGroups = groupByFirm(transactions);
   const firms = Object.keys(firmGroups);
   

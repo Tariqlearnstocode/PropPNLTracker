@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { checkRateLimit } from '@/utils/rate-limit';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
 import { getActiveSubscription } from '@/lib/stripe/helpers';
+import { encryptToken } from '@/utils/teller-token-encryption';
 import https from 'https';
 
 const TELLER_API_URL = 'https://api.teller.io';
@@ -336,19 +337,34 @@ export async function POST(request: NextRequest) {
 
           // Store/update connected account
           // Clear needs_refresh flag after successful sync
+          // For subscription users: encrypt and store access token for daily refresh
+          const accountUpdateData: any = {
+            user_id: user.id,
+            account_id: account.id,
+            account_name: account.name,
+            account_type: account.type,
+            enrollment_id: account.enrollment_id || null, // Store enrollment_id if available
+            enrollment_status: 'connected',
+            last_synced_at: new Date().toISOString(),
+            needs_refresh: false, // Clear refresh flag after successful sync
+            updated_at: new Date().toISOString(),
+          };
+
+          // If subscription user: encrypt and store access token, enable daily refresh
+          if (hasSubscription && access_token) {
+            try {
+              accountUpdateData.encrypted_access_token = encryptToken(access_token);
+              accountUpdateData.token_encrypted_at = new Date().toISOString();
+              accountUpdateData.can_refresh_daily = true;
+            } catch (error: any) {
+              console.error(`Error encrypting token for account ${account.id}:`, error);
+              // Continue without storing token if encryption fails
+            }
+          }
+
           const { error: accountError } = await supabaseAdmin
             .from('connected_accounts')
-            .upsert({
-              user_id: user.id,
-              account_id: account.id,
-              account_name: account.name,
-              account_type: account.type,
-              enrollment_id: account.enrollment_id || null, // Store enrollment_id if available
-              enrollment_status: 'connected',
-              last_synced_at: new Date().toISOString(),
-              needs_refresh: false, // Clear refresh flag after successful sync
-              updated_at: new Date().toISOString(),
-            }, {
+            .upsert(accountUpdateData, {
               onConflict: 'user_id,account_id',
             });
 
@@ -372,30 +388,35 @@ export async function POST(request: NextRequest) {
     const successCount = reportResults.filter(r => r.success).length;
 
     // 8. Delete account connections (Teller charges per active enrollment)
-    // Note: For subscription users, we disconnect after manual refresh
-    // Auto-refresh will require re-authentication (handled separately)
-    console.log(`Disconnecting ${accounts.length} account(s) from Teller...`);
-    
-    const disconnectResults = await Promise.all(
-      accounts.map(async (account: any) => {
-        try {
-          const deleteRes = await tellerFetch(`${TELLER_API_URL}/accounts/${account.id}`, {
-            method: 'DELETE',
-            headers,
-          });
-          if (deleteRes.ok) {
-            return { id: account.id, success: true };
-          } else {
-            return { id: account.id, success: false };
+    // For subscription users: Keep enrollments active for daily refresh
+    // For one-time users: Disconnect after fetch to minimize costs
+    if (!hasSubscription) {
+      console.log(`Disconnecting ${accounts.length} account(s) from Teller (one-time user)...`);
+      
+      const disconnectResults = await Promise.all(
+        accounts.map(async (account: any) => {
+          try {
+            const deleteRes = await tellerFetch(`${TELLER_API_URL}/accounts/${account.id}`, {
+              method: 'DELETE',
+              headers,
+            });
+            if (deleteRes.ok) {
+              return { id: account.id, success: true };
+            } else {
+              return { id: account.id, success: false };
+            }
+          } catch (err: any) {
+            console.error(`Error disconnecting account ${account.id}:`, err?.message);
+            return { id: account.id, success: false, error: err?.message };
           }
-        } catch (err: any) {
-          console.error(`Error disconnecting account ${account.id}:`, err?.message);
-          return { id: account.id, success: false, error: err?.message };
-        }
-      })
-    );
-    
-    const disconnectedCount = disconnectResults.filter(r => r.success).length;
+        })
+      );
+      
+      const disconnectedCount = disconnectResults.filter(r => r.success).length;
+      console.log(`Disconnected ${disconnectedCount}/${accounts.length} account(s)`);
+    } else {
+      console.log(`Keeping ${accounts.length} enrollment(s) active for subscription user (daily refresh enabled)`);
+    }
 
     // Return success with the first report token for redirect
     // Since users typically connect one account at a time, we return the first report token

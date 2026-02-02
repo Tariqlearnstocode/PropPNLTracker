@@ -143,14 +143,21 @@ async function handleTransactionsProcessed(payload: any) {
 
   console.log(`User ${report.user_id} has subscription, queuing auto-refresh for account ${account_id}`);
 
-  // TODO: Implement actual refresh
-  // This requires access tokens. Options:
-  // 1. Store encrypted access tokens in database (for subscription users)
-  // 2. Keep Teller enrollments active for subscription users (don't disconnect)
-  // 3. Use Teller's refresh token mechanism if available
-  // 
-  // For now, we'll mark the account as needing refresh
-  // The user can manually trigger refresh, or we can implement token storage
+  // Check if account has stored encrypted token for refresh
+  const { data: connectedAccount } = await supabaseAdmin
+    .from('connected_accounts')
+    .select('encrypted_access_token, can_refresh_daily, account_id')
+    .eq('user_id', report.user_id)
+    .eq('account_id', account_id)
+    .single();
+
+  // If account has encrypted token and can refresh daily, mark as needing refresh
+  // User can manually trigger refresh via refresh button
+  if (connectedAccount?.encrypted_access_token && connectedAccount.can_refresh_daily) {
+    console.log(`Account ${account_id} has stored token, marking for refresh`);
+  } else {
+    console.log(`Account ${account_id} does not have stored token or cannot refresh daily`);
+  }
   
   // Update connected_accounts to mark that new data is available
   const { error: updateError } = await supabaseAdmin

@@ -1,116 +1,94 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { FileCheck, User, LogOut, Settings, BarChart3 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function GlobalNavbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, supabase } = useAuth();
-  const [signingOut, setSigningOut] = useState(false);
-  const [reportToken, setReportToken] = useState<string | null>(null);
-  
-  // Fetch user's report token
-  useEffect(() => {
-    if (user) {
-      fetch('/api/user/report-token')
-        .then(res => res.json())
-        .then(data => {
-          if (data.reportToken) {
-            setReportToken(data.reportToken);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching report token:', err);
-        });
-    } else {
-      setReportToken(null);
-    }
-  }, [user]);
 
   // Don't show navbar on verify pages
   if (pathname?.startsWith('/verify/')) {
     return null;
   }
 
-  const handleSignOut = async () => {
-    if (signingOut) return;
-    setSigningOut(true);
-    
-    try {
+  // Authenticated: slim top bar
+  if (user) {
+    const handleSignOut = async () => {
       await supabase.auth.signOut();
-    } catch (err) {
-      console.error('Sign out error:', err);
-    } finally {
-      setSigningOut(false);
-      }
-  };
+      router.push('/');
+    };
 
+    return (
+      <header className="bg-terminal-bg border-b border-terminal-border sticky top-0 z-40">
+        <div className="w-full px-4 sm:px-6">
+          <div className="flex items-center justify-between h-12">
+            {/* Left: App name with green dot */}
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-profit opacity-75 animate-ping" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+              </span>
+              <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">
+                Prop PNL
+              </span>
+            </Link>
+
+            {/* Right: email, settings, sign out */}
+            <div className="flex items-center gap-4">
+              <span className="text-terminal-muted text-xs font-mono hidden sm:inline truncate max-w-[180px]">
+                {user.email}
+              </span>
+              <Link
+                href="/settings"
+                className="text-terminal-muted hover:text-terminal-text text-xs font-mono transition-colors"
+              >
+                Settings
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="text-terminal-muted hover:text-terminal-text text-xs font-mono transition-colors"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // Unauthenticated: landing page nav
   const handleOpenAuthModal = (mode: 'signin' | 'signup') => {
     window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode } }));
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-terminal-bg border-b border-terminal-border sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           <Link href="/" className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FileCheck className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-semibold text-gray-900 hidden sm:inline">Income Verifier</span>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-profit opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-profit" />
+            </span>
+            <span className="font-display font-semibold text-terminal-text text-sm tracking-wide">Prop PNL</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
-            {user ? (
-              <>
-                {reportToken && !pathname?.startsWith('/report/') && (
-                  <Link
-                    href={`/report/${reportToken}`}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50 rounded-lg border border-emerald-200 transition-colors flex-shrink-0"
-                  >
-                    <BarChart3 className="w-4 h-4" />
-                    <span className="hidden sm:inline">View Report</span>
-                  </Link>
-                )}
-                <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 text-sm text-gray-600 bg-gray-50 rounded-lg">
-                  <User className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline truncate max-w-[120px] md:max-w-none">{user.email}</span>
-                </div>
-                <Link
-                  href="/settings"
-                  className="flex items-center justify-center w-9 h-9 text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex-shrink-0"
-                  aria-label="Settings"
-                >
-                  <Settings className="w-4 h-4" />
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  disabled={signingOut}
-                  className="flex items-center gap-2 px-2 sm:px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-                  aria-label={signingOut ? 'Signing out' : 'Sign Out'}
-                >
-                  <LogOut className="w-4 h-4 flex-shrink-0" />
-                  <span className="hidden sm:inline">{signingOut ? 'Signing out...' : 'Sign Out'}</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => handleOpenAuthModal('signin')}
-                  className="px-3 sm:px-4 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200"
-                >
-                  Sign In
-                </button>
-                <button
-                  onClick={() => handleOpenAuthModal('signup')}
-                  className="px-3 sm:px-4 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  Get Started
-                </button>
-              </>
-            )}
+            <button
+              onClick={() => handleOpenAuthModal('signin')}
+              className="px-3 sm:px-4 py-1.5 text-sm text-terminal-muted hover:text-terminal-text rounded-lg border border-terminal-border hover:bg-terminal-card-hover transition-colors"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => handleOpenAuthModal('signup')}
+              className="px-3 sm:px-4 py-1.5 bg-profit hover:bg-profit/90 text-terminal-bg text-sm font-medium rounded-lg transition-colors"
+            >
+              Get Started
+            </button>
           </div>
         </div>
       </div>

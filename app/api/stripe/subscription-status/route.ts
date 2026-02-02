@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     let currentUsage = 0;
 
     try {
-      stripeSubscription = await stripe.subscriptions.retrieve(
+      stripeSubscription = await stripe!.subscriptions.retrieve(
         subscription.stripe_subscription_id
       );
 

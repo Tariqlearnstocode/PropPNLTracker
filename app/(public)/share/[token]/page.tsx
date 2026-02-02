@@ -1,32 +1,88 @@
-import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
+import ReportContent from '../../report/[token]/ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
 import type { PNLReport } from '@/lib/pnl-calculations';
+import { supabaseAdmin } from '@/utils/supabase/admin';
+import { getURL } from '@/utils/helpers';
+import type { Metadata } from 'next';
 
 interface PageProps {
   params: Promise<{ token: string }>;
 }
 
-interface PNLReportRow {
-  id: string;
-  user_id: string;
-  report_token: string;
-  account_id: string;
-  raw_teller_data: any;
-  pnl_data: PNLReport | null;
-  manual_assignments: Record<string, string> | null;
-  status: 'pending' | 'completed' | 'failed';
-  created_at: string;
-  updated_at: string;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { token } = await params;
+  const siteUrl = getURL();
+
+  const defaultMetadata: Metadata = {
+    title: 'Prop Trading Report | Prop PNL',
+    description: 'View this prop trading performance report on Prop PNL.',
+    openGraph: {
+      title: 'Prop Trading Report | Prop PNL',
+      description: 'View this prop trading performance report on Prop PNL.',
+      url: `${siteUrl}/share/${token}`,
+      siteName: 'Prop PNL',
+      images: [{ url: `${siteUrl}/api/og/report?token=${token}`, width: 1200, height: 630, alt: 'Prop Trading Report' }],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Prop Trading Report | Prop PNL',
+      description: 'View this prop trading performance report on Prop PNL.',
+      images: [`${siteUrl}/api/og/report?token=${token}`],
+    },
+  };
+
+  try {
+    const { data: report, error } = await supabaseAdmin
+      .from('pnl_reports')
+      .select('raw_teller_data, pnl_data, manual_assignments, status, display_name')
+      .eq('report_token', token)
+      .single();
+
+    if (error || !report || report.status !== 'completed') return defaultMetadata;
+
+    let pnlData: PNLReport | null = null;
+    const manualAssignments = report.manual_assignments || {};
+
+    if (report.raw_teller_data) {
+      pnlData = calculatePNLReport(report.raw_teller_data, manualAssignments);
+    } else if (report.pnl_data) {
+      pnlData = report.pnl_data as PNLReport;
+    }
+
+    if (!pnlData) return defaultMetadata;
+
+    const { summary, perFirmBreakdown } = pnlData;
+    const netPNL = summary.netPNL;
+    const sign = netPNL >= 0 ? '+' : '-';
+    const formattedPNL = `${sign}$${Math.abs(netPNL).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+    const firmCount = perFirmBreakdown.length;
+    const roi = summary.totalFees > 0
+      ? `${netPNL >= 0 ? '+' : ''}${((netPNL / summary.totalFees) * 100).toFixed(0)}%`
+      : 'N/A';
+    const description = `Net P&L: ${formattedPNL} | ${firmCount} Firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI`;
+    const title = report.display_name
+      ? `${report.display_name}'s Trading Report | Prop PNL`
+      : 'Prop Trading Report | Prop PNL';
+
+    return {
+      ...defaultMetadata,
+      title,
+      description,
+      openGraph: { ...defaultMetadata.openGraph as object, title, description },
+      twitter: { ...defaultMetadata.twitter as object, title, description },
+    };
+  } catch {
+    return defaultMetadata;
+  }
 }
 
-// Public share view - limited data, no transaction details
-export default async function ShareReportPage({ params }: PageProps) {
+export default async function SharePage({ params }: PageProps) {
   const { token } = await params;
-  const supabase = await createClient();
 
-  // Fetch PNL report by token (no auth required for public shares)
-  const { data: report, error } = await supabase
+  // Use admin client — no auth required for public share pages
+  const { data: report, error } = await supabaseAdmin
     .from('pnl_reports')
     .select('*')
     .eq('report_token', token)
@@ -34,21 +90,11 @@ export default async function ShareReportPage({ params }: PageProps) {
 
   if (error || !report) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m4-9V5a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2h4a2 2 0 002-2z" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Report Not Found</h1>
-          <p className="text-gray-600 mb-4">
-            This shared PNL report could not be found.
-          </p>
-          <Link 
-            href="/"
-            className="inline-block px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-          >
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
+        <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
+          <h1 className="text-xl font-semibold text-terminal-text mb-2">Report Not Found</h1>
+          <p className="text-terminal-muted mb-4">This report doesn&apos;t exist or has been removed.</p>
+          <Link href="/" className="inline-block px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-lg transition-colors">
             Go Home
           </Link>
         </div>
@@ -56,123 +102,59 @@ export default async function ShareReportPage({ params }: PageProps) {
     );
   }
 
-  if (report.status !== 'completed' || !report.pnl_data) {
+  if (report.status !== 'completed') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center max-w-md">
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">Report Not Ready</h1>
-          <p className="text-gray-600 mb-4">
-            This report is still being processed.
-          </p>
-          <Link 
-            href="/"
-            className="inline-block px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-          >
-            Go Home
-          </Link>
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
+        <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
+          <h1 className="text-xl font-semibold text-terminal-text mb-2">Report Not Ready</h1>
+          <p className="text-terminal-muted">This report is still being processed.</p>
         </div>
       </div>
     );
   }
 
-  const pnlData = report.pnl_data;
+  // Recalculate from raw data for accuracy
+  let pnlData: PNLReport | null = null;
+  const manualAssignments = report.manual_assignments || {};
 
-  // Public view - only show summary data, no transaction details
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">PNL Report Summary</h1>
-            <p className="text-gray-600">
-              Shared PNL report - Summary view only
-            </p>
-          </div>
+  if (report.raw_teller_data) {
+    pnlData = calculatePNLReport(report.raw_teller_data, manualAssignments);
+  } else if (report.pnl_data) {
+    pnlData = report.pnl_data as PNLReport;
+    if (pnlData && pnlData.transactions) {
+      pnlData.transactions = pnlData.transactions.map((txn: any) => {
+        if (!txn.match) {
+          return { ...txn, match: { type: 'unmatched' as const, firmName: null, confidence: 'low' as const } };
+        }
+        return txn;
+      });
+    }
+  }
 
-          {/* Summary Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-emerald-50 rounded-lg p-6 border border-emerald-200">
-              <div className="text-sm font-medium text-emerald-700 mb-1">Total Deposits</div>
-              <div className="text-2xl font-bold text-emerald-900">
-                ${pnlData.summary.totalDeposits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-            <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-              <div className="text-sm font-medium text-red-700 mb-1">Total Fees</div>
-              <div className="text-2xl font-bold text-red-900">
-                ${pnlData.summary.totalFees.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-            <div className={`rounded-lg p-6 border ${
-              pnlData.summary.totalPNL >= 0 
-                ? 'bg-emerald-50 border-emerald-200' 
-                : 'bg-red-50 border-red-200'
-            }`}>
-              <div className={`text-sm font-medium mb-1 ${
-                pnlData.summary.totalPNL >= 0 ? 'text-emerald-700' : 'text-red-700'
-              }`}>
-                Net PNL
-              </div>
-              <div className={`text-2xl font-bold ${
-                pnlData.summary.totalPNL >= 0 ? 'text-emerald-900' : 'text-red-900'
-              }`}>
-                ${pnlData.summary.totalPNL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </div>
-            </div>
-          </div>
-
-          {/* Monthly Summary Table (no transaction details) */}
-          <div className="border border-gray-200 rounded-lg overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Monthly Breakdown</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">Month</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600">Deposits</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600">Fees</th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600">Net PNL</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {pnlData.monthlyBreakdown.map((month) => (
-                    <tr key={month.month} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{month.month}</td>
-                      <td className="px-6 py-4 text-sm text-right text-emerald-600">
-                        ${month.deposits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-right text-red-600">
-                        ${month.fees.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td className={`px-6 py-4 text-sm text-right font-semibold ${
-                        month.netPNL >= 0 ? 'text-emerald-600' : 'text-red-600'
-                      }`}>
-                        ${month.netPNL.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="mt-8 p-6 bg-gray-50 rounded-lg text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Want to track your own PNL?</h3>
-            <p className="text-gray-600 mb-4">
-              Create your own account and get detailed transaction views, filters, and more.
-            </p>
-            <Link
-              href="/"
-              className="inline-block px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-            >
-              Get Started
-            </Link>
-          </div>
+  if (!pnlData) {
+    return (
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
+        <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
+          <h1 className="text-xl font-semibold text-terminal-text mb-2">Report Error</h1>
+          <p className="text-terminal-muted">This report could not be processed.</p>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <ReportContent
+      report={{
+        id: report.id,
+        user_id: report.user_id,
+        report_token: report.report_token,
+        account_id: report.account_id,
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        display_name: report.display_name || null,
+      }}
+      pnlData={pnlData}
+      isPublicView
+    />
   );
 }
