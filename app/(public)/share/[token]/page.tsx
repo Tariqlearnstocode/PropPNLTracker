@@ -2,6 +2,7 @@ import Link from 'next/link';
 import ReportContent from '../../report/[token]/ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
 import type { PNLReport } from '@/lib/pnl-calculations';
+import { getReportBySlugOrToken } from '@/lib/report-resolver';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getURL } from '@/utils/helpers';
 import type { Metadata } from 'next';
@@ -34,21 +35,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 
   try {
-    const { data: report, error } = await supabaseAdmin
-      .from('pnl_reports')
-      .select('raw_teller_data, pnl_data, manual_assignments, status, display_name')
-      .eq('report_token', token)
-      .single();
-
-    if (error || !report || report.status !== 'completed') return defaultMetadata;
+    const report = await getReportBySlugOrToken(supabaseAdmin, token);
+    if (!report || (report as { status: string }).status !== 'completed') return defaultMetadata;
 
     let pnlData: PNLReport | null = null;
-    const manualAssignments = report.manual_assignments || {};
+    const manualAssignments = (report as { manual_assignments?: object }).manual_assignments || {};
 
-    if (report.raw_teller_data) {
-      pnlData = calculatePNLReport(report.raw_teller_data, manualAssignments);
-    } else if (report.pnl_data) {
-      pnlData = report.pnl_data as PNLReport;
+    if ((report as { raw_teller_data?: unknown }).raw_teller_data) {
+      pnlData = calculatePNLReport((report as { raw_teller_data: unknown }).raw_teller_data, manualAssignments);
+    } else if ((report as { pnl_data?: PNLReport }).pnl_data) {
+      pnlData = (report as { pnl_data: PNLReport }).pnl_data;
     }
 
     if (!pnlData) return defaultMetadata;
@@ -62,8 +58,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `${netPNL >= 0 ? '+' : ''}${((netPNL / summary.totalFees) * 100).toFixed(0)}%`
       : 'N/A';
     const description = `Net P&L: ${formattedPNL} | ${firmCount} Firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI`;
-    const title = report.display_name
-      ? `${report.display_name}'s Trading Report | Prop PNL`
+    const reportRow = report as { display_name?: string | null };
+    const title = reportRow.display_name
+      ? `${reportRow.display_name}'s Trading Report | Prop PNL`
       : 'Prop Trading Report | Prop PNL';
 
     return {
@@ -81,14 +78,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function SharePage({ params }: PageProps) {
   const { token } = await params;
 
-  // Use admin client — no auth required for public share pages
-  const { data: report, error } = await supabaseAdmin
-    .from('pnl_reports')
-    .select('*')
-    .eq('report_token', token)
-    .single();
+  const report = await getReportBySlugOrToken(supabaseAdmin, token);
 
-  if (error || !report) {
+  if (!report) {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
         <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
@@ -102,7 +94,7 @@ export default async function SharePage({ params }: PageProps) {
     );
   }
 
-  if (report.status !== 'completed') {
+  if ((report as { status: string }).status !== 'completed') {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
         <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
@@ -113,14 +105,26 @@ export default async function SharePage({ params }: PageProps) {
     );
   }
 
-  // Recalculate from raw data for accuracy
+  const reportRow = report as {
+    id: string;
+    user_id: string;
+    report_token: string;
+    account_id: string | null;
+    created_at: string;
+    updated_at: string;
+    display_name: string | null;
+    share_slug: string | null;
+    raw_teller_data?: unknown;
+    pnl_data?: PNLReport;
+    manual_assignments?: object;
+  };
   let pnlData: PNLReport | null = null;
-  const manualAssignments = report.manual_assignments || {};
+  const manualAssignments = reportRow.manual_assignments || {};
 
-  if (report.raw_teller_data) {
-    pnlData = calculatePNLReport(report.raw_teller_data, manualAssignments);
-  } else if (report.pnl_data) {
-    pnlData = report.pnl_data as PNLReport;
+  if (reportRow.raw_teller_data) {
+    pnlData = calculatePNLReport(reportRow.raw_teller_data, manualAssignments);
+  } else if (reportRow.pnl_data) {
+    pnlData = reportRow.pnl_data;
     if (pnlData && pnlData.transactions) {
       pnlData.transactions = pnlData.transactions.map((txn: any) => {
         if (!txn.match) {
@@ -145,13 +149,14 @@ export default async function SharePage({ params }: PageProps) {
   return (
     <ReportContent
       report={{
-        id: report.id,
-        user_id: report.user_id,
-        report_token: report.report_token,
-        account_id: report.account_id,
-        created_at: report.created_at,
-        updated_at: report.updated_at,
-        display_name: report.display_name || null,
+        id: reportRow.id,
+        user_id: reportRow.user_id,
+        report_token: reportRow.report_token,
+        account_id: reportRow.account_id,
+        created_at: reportRow.created_at,
+        updated_at: reportRow.updated_at,
+        display_name: reportRow.display_name || null,
+        share_slug: reportRow.share_slug || null,
       }}
       pnlData={pnlData}
       isPublicView

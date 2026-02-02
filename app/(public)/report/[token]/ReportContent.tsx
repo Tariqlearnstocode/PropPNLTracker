@@ -41,6 +41,7 @@ interface Props {
     created_at: string;
     updated_at: string;
     display_name?: string | null;
+    share_slug?: string | null;
   };
   pnlData: PNLReport;
   canRefreshDaily?: boolean;
@@ -60,9 +61,23 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const [bulkAssignModalOpen, setBulkAssignModalOpen] = useState(false);
   const [ctaDismissed, setCtaDismissed] = useState(false);
   const [displayName, setDisplayName] = useState(report.display_name || '');
+  const [shareSlug, setShareSlug] = useState(report.share_slug ?? null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleGetStarted = useCallback(() => setAuthModalOpen(true), []);
+
+  const handleShareSlugSave = useCallback(async (slug: string | null) => {
+    const res = await fetch('/api/pnl/share-slug', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reportId: report.id, shareSlug: slug || '' }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Failed to update');
+    }
+    setShareSlug(slug || null);
+  }, [report.id]);
 
   // When public view, feed navbar (SharedReportBanner-style) via context so GlobalNavbar can render it
   useEffect(() => {
@@ -326,8 +341,11 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
           onRefreshData={isPublicView ? undefined : handleRefreshData}
           displayName={displayName}
           onGetStarted={isPublicView ? handleGetStarted : undefined}
-          shareUrl={typeof window !== 'undefined' ? (isPublicView ? window.location.href : `${window.location.origin}/share/${report.report_token}`) : ''}
+          shareUrl={typeof window !== 'undefined' ? (isPublicView ? window.location.href : `${window.location.origin}/share/${shareSlug || report.report_token}`) : ''}
           isPublicView={isPublicView}
+          reportId={report.id}
+          shareSlug={shareSlug}
+          onShareSlugSave={!isPublicView ? handleShareSlugSave : undefined}
         />
       </div>
 

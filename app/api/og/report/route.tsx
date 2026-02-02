@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { getReportBySlugOrToken } from '@/lib/report-resolver';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
 import type { PNLReport } from '@/lib/pnl-calculations';
 
@@ -139,29 +140,18 @@ export async function GET(request: NextRequest) {
       return generateFallbackImage();
     }
 
-    // Look up the report by token using admin client (bypasses RLS since OG crawlers are unauthenticated)
-    const { data: report, error } = await supabaseAdmin
-      .from('pnl_reports')
-      .select('raw_teller_data, pnl_data, manual_assignments, status')
-      .eq('report_token', token)
-      .single();
-
-    if (error || !report) {
+    const report = await getReportBySlugOrToken(supabaseAdmin, token);
+    if (!report || (report as { status: string }).status !== 'completed') {
       return generateFallbackImage();
     }
 
-    if (report.status !== 'completed') {
-      return generateFallbackImage();
-    }
-
-    // Calculate PNL data from raw data (same approach as page.tsx)
     let pnlData: PNLReport | null = null;
-    const manualAssignments = report.manual_assignments || {};
+    const manualAssignments = (report as { manual_assignments?: object }).manual_assignments || {};
 
-    if (report.raw_teller_data) {
-      pnlData = calculatePNLReport(report.raw_teller_data, manualAssignments);
-    } else if (report.pnl_data) {
-      pnlData = report.pnl_data as PNLReport;
+    if ((report as { raw_teller_data?: unknown }).raw_teller_data) {
+      pnlData = calculatePNLReport((report as { raw_teller_data: unknown }).raw_teller_data, manualAssignments);
+    } else if ((report as { pnl_data?: PNLReport }).pnl_data) {
+      pnlData = (report as { pnl_data: PNLReport }).pnl_data;
     }
 
     if (!pnlData) {

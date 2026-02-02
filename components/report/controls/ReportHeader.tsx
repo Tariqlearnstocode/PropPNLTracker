@@ -7,6 +7,7 @@ import { CombinedDateSelector } from './CombinedDateSelector';
 import { FirmFilter } from './FirmFilter';
 import { ExportDropdown } from './ExportDropdown';
 import { ExportBlockedPopup } from '@/components/report/public/ExportBlockedPopup';
+import { ShareModal } from '@/components/report/public/ShareModal';
 import { useToast } from '@/components/ui/Toasts/use-toast';
 
 interface ReportHeaderProps {
@@ -39,9 +40,12 @@ interface ReportHeaderProps {
   onRefreshData?: () => Promise<void>;
   displayName?: string;
   onGetStarted?: () => void;
-  /** URL to copy when sharing (owner: /share/{token}, viewer: current page URL) */
+  /** URL to copy when sharing (owner: /share/{slug or token}, viewer: current page URL) */
   shareUrl?: string;
   isPublicView?: boolean;
+  reportId?: string;
+  shareSlug?: string | null;
+  onShareSlugSave?: (slug: string | null) => Promise<void>;
 }
 
 export function ReportHeader({
@@ -73,32 +77,27 @@ export function ReportHeader({
   onGetStarted,
   shareUrl = '',
   isPublicView = false,
+  reportId,
+  shareSlug = null,
+  onShareSlugSave,
 }: ReportHeaderProps) {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exportBlockedOpen, setExportBlockedOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
-  const handleShare = useCallback(async () => {
+  const handleShare = useCallback(() => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ url });
-        return;
-      } catch {
-        // User cancelled or share failed — fall through to clipboard
-      }
+    if (isPublicView) {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {});
+      return;
     }
-
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Copy failed — no toast
-    }
-  }, [shareUrl]);
+    setShareModalOpen(true);
+  }, [shareUrl, isPublicView]);
 
   // Check if already refreshed today (rate limit: once per UTC day)
   const lastRefreshDate = lastRefreshAttempt ? new Date(lastRefreshAttempt) : null;
@@ -201,7 +200,7 @@ export function ReportHeader({
             )}
             <button
               onClick={handleShare}
-              title="Copy link"
+              title={isPublicView ? 'Copy link' : 'Share'}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono font-medium rounded-lg border transition-colors ${
                 copied
                   ? 'border-profit/50 text-profit bg-profit/10'
@@ -303,6 +302,16 @@ export function ReportHeader({
           open={exportBlockedOpen}
           onClose={() => setExportBlockedOpen(false)}
           onGetStarted={onGetStarted}
+        />
+      )}
+      {!isPublicView && (
+        <ShareModal
+          open={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          shareUrl={shareUrl}
+          reportToken={report.report_token}
+          shareSlug={shareSlug}
+          onShareSlugSave={onShareSlugSave}
         />
       )}
     </div>

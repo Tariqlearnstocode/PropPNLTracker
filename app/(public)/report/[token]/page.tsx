@@ -133,6 +133,7 @@ interface PNLReportRow {
   created_at: string;
   updated_at: string;
   display_name: string | null;
+  share_slug: string | null;
 }
 
 export default async function ReportPage({ params }: PageProps) {
@@ -283,6 +284,7 @@ export default async function ReportPage({ params }: PageProps) {
         created_at: reportData.created_at,
         updated_at: reportData.updated_at,
         display_name: reportData.display_name,
+        share_slug: reportData.share_slug ?? null,
       }}
       pnlData={pnlData}
       canRefreshDaily={canRefreshDaily}
