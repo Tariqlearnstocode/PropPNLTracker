@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { firms, payoutProcessors, getCategoryLabel, getFirmsByProcessor } from '@/lib/firms';
+import { firms, payoutProcessors, getCategoryLabel } from '@/lib/firms';
 
 export const metadata: Metadata = {
   title: 'Supported Prop Firms | Prop PNL - P&L Tracker',
@@ -51,9 +51,11 @@ export default function FirmsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {firms.map((firm) => (
-              <Link
+              <a
                 key={firm.slug}
-                href={`/firms/${firm.slug}`}
+                href={firm.website}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-terminal-card rounded-lg border border-terminal-border p-6 hover:border-profit/30 hover:bg-terminal-card-hover transition-colors group"
               >
                 <div className="flex items-start justify-between mb-4">
@@ -65,16 +67,12 @@ export default function FirmsPage() {
                       {getCategoryLabel(firm.category)}
                     </span>
                   </div>
-                  <span className="text-terminal-muted group-hover:text-profit transition-colors mt-1">→</span>
+                  <span className="text-terminal-muted group-hover:text-profit transition-colors mt-1">↗</span>
                 </div>
                 <p className="text-sm text-terminal-muted mb-4 line-clamp-2">
                   {firm.description}
                 </p>
                 <div className="flex flex-wrap gap-3 text-xs text-terminal-muted">
-                  <span className="flex items-center gap-1">
-                    <span>💳</span>
-                    {firm.payoutProcessor}
-                  </span>
                   {firm.detection === 'auto' ? (
                     <span className="flex items-center gap-1 text-profit">
                       <span>✓</span>
@@ -87,7 +85,7 @@ export default function FirmsPage() {
                     </span>
                   )}
                 </div>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -106,44 +104,23 @@ export default function FirmsPage() {
               categorizes it instantly.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {payoutProcessors
-              .filter((p) => p.firmsUsing.length > 0)
-              .map((processor) => {
-                const processorFirms = getFirmsByProcessor(processor.slug);
-                return (
-                  <div
-                    key={processor.slug}
-                    className="bg-terminal-bg rounded-lg border border-terminal-border p-8"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-xl text-profit">⚡</span>
-                      <h3 className="text-xl font-semibold text-terminal-text">
-                        {processor.name}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-terminal-muted mb-6">
-                      {processor.description}
-                    </p>
-                    <div>
-                      <p className="text-xs font-mono text-terminal-muted mb-2 uppercase tracking-wide">
-                        Firms using this processor
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {processorFirms.map((firm) => (
-                          <Link
-                            key={firm.slug}
-                            href={`/firms/${firm.slug}`}
-                            className="text-xs px-2 py-1 rounded bg-terminal-card border border-terminal-border text-terminal-text hover:border-profit/30 hover:text-profit transition-colors"
-                          >
-                            {firm.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {payoutProcessors.map((processor) => (
+              <div
+                key={processor.slug}
+                className="bg-terminal-bg rounded-lg border border-terminal-border p-8"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xl text-profit">⚡</span>
+                  <h3 className="text-xl font-semibold text-terminal-text">
+                    {processor.name}
+                  </h3>
+                </div>
+                <p className="text-sm text-terminal-muted">
+                  {processor.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

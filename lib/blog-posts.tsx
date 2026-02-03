@@ -1261,6 +1261,743 @@ export const BLOG_POSTS: BlogPost[] = [
       </>
     ),
   },
+  {
+    slug: 'prop-firm-payout-processors-explained',
+    title: 'Prop Firm Payout Processors Explained: Rise, Wise, Stripe and More',
+    description:
+      'How prop firm payouts actually reach your bank — Rise, Wise, Stripe, PayPal and direct transfers explained, with what each looks like on your bank statement.',
+    date: '2025-05-20',
+    readTime: '9 min read',
+    tags: ['education', 'payouts', 'processors'],
+    content: () => (
+      <>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          You passed the challenge, traded the funded account, and requested a payout. Then what? The money does not teleport from your prop firm&apos;s bank account to yours. It passes through a payout processor — a third-party company that handles the actual movement of funds. Which processor a firm uses determines how fast you get paid, what fees are deducted, and critically, what the deposit looks like on your bank statement.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          That last point matters more than most traders realize. When you are trying to track your real P&L — whether in a spreadsheet or through bank-connected software — the name on the deposit is often not the prop firm&apos;s name. It is the processor&apos;s name. And if you trade with three firms that all pay through Rise, you get three deposits that all say &quot;Riseworks&quot; with no indication of which firm sent the money. This is where tracking breaks down.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is how the payout chain works and what to expect from each major processor.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How the Payout Chain Works</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The flow is straightforward in concept: <strong className="text-profit">Prop Firm → Payout Processor → Your Bank</strong>. But each step has its own timeline, fees, and complications.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          When you request a withdrawal from your prop firm dashboard, the firm initiates a payment through their chosen processor. The processor receives the funds from the firm (or holds them in escrow ahead of time), converts currency if needed, deducts any processing fees, and then sends the remaining amount to your bank account via ACH, wire transfer, or local bank rails depending on the processor and your country.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The entire process typically takes <span className="font-mono text-profit">1-7 business days</span> from the time you hit &quot;withdraw&quot; to the time the money appears in your bank. First payouts are almost always slower due to additional KYC verification at the processor level. After that, subsequent payouts are faster because the processor already has your information on file.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Rise (Riseworks)</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Rise — formerly known as Riseworks — is the most common payout processor in the prop trading industry. It was originally built for paying remote contractors and freelancers, and prop firms adopted it because it handles international payments, tax form generation (1099s), and compliance in one platform.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Firms that use Rise:</strong> Topstep, Apex Trader Funding, Earn2Trade, and many smaller futures prop firms. If you trade futures, there is a strong chance your payout comes through Rise.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">What it looks like on your bank statement:</strong> Deposits from Rise typically appear as <span className="font-mono text-profit">&quot;Riseworks&quot;</span>, <span className="font-mono text-profit">&quot;Riseworks Inc&quot;</span>, or <span className="font-mono text-profit">&quot;Rise&quot;</span>. The description field may include a reference number but rarely mentions the prop firm by name. If you receive payouts from both Topstep and Apex, both show up as &quot;Riseworks&quot; on your statement — making it impossible to tell them apart from the bank transaction alone.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Fees:</strong> Rise typically charges <span className="font-mono text-profit">$0-$3</span> for US ACH transfers. International transfers may incur currency conversion fees of <span className="font-mono text-profit">1-3%</span>. Some firms absorb the Rise fee entirely; others pass it through to the trader. Rise also handles your 1099-NEC at year-end if you earned over $600 through the platform.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Speed:</strong> US ACH deposits typically arrive in <span className="font-mono text-profit">2-4 business days</span>. International payments can take <span className="font-mono text-profit">3-7 business days</span> depending on the destination country and banking system.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Wise (formerly TransferWise)</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Wise is a global money transfer platform that specializes in international payments with competitive exchange rates. Forex prop firms based outside the US — particularly European firms — tend to favor Wise because it handles cross-border payments efficiently.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Firms that use Wise:</strong> FTMO, The5ers, and several other forex-focused prop firms based in Europe and Israel. Some firms give traders the choice between Wise and a direct bank wire.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">What it looks like on your bank statement:</strong> Deposits appear as <span className="font-mono text-profit">&quot;Wise&quot;</span>, <span className="font-mono text-profit">&quot;Wise Payments Limited&quot;</span>, or sometimes <span className="font-mono text-profit">&quot;TransferWise&quot;</span> on older banking systems. The reference field occasionally includes the sender&apos;s name (the prop firm), but this is inconsistent. Most traders see a Wise deposit and have to cross-reference the amount and timing with their firm&apos;s dashboard to identify which payout it was.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Fees:</strong> Wise is known for transparency. Fees are typically <span className="font-mono text-profit">0.5-1.5%</span> of the transfer amount, including currency conversion. A <span className="font-mono text-profit">$2,000</span> payout from FTMO (converted from CZK or EUR to USD) might arrive as <span className="font-mono text-profit">$1,975-$1,990</span> after Wise fees. The fee structure is clearly shown before you accept the transfer.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Speed:</strong> Wise transfers to US bank accounts typically arrive in <span className="font-mono text-profit">1-3 business days</span>. Transfers to some countries can be near-instant if Wise has local banking partnerships.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Stripe</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Stripe is primarily a payment processing platform for businesses, not a payout processor per se. However, some newer prop firms use Stripe Connect to handle both incoming challenge fees and outgoing payouts through the same system. This is less common for payouts than Rise or Wise, but you may encounter it.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">What it looks like on your bank statement:</strong> Stripe payouts usually appear as <span className="font-mono text-profit">&quot;Stripe&quot;</span> or <span className="font-mono text-profit">&quot;Stripe Transfer&quot;</span>, though some firms configure Stripe to show their own business name. The inconsistency here is the biggest problem — you might see &quot;Stripe&quot; from one firm and the firm&apos;s actual name from another, even though both use Stripe under the hood.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Fees:</strong> Stripe charges businesses roughly <span className="font-mono text-profit">2.9% + $0.30</span> per transaction for incoming payments. Payout fees to connected accounts (traders) are typically <span className="font-mono text-profit">$0-$2</span> for US bank transfers. Most firms absorb Stripe&apos;s fees rather than passing them to traders.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">PayPal</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A handful of prop firms still offer PayPal as a payout option, though it is becoming less common. PayPal&apos;s higher fees and buyer-protection disputes have made many firms move away from it.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">What it looks like on your bank statement:</strong> If you withdraw from PayPal to your bank, it appears as <span className="font-mono text-profit">&quot;PayPal Transfer&quot;</span> or <span className="font-mono text-profit">&quot;PayPal&quot;</span>. The original sender (the prop firm) is visible in your PayPal account but not on the bank statement — adding another layer of confusion for tracking.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Fees:</strong> PayPal&apos;s business payment fees can run <span className="font-mono text-profit">2-5%</span> depending on the countries involved and whether currency conversion is needed. This makes it the most expensive option for prop firm payouts. Withdrawing from PayPal to your bank is free but takes <span className="font-mono text-profit">1-3 business days</span>.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Direct Bank Transfer (Wire / ACH)</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Some larger or more established prop firms offer direct bank transfers — either domestic ACH or international wire — without going through a third-party processor. This is the most straightforward option for the trader but the most expensive for the firm, which is why fewer firms offer it.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">What it looks like on your bank statement:</strong> Direct wires usually show the sending firm&apos;s actual name or their bank&apos;s name. This is the clearest option for tracking because you can see <span className="font-mono text-profit">&quot;FTMO s.r.o.&quot;</span> or <span className="font-mono text-profit">&quot;Topstep LLC&quot;</span> directly on the statement.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Fees:</strong> Incoming domestic ACH transfers are usually free. International wires can incur fees of <span className="font-mono text-profit">$15-$50</span> at your receiving bank, plus the sending bank&apos;s fees. Some intermediary banks also take a cut on international wires, so a $2,000 wire might arrive as $1,950.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Why This Matters for Tracking Your P&L</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is the core problem: if you trade with Topstep, Apex, and FTMO simultaneously, your bank statement might show three deposits labeled <span className="font-mono text-profit">&quot;Riseworks&quot;</span>, <span className="font-mono text-profit">&quot;Riseworks&quot;</span>, and <span className="font-mono text-profit">&quot;Wise&quot;</span>. None of them mention the firm by name. On the expense side, your challenge fees might show as charges to the firm&apos;s website domain, the firm&apos;s legal entity name, or even the payment processor they use for incoming payments.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          If you are tracking your P&L manually, you have to cross-reference every single deposit with your firm dashboards to figure out which payout came from where. For one firm, this is manageable. For three or four firms with overlapping payout dates, it becomes a genuine headache. Most traders give up on accurate per-firm tracking within a couple of months.
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          The irony of payout processors: they make it easier for firms to pay you, but harder for you to track what you were paid.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How Bank-Connected Tracking Solves This</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Bank-connected P&L tools like Prop PNL are built to handle exactly this problem. When you connect your bank, the software reads the raw transaction data — including the processor name, amount, date, and any reference codes — and maps it back to the correct prop firm. It knows that &quot;Riseworks&quot; deposits on certain dates align with your Topstep or Apex payout schedule. It knows that &quot;Wise Payments Limited&quot; is likely an FTMO payout when the amount matches your profit split.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          This automatic categorization eliminates the manual cross-referencing that makes spreadsheet tracking so fragile. You see a clean, per-firm breakdown of payouts and fees without having to decode processor names yourself.
+        </p>
+
+        <div className="mt-12 p-6 bg-terminal-card rounded-lg border border-profit/20 text-center">
+          <p className="text-terminal-text mb-4 text-lg font-semibold">
+            Stop decoding bank statements manually
+          </p>
+          <p className="text-terminal-muted mb-6 text-sm">
+            Prop PNL auto-identifies Rise, Wise, and Stripe payouts and maps them to your prop firms. See your real P&L per firm in 60 seconds.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank - Free
+          </Link>
+        </div>
+      </>
+    ),
+  },
+  {
+    slug: 'prop-firm-reset-fees',
+    title: 'Prop Firm Reset Fees: How Much Are You Really Spending on Resets?',
+    description:
+      'Reset fees are the silent killer of prop trading profitability. Here is exactly how much they cost and how fast they add up.',
+    date: '2025-05-15',
+    readTime: '8 min read',
+    tags: ['costs', 'fees', 'profitability'],
+    content: () => (
+      <>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          You blew the challenge. Hit the drawdown limit on day four, or broke a rule you forgot about, or the market gapped against you overnight. It happens. The firm sends you an email: &quot;Reset your account for just $99 and try again.&quot; It sounds reasonable. It is cheaper than buying a whole new challenge. So you click the button, pay the fee, and start over.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Then it happens again. And again. Each time, the $99 feels small in isolation. But reset fees are the silent killer of prop trading profitability. They compound faster than most traders realize, and they are the single largest hidden cost in the prop firm business model. Let us do the math.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">What Resets Are and Why They Exist</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A reset restores your evaluation account to its starting balance and clears any rule violations so you can attempt the challenge again. It is essentially a discounted do-over. Instead of purchasing an entirely new challenge at full price, you pay a fraction of the original cost.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          From the firm&apos;s perspective, resets are extremely profitable. The infrastructure cost of resetting a simulated account is near zero — it is a database operation. The <span className="font-mono text-profit">$50-$150</span> reset fee is almost pure margin. This is why firms make the reset process so seamless: one click, instant restart, minimal friction. They want you to reset. It is a significant revenue stream.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          From the trader&apos;s perspective, the appeal is obvious. You already know the platform, the rules, and the evaluation structure. Starting over with a reset feels like picking up where you left off rather than beginning from scratch. But this convenience has a price that extends well beyond the stated fee.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Typical Reset Costs by Firm</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Reset fees scale with account size. Here are approximate ranges for common firms and account levels:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Topstep ($50K account):</strong> Resets are effectively built into the monthly subscription model. Each new month is a fresh evaluation at <span className="font-mono text-profit">$49-$99/month</span> depending on account size.</li>
+          <li><strong className="text-profit">Apex Trader Funding ($50K-$300K):</strong> Reset fees range from <span className="font-mono text-profit">$80 to $170</span> depending on the account tier. During promotional periods, both challenges and resets can be significantly discounted.</li>
+          <li><strong className="text-profit">FTMO ($50K-$200K):</strong> FTMO calls it a &quot;Free Retry&quot; under certain conditions, but if you fail Phase 1 badly, you need to repurchase. A new $100K challenge costs <span className="font-mono text-profit">$540</span>. There is no cheap reset — you buy a new challenge.</li>
+          <li><strong className="text-profit">The5ers:</strong> Evaluation reset fees vary by program, typically <span className="font-mono text-profit">$75-$150</span> for their standard challenge accounts.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The average reset fee across the industry lands around <span className="font-mono text-profit">$80-$120</span> for a mid-sized account. That number seems manageable. Until you see what happens over time.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Compounding Math: A Realistic Example</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Meet a hypothetical trader — call them Trader A. They purchased a $100K challenge at Apex for <span className="font-mono text-profit">$250</span> during a promotional period. Solid strategy, decent execution, but they keep clipping the trailing drawdown limit during volatile sessions. Here is their reset history over six months:
+        </p>
+        <div className="bg-terminal-card rounded-lg border border-terminal-border p-6 mb-6 font-mono text-sm">
+          <div className="space-y-2">
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 1: Challenge purchase</span>
+              <span className="text-red-400">- $250</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 1: Reset #1</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 2: Reset #2</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 2: Reset #3</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 3: Reset #4</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 3: Reset #5</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 4: Reset #6</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 5: Reset #7 (passed!)</span>
+              <span className="text-red-400">- $100</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Month 5: Activation fee</span>
+              <span className="text-red-400">- $130</span>
+            </div>
+            <div className="border-t border-terminal-border mt-3 pt-3 flex justify-between font-bold text-terminal-text">
+              <span>Total spent before first trade</span>
+              <span className="text-red-400">$1,080</span>
+            </div>
+          </div>
+        </div>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Trader A spent <strong className="text-profit">$1,080</strong> to get funded on a $100K account. The original challenge was $250. The seven resets at $100 each added $700 — nearly <strong className="text-profit">three times the original challenge cost</strong>. Plus the activation fee. This is not an unusual scenario. Many traders need 3-8 resets before passing, and some need more than 10.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Now multiply this across firms. If Trader A is also running a second challenge at a different firm with similar reset patterns, the total can easily reach <span className="font-mono text-profit">$2,000-$3,000</span> in combined challenge and reset fees before a single funded trade is executed.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Resets Plus Everything Else</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Reset fees do not exist in isolation. They stack on top of your other ongoing costs:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Data feeds:</strong> You pay <span className="font-mono text-profit">$11-$130/month</span> for market data whether you are resetting or not. Each month you spend resetting is another month of data feed charges on an evaluation account that earns nothing.</li>
+          <li><strong className="text-profit">Platform subscriptions:</strong> NinjaTrader at <span className="font-mono text-profit">$75/month</span> or similar keeps billing while you reset and reattempt.</li>
+          <li><strong className="text-profit">Subscription-model firms:</strong> At Topstep, each month of the Trading Combine is effectively a reset — you pay the monthly fee to keep evaluating. Three months of attempts at $99/month is $297 in &quot;resets&quot; even though it is not labeled that way.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Over six months with data feeds ($130/month) and platform costs ($75/month), Trader A adds <span className="font-mono text-profit">$1,230</span> in infrastructure costs to the $1,080 in challenge and reset fees. The total cost of getting funded: <strong className="text-profit">$2,310</strong>. That is the break-even number their funded account needs to exceed before they are truly profitable.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Psychology of &quot;Just One More Reset&quot;</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Resets exploit a well-known cognitive bias: the <strong className="text-profit">sunk cost fallacy</strong>. You have already spent $250 on the challenge and $300 on three resets. If you walk away now, that $550 is gone with nothing to show for it. But if you reset one more time for $100, you might pass and recoup everything. The logic feels airtight in the moment.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The problem is that this logic applies equally to reset #4, #5, #6, and #10. At every stage, you have sunk more cost and the emotional pressure to &quot;make it worth it&quot; increases. Each reset raises your break-even point, which means you need to earn more from the funded account to justify the total investment. And each reset that follows a failure may indicate that something fundamental about your strategy or risk management needs to change — not just a fresh start at the same challenge.
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          If you have reset the same challenge more than 5 times, the problem is probably not bad luck. Something structural needs to change — your strategy, your risk parameters, or potentially the firm&apos;s rules themselves.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">When Resets Stop Making Financial Sense</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          There is a point where resetting becomes more expensive than buying a new challenge at a different firm — or even reconsidering your approach entirely. Here is a simple framework:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">After 3 resets:</strong> Evaluate honestly. What caused each failure? If it was the same issue each time, a reset will not fix it. You need practice, rule adjustment, or a different firm.</li>
+          <li><strong className="text-profit">After 5 resets:</strong> Compare your total spend to the cost of a full new challenge at a different firm. A fresh challenge with different rules might suit your trading style better. Five resets at $100 ($500) plus the original challenge ($250) equals $750 — enough to buy a premium challenge at almost any firm.</li>
+          <li><strong className="text-profit">After 8+ resets:</strong> Step back to demo trading for a month. The cost of resets has likely exceeded $1,000, and the funded account will need to generate significant profit just to break even. It is cheaper to practice for free and come back sharper.</li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How to Track Reset Spending Accurately</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The biggest issue with resets is that traders lose count. They remember the big challenge purchase but forget whether they reset three times or five. Over a year of trading with multiple firms, the total can be shocking when you finally add it up.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Your bank account does not forget. Every reset fee shows up as a debit — usually to the firm&apos;s website or payment processor. Bank-connected tracking catches every single one and categorizes it as a prop firm expense. When you see the cumulative total displayed on a screen, it hits differently than individual $100 charges spread across months.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Knowing your exact reset spend also changes behavior. Traders who can see they have spent <span className="font-mono text-profit">$800</span> on resets at one firm are more likely to pause and reassess than traders who vaguely remember &quot;a few resets.&quot; Visibility creates accountability.
+        </p>
+
+        <div className="mt-12 p-6 bg-terminal-card rounded-lg border border-profit/20 text-center">
+          <p className="text-terminal-text mb-4 text-lg font-semibold">
+            See your total reset spend in seconds
+          </p>
+          <p className="text-terminal-muted mb-6 text-sm">
+            Prop PNL connects to your bank and totals every challenge fee, reset, and payout automatically. No more guessing how much you have spent.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank - Free
+          </Link>
+        </div>
+      </>
+    ),
+  },
+  {
+    slug: 'prop-firm-profit-split-explained',
+    title: 'What Is a Prop Firm Profit Split? How Payouts Actually Work',
+    description:
+      'Prop firm profit splits explained — what 80/20 and 90/10 really mean, when splits change, and how to calculate your actual take-home after the split.',
+    date: '2025-05-10',
+    readTime: '7 min read',
+    tags: ['education', 'payouts', 'profitability'],
+    content: () => (
+      <>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          You made <span className="font-mono text-profit">$5,000</span> in profit on your funded account. How much of that do you actually keep? The answer depends on your profit split — and it is not as straightforward as it sounds. Profit splits are the mechanism prop firms use to divide trading profits between the firm and the trader. Most traders know the headline number (80/20, 90/10) but miss the details that determine their actual take-home.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">What a Profit Split Is</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A profit split is the percentage of your funded account&apos;s trading profit that goes to you versus the firm. An <span className="font-mono text-profit">80/20</span> split means you keep 80% of the profit and the firm takes 20%. A <span className="font-mono text-profit">90/10</span> split means you keep 90%.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The split applies to your <strong className="text-profit">gross trading profit</strong> — the gains in your funded account above the starting balance. If your account started at $100,000 and you grew it to $105,000, your gross profit is $5,000. At an 80/20 split, the firm pays you <span className="font-mono text-profit">$4,000</span> and keeps $1,000.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          This sounds simple, but a few nuances change the real math significantly.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Common Split Structures Across Firms</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Profit splits vary by firm and often change over time as you prove consistency:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">FTMO:</strong> Starts at <span className="font-mono text-profit">80/20</span>. After meeting their scaling plan requirements (10% profit over four months with no violations), you move to <span className="font-mono text-profit">90/10</span>. The 90/10 split is the maximum.</li>
+          <li><strong className="text-profit">Topstep:</strong> Starts at <span className="font-mono text-profit">80/20</span> for your first <span className="font-mono text-profit">$10,000</span> in total payouts. After $10K in cumulative payouts, you move to <span className="font-mono text-profit">90/10</span> permanently.</li>
+          <li><strong className="text-profit">Apex Trader Funding:</strong> Split varies depending on promotions and account type, typically ranging from <span className="font-mono text-profit">75/25</span> to <span className="font-mono text-profit">90/10</span>. Their promotional accounts sometimes start at lower splits.</li>
+          <li><strong className="text-profit">The5ers:</strong> Starts at <span className="font-mono text-profit">80/20</span> and scales up to <span className="font-mono text-profit">100/0</span> (you keep everything) at higher tier levels. Reaching 100/0 requires significant milestones and account growth.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The trend across the industry is toward higher trader splits. Competition has pushed most reputable firms to offer 80/20 as a floor, with a path to 90/10. Firms advertising 90/10 or 100/0 from day one usually compensate with higher challenge fees or stricter rules.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How Scaling Plans Change Your Split</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Most firms offer a scaling plan — a structured path to larger accounts and better splits. The idea is that as you prove you can manage the account responsibly, you earn more favorable terms. Here is how scaling works at FTMO as a concrete example:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li>Start with a $100,000 account at 80/20</li>
+          <li>After 4 months of profitable trading (minimum 10% profit), your account scales to <span className="font-mono text-profit">$125,000</span> and your split moves to <span className="font-mono text-profit">90/10</span></li>
+          <li>Continue hitting milestones and the account can grow to <span className="font-mono text-profit">$200,000</span>, <span className="font-mono text-profit">$400,000</span>, and eventually up to <span className="font-mono text-profit">$2,000,000</span></li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The scaling plan means your effective split improves over time — but only if you maintain consistency. One violation can reset your scaling progress, depending on the firm&apos;s rules.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Math on What You Actually Take Home</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Let us walk through three scenarios to show how the split affects real dollar amounts:
+        </p>
+        <div className="bg-terminal-card rounded-lg border border-terminal-border p-6 mb-6 font-mono text-sm">
+          <div className="space-y-2">
+            <div className="text-terminal-muted text-xs mb-2">Scenario 1: $5,000 profit on 80/20</div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Your share (80%)</span>
+              <span className="text-profit">$4,000</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Firm&apos;s share (20%)</span>
+              <span className="text-red-400">$1,000</span>
+            </div>
+            <div className="border-t border-terminal-border mt-3 pt-3 text-terminal-muted text-xs mb-2">Scenario 2: $5,000 profit on 90/10</div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Your share (90%)</span>
+              <span className="text-profit">$4,500</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Firm&apos;s share (10%)</span>
+              <span className="text-red-400">$500</span>
+            </div>
+            <div className="border-t border-terminal-border mt-3 pt-3 text-terminal-muted text-xs mb-2">Scenario 3: $5,000 profit on 75/25</div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Your share (75%)</span>
+              <span className="text-profit">$3,750</span>
+            </div>
+            <div className="flex justify-between text-terminal-text">
+              <span>Firm&apos;s share (25%)</span>
+              <span className="text-red-400">$1,250</span>
+            </div>
+          </div>
+        </div>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The difference between 75/25 and 90/10 on a $5,000 profit is <strong className="text-profit">$750</strong>. Over a year of consistent trading with monthly payouts in that range, you are talking about <span className="font-mono text-profit">$9,000</span> more in your pocket at the better split. The split matters.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Why the Split Percentage Alone Does Not Tell the Whole Story</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is where most comparisons go wrong. Traders look at splits in isolation — &quot;Firm A offers 90/10 and Firm B offers 80/20, so Firm A is obviously better.&quot; But the split is only one variable. The total cost structure determines your real take-home.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Consider two firms:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Firm A:</strong> 90/10 split, but the challenge costs $600, resets are $150, and the drawdown rules are tight (leading to more resets).</li>
+          <li><strong className="text-profit">Firm B:</strong> 80/20 split, but the challenge costs $250, resets are $80, and the drawdown rules are more forgiving.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          If Firm A requires 4 resets to pass and Firm B requires 1 reset, the total cost to get funded at Firm A is <span className="font-mono text-profit">$1,200</span> ($600 + 4 x $150) versus <span className="font-mono text-profit">$330</span> ($250 + 1 x $80) at Firm B. The $870 difference in getting-funded cost offsets many months of the better split.
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          A 90/10 split with $1,200 in sunk costs is worse than an 80/20 split with $330 in sunk costs until you have earned enough in payouts for the split difference to make up the gap. Do the math for your specific situation.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How Fees Reduce Your Effective Split</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Your effective split is not the number on the firm&apos;s marketing page. It is what you actually keep after all costs are deducted. Here is a realistic example:
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A trader with a $100K account at 80/20 earns <span className="font-mono text-profit">$5,000</span> in gross profit. Their payout is $4,000. But to reach this point, they spent:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li>Challenge fee: <span className="font-mono text-profit">$350</span></li>
+          <li>Two resets: <span className="font-mono text-profit">$200</span></li>
+          <li>Two months of data feeds: <span className="font-mono text-profit">$260</span></li>
+          <li>Activation fee: <span className="font-mono text-profit">$130</span></li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Total expenses: <span className="font-mono text-profit">$940</span>. Net take-home from that $5,000 in trading profit: <strong className="text-profit">$3,060</strong>. That is an effective split of <span className="font-mono text-profit">61/39</span> — not 80/20. The firm&apos;s 20% share was $1,000, but your fees added another $940 in costs. Your actual take-home rate on the gross profit was 61.2%.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The effective split improves over time as your initial costs are amortized across more payouts. By the third or fourth payout, the per-payout cost drops significantly. But that first payout almost always delivers a much lower effective split than the headline number.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Calculating Your Real Numbers</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          To know your actual effective split, you need two numbers: total money deposited into your bank from a specific firm, and total money debited from your bank to that firm (or its processor). The ratio between these tells you what you are really keeping.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Tracking this manually means combing through bank statements, matching Riseworks and Wise deposits to the right firms, and adding up every challenge fee and reset that may have been charged months ago. It is doable for one firm. It becomes unsustainable across three or four.
+        </p>
+
+        <div className="mt-12 p-6 bg-terminal-card rounded-lg border border-profit/20 text-center">
+          <p className="text-terminal-text mb-4 text-lg font-semibold">
+            See your real effective split per firm
+          </p>
+          <p className="text-terminal-muted mb-6 text-sm">
+            Prop PNL shows total payouts vs. total costs for each firm — so you know your actual take-home rate, not just the headline split.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank - Free
+          </Link>
+        </div>
+      </>
+    ),
+  },
+  {
+    slug: 'treat-prop-trading-like-a-business',
+    title: 'How to Treat Prop Trading Like a Business',
+    description:
+      'The traders who succeed long-term treat prop trading as a business, not a hobby. Here is what that actually looks like in practice.',
+    date: '2025-05-05',
+    readTime: '10 min read',
+    tags: ['strategy', 'profitability', 'guide'],
+    content: () => (
+      <>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Ask any consistently profitable prop trader what separates them from the majority who lose money, and you will hear some version of the same answer: &quot;I treat it like a business.&quot; It sounds like a clich&eacute;. It is not. The difference between treating prop trading as a hobby and treating it as a business is the difference between vaguely hoping you are profitable and knowing your exact net margin to the dollar.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is what that actually looks like in practice — not the motivational poster version, but the real operational framework.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Mindset Shift: Trader to Business Owner</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A hobby trader thinks in terms of trades. &quot;I made $800 today.&quot; &quot;I lost $400 this morning.&quot; The frame of reference is the individual trade or the daily P&L on their trading platform.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A business-owner trader thinks in terms of operations. &quot;My cost to acquire this funded account was $680.&quot; &quot;This firm has generated $3,200 in payouts against $1,400 in total costs, giving me a net margin of 56%.&quot; &quot;My monthly overhead across all firms is $350, so I need at least that in monthly payouts to break even.&quot;
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The difference is not intelligence or talent. It is the frame. One frame leads to emotional reactions after each trade. The other leads to strategic decisions based on data. Every point that follows is a consequence of making this shift.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Track Income and Expenses — Not Just Wins and Losses</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Your trading platform shows wins and losses. That is your <strong className="text-profit">gross performance</strong>. But a business tracks <strong className="text-profit">revenue and expenses</strong>. In prop trading terms:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Revenue:</strong> Every dollar deposited into your bank from prop firm payouts. This is your top-line income.</li>
+          <li><strong className="text-profit">Cost of goods sold:</strong> Challenge fees, reset fees, and activation fees — the direct costs of acquiring and maintaining funded accounts.</li>
+          <li><strong className="text-profit">Operating expenses:</strong> Data feeds, platform subscriptions, internet, hardware, education, and any other recurring costs.</li>
+          <li><strong className="text-profit">Net profit:</strong> Revenue minus all costs. This is the only number that determines whether your business is viable.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A trader who made <span className="font-mono text-profit">$12,000</span> in payouts over six months feels great. A business owner who made $12,000 in revenue but spent $9,500 in costs knows the business generated <span className="font-mono text-profit">$2,500</span> in profit — a 20.8% net margin. Both are looking at the same bank account. Only one knows the real story.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Know Your Cost of Goods</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          In a traditional business, cost of goods sold (COGS) is what you spend to deliver your product. In prop trading, your &quot;product&quot; is a funded account that generates payouts. The cost of producing that product includes:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Challenge fees:</strong> The initial cost to attempt getting funded. Budget <span className="font-mono text-profit">$150-$1,080</span> per attempt depending on the firm and account size.</li>
+          <li><strong className="text-profit">Reset fees:</strong> The cost of each failed attempt. Budget <span className="font-mono text-profit">$80-$150</span> per reset, and assume 2-5 resets per challenge passed.</li>
+          <li><strong className="text-profit">Activation fees:</strong> The cost to go live after passing. <span className="font-mono text-profit">$0-$500</span> depending on the firm.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Add these up per firm and you get your <strong className="text-profit">acquisition cost per funded account</strong>. If it cost you $780 to get funded at Topstep and $1,200 to get funded at FTMO, those are your unit economics. A business owner evaluates whether each unit (funded account) generates enough revenue to justify the acquisition cost — and how long it takes to recoup that cost.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Calculate ROI on Each Firm</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Return on investment is the most basic business metric, and most prop traders have never calculated it for a single firm. The formula is simple:
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          ROI = (Total Payouts from Firm - Total Costs Paid to Firm) / Total Costs Paid to Firm x 100
+        </blockquote>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          If you spent <span className="font-mono text-profit">$1,500</span> total at FTMO (challenge + reset + activation) and received <span className="font-mono text-profit">$6,000</span> in payouts, your ROI is 300%. If you spent $800 at Apex and received $600 in payouts, your ROI is -25%. That second firm is a losing proposition — and you should either change your approach there or stop using it entirely.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Most traders never do this calculation because the data is scattered. Challenge fees are on credit card statements. Payouts arrive through Rise or Wise. Reset fees are buried in email receipts. Pulling it all together requires discipline — or automation.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Know Your Break-Even Point</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Every business needs to know its break-even point — the amount of revenue required to cover all costs. For a prop trader, this means adding up every dollar you have spent on prop trading (challenges, resets, data, platforms, everything) and knowing exactly how much you need in payouts to get to zero.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          If your total lifetime spend on prop trading is <span className="font-mono text-profit">$4,500</span> and your total lifetime payouts are <span className="font-mono text-profit">$3,800</span>, you are <span className="font-mono text-profit">$700</span> away from break-even. That is not a failure — it is information. You know exactly where you stand and what you need. Compare this to the trader who &quot;thinks&quot; they are profitable because they received a couple of big payouts last month but has no idea what they have spent in total.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Conduct Regular P&L Reviews</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Every real business does monthly or quarterly financial reviews. As a prop trading business, you should do the same — at minimum once per month. Your monthly review should answer:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li>How much did I receive in payouts this month?</li>
+          <li>How much did I spend on challenges, resets, and fees this month?</li>
+          <li>What is my net profit or loss for the month?</li>
+          <li>Which firms are generating positive ROI and which are negative?</li>
+          <li>What is my cumulative P&L year to date?</li>
+          <li>Am I on track for my annual targets?</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          This review takes 15 minutes if your data is organized. It takes 2 hours if you are digging through bank statements and email receipts. And it does not happen at all if you do not have a system — which is why most traders skip it.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Prepare for Taxes Like a Business</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Prop firm payouts are self-employment income. That means <span className="font-mono text-profit">15.3%</span> in self-employment tax on top of your regular income tax rate. It also means you can deduct legitimate business expenses — challenge fees, data feeds, platform costs, home office, equipment — against that income.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          But deductions only work if you have records. A business owner keeps receipts, categorizes expenses, and can hand their accountant a clean profit and loss statement. A hobby trader scrambles in April trying to remember what they spent 10 months ago. The difference can be thousands of dollars in missed deductions or underpayment penalties.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">When to Cut a Losing Firm vs. Double Down</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A real business kills underperforming product lines and doubles down on winners. The same logic applies to prop firms. If you have been trading at a firm for six months and the math shows a negative ROI after all costs, you need to ask hard questions:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li>Is the negative ROI because of my trading, or because the firm&apos;s rules do not suit my strategy?</li>
+          <li>Would I be profitable at this firm if I changed my approach, or is it a structural mismatch?</li>
+          <li>Is the money I am spending here better deployed at a different firm where my ROI is positive?</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          These are business decisions, not emotional ones. A trader emotionally attached to a firm (&quot;I have spent so much there, I cannot quit now&quot;) is making a sunk-cost decision. A business owner looks at forward ROI and allocates capital where it produces the best return.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Spreadsheet Trap</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Many traders try to build this business framework in a spreadsheet. It works at first. You create columns for each firm, rows for each transaction, formulas for totals. Month one looks clean. Month two is still manageable.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          By month four, the spreadsheet is stale. You forgot to log two reset fees, a data feed charge changed and you did not update it, and a payout from Wise is sitting unidentified because you do not remember which firm it came from. The spreadsheet becomes a source of anxiety rather than clarity — you know it is wrong, but fixing it requires an hour of forensic bank statement review.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Manual tracking breaks down at scale. One firm, maybe two — a spreadsheet can handle it. Three firms with monthly payouts, resets, subscriptions, and data feeds producing 30-50 transactions per month? You need a system that does not depend on your memory or discipline.
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          The best system is the one that runs without you. Your bank records every transaction automatically. Build your tracking on top of that foundation, not on manual entry.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Build Systems, Not Habits</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A habit requires willpower every day. A system runs on its own. Businesses do not rely on the CEO remembering to check revenue — they have dashboards, accounting software, and automated reports. Your prop trading business should work the same way.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Connect your bank to tracking software that auto-categorizes prop firm transactions. Set up a monthly calendar reminder to review your P&L report (even if the data is already there — the review itself is the value). Use the per-firm breakdown to make allocation decisions quarterly. Export the data for your accountant at tax time.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          This is not complicated. It is just business. And the traders who run it like one are the traders who are still here — and still profitable — a year from now.
+        </p>
+
+        <div className="mt-12 p-6 bg-terminal-card rounded-lg border border-profit/20 text-center">
+          <p className="text-terminal-text mb-4 text-lg font-semibold">
+            Run your prop trading business on real data
+          </p>
+          <p className="text-terminal-muted mb-6 text-sm">
+            Prop PNL connects to your bank and gives you the P&L dashboard your business needs. Per-firm ROI, monthly reviews, tax-ready exports.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank - Free
+          </Link>
+        </div>
+      </>
+    ),
+  },
+  {
+    slug: 'build-verified-prop-trading-track-record',
+    title: 'How to Build a Verified Prop Trading Track Record',
+    description:
+      'Screenshots can be faked. Here is how to build a prop trading track record that people actually trust — and why bank-verified proof matters.',
+    date: '2025-04-28',
+    readTime: '8 min read',
+    tags: ['strategy', 'credibility', 'verification'],
+    content: () => (
+      <>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Every prop trading Discord, Twitter thread, and YouTube comment section has the same problem: screenshots. &quot;Look at my payout!&quot; followed by an image that could have been made in Photoshop in 30 seconds. Or a broker statement that could be a demo account. Or a dashboard screenshot with the URL conveniently cropped out.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The prop trading world has a credibility crisis. Everyone claims to be profitable. Very few can prove it. And the traders who <em>can</em> prove it — the ones with verified, tamper-proof track records — have an enormous advantage. Whether you want to build a following, sell a course, attract investors, or simply hold yourself accountable, a verified track record is the foundation.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is how to build one that people actually trust.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Why Track Records Matter</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A track record is proof of performance over time. It is the difference between &quot;trust me, I am profitable&quot; and &quot;here are 12 months of verified results.&quot; Depending on your goals, a credible track record serves different purposes:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Accountability:</strong> The most underrated reason. When you know your results are being tracked and are visible, you trade differently. You take fewer impulsive trades. You follow your rules. The track record becomes a forcing function for discipline.</li>
+          <li><strong className="text-profit">Coaching and education credibility:</strong> If you plan to teach, mentor, or sell a course, verified results are the difference between being taken seriously and being dismissed as another scammer. The bar is rising — audiences increasingly demand proof before paying for education.</li>
+          <li><strong className="text-profit">Social media and following:</strong> Consistently sharing verified results builds an audience that trusts you. Unverified screenshots get likes but not loyalty. Verified results build reputation.</li>
+          <li><strong className="text-profit">Investor interest:</strong> If you eventually want to manage capital or attract backing beyond prop firms, institutional investors will not look at screenshots. They want auditable records, ideally bank-verified, covering an extended period.</li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">The Problem with Screenshots</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Let us be direct about why screenshots are worthless as proof:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Trivially easy to fake:</strong> Browser developer tools let you change any number on any webpage in seconds. A &quot;$15,000 payout&quot; screenshot could have originally said $150. No technical skill required — a 12-year-old can do it.</li>
+          <li><strong className="text-profit">No context:</strong> A screenshot of a $5,000 payout says nothing about the $4,000 in challenge fees and resets it took to get there. It is a single data point presented without the full picture.</li>
+          <li><strong className="text-profit">No continuity:</strong> A screenshot is a moment in time. It does not show what happened before or after. A trader could post a winning month and omit the three losing months that preceded it.</li>
+          <li><strong className="text-profit">Demo vs. live:</strong> Most trading platform screenshots look identical whether the account is live-funded or a demo. Without additional verification, there is no way to tell.</li>
+          <li><strong className="text-profit">No ongoing verification:</strong> A screenshot posted in January cannot be updated or verified in March. It is a static claim with no mechanism for continuous proof.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The prop trading community knows this. That is why screenshot posts generate skepticism as often as they generate admiration. &quot;Proof or it didn&apos;t happen&quot; is a common reply — and for good reason.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Broker Statements vs. Bank Statements</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A step up from screenshots is sharing broker or firm statements — PDF documents showing your account history, trades, and P&L. These carry more weight than screenshots because they are harder (though not impossible) to forge. However, they have limitations:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Broker statements show gross performance</strong> — the trading P&L on the funded account. They do not show what you actually received after the profit split, and they do not include your costs (challenge fees, resets, data feeds).</li>
+          <li><strong className="text-profit">Prop firm dashboards are not bank-verified.</strong> The firm controls what numbers appear. While reputable firms are honest, there is no independent third-party verification built in.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          <strong className="text-profit">Bank statements</strong> are the gold standard because they represent an independent, third-party record of actual money movement. Your bank does not care about your marketing narrative. It records exactly what was deposited, exactly what was withdrawn, and when. A bank statement showing consistent deposits from Rise, Wise, or FTMO is nearly impossible to fake because the bank is a regulated institution with its own audit trail.
+        </p>
+        <blockquote className="border-l-2 border-profit/30 pl-4 italic text-terminal-muted mb-6">
+          A trading platform shows what you traded. A broker statement shows what you earned on paper. A bank statement shows what you actually received. Each level is more credible than the last.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">What &quot;Bank-Verified&quot; Actually Means</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          When we say &quot;bank-verified,&quot; we mean the financial data comes directly from a regulated banking institution through a secure, read-only API connection — not from screenshots, not from manual entry, and not from the prop firm itself.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Here is how it works technically: a service like Teller (the banking API Prop PNL uses) connects directly to your bank, reads your transaction history through an encrypted connection, and passes that data to the tracking platform. The trader cannot modify the data. The tracking platform cannot modify the data. It comes straight from the bank&apos;s records. This is the same type of connection used by financial institutions, accounting software, and lending platforms.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The result is a P&L report that is backed by bank data — not self-reported numbers, not screenshots, and not manually-entered figures. When someone views a bank-verified report, they know the payouts shown actually landed in a real bank account and the fees shown actually left it.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">How to Share Results Credibly</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          There are several ways to share your track record, ranked by credibility:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Screenshots (lowest credibility):</strong> Easy to produce, easy to fake, no ongoing verification. Useful for casual sharing but carries zero weight with serious audiences.</li>
+          <li><strong className="text-profit">PDF exports of broker/firm statements (medium credibility):</strong> Harder to fake, includes more context, but static and does not include full cost picture. Better for one-time proof but does not build an ongoing narrative.</li>
+          <li><strong className="text-profit">Public shareable links (high credibility):</strong> A link to a live, updating report that pulls from verified data. Viewers can see the track record is current, includes both income and expenses, and is backed by a verifiable data source. This is the format that works best for social media bios, coaching applications, and long-term credibility building.</li>
+          <li><strong className="text-profit">Bank-verified shareable links (highest credibility):</strong> Same as above, but explicitly backed by bank-connected data through a regulated API. The viewer knows the numbers came from the trader&apos;s actual bank account, not from manual entry or self-reporting.</li>
+        </ul>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          The best format depends on your audience. For Twitter followers, a public link they can check anytime is powerful. For potential coaching clients, a bank-verified report with months of history is persuasive. For investors, nothing less than bank-verified data with a long track record will be taken seriously.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Building Consistency Over Time</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          A single great month is not a track record. Neither is a single great payout. What matters — to followers, investors, and to yourself — is <strong className="text-profit">consistency over time</strong>. A track record that shows 8 out of 12 months profitable, with controlled drawdowns and steady growth, is far more impressive than a single $20,000 month followed by silence.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          This is where the accountability function of a track record becomes its most valuable feature. When you know your results are being tracked month over month, you are less likely to take the risky all-or-nothing trade that could blow your account. You play for the long game because the long game is what the record shows.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Start building your track record now, even if the numbers are small. A trader with 6 months of modest but consistent bank-verified profits has more credibility than a trader with one impressive screenshot from last week.
+        </p>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">What Serious People Actually Look For</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Whether your audience is followers, students, or potential investors, here is what they look for in a credible track record:
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-terminal-text mb-6 ml-4">
+          <li><strong className="text-profit">Duration:</strong> Minimum 3-6 months. Anything less is too short to distinguish skill from luck. Twelve months or more is strongly preferred.</li>
+          <li><strong className="text-profit">Net numbers, not gross:</strong> Show the P&L after all costs, not just payouts. Anyone can show deposits. Showing net profit after fees demonstrates real business acumen.</li>
+          <li><strong className="text-profit">Consistency:</strong> Steady, repeatable results beat one-off big months. Low volatility in monthly returns suggests a real edge rather than gambling.</li>
+          <li><strong className="text-profit">Verification source:</strong> Where does the data come from? Self-reported numbers carry minimal weight. Bank-connected data carries maximum weight.</li>
+          <li><strong className="text-profit">Transparency about losses:</strong> A track record that shows bad months alongside good ones is more credible than one that is suspiciously clean. Real trading has drawdowns. Showing them builds trust.</li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-terminal-text mt-12 mb-4">Getting Started</h2>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          Building a verified track record is not something you do retroactively. You cannot go back and verify six months of screenshots after the fact. The best time to start is now — connect your bank, let the data accumulate, and in three to six months, you will have something that no screenshot can match: a continuous, bank-verified record of your prop trading results.
+        </p>
+        <p className="text-terminal-text mb-6 leading-relaxed">
+          When you are ready to share it — whether on social media, with potential coaching clients, or just to keep yourself honest — you will have a link that speaks for itself. No explanation needed. No &quot;trust me.&quot; Just the numbers, verified by your bank.
+        </p>
+
+        <div className="mt-12 p-6 bg-terminal-card rounded-lg border border-profit/20 text-center">
+          <p className="text-terminal-text mb-4 text-lg font-semibold">
+            Build your bank-verified track record
+          </p>
+          <p className="text-terminal-muted mb-6 text-sm">
+            Prop PNL creates a shareable, bank-verified P&L report you can link anywhere. Start building your proof today.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank - Free
+          </Link>
+        </div>
+      </>
+    ),
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {

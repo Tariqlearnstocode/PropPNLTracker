@@ -554,8 +554,11 @@ export default function LandingPage() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">What firms do you support?</h3>
+              <p className="text-terminal-text mb-3">
+                We auto-detect transactions from virtually every prop firm — Topstep, FTMO, Apex, The5ers, Earn2Trade, Bulenox, TradeDay, TakeProfitTrader, Tradeify, FundedNext, Leeloo, Elite Trader Funding, and dozens more. We also recognize all major payout processors like Rise, Wise, and Stripe.
+              </p>
               <p className="text-terminal-text">
-                We support most major prop firms and payout processors—including Rise, Wise, Topstep, FTMO, and The5ers.
+                If we miss a transaction, you can manually assign it to a firm in your dashboard. This way your P&L stays accurate even if your firm uses an unusual payment description.
               </p>
             </div>
             <div>
