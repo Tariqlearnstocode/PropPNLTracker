@@ -1,11 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toasts/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTellerConnect } from 'teller-connect-react';
 import Link from 'next/link';
+
+function openSignupModal() {
+  window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } }));
+}
 
 export default function ConnectPage() {
   const { user } = useAuth();
@@ -13,13 +17,15 @@ export default function ConnectPage() {
   const { toast } = useToast();
   const [connecting, setConnecting] = useState(false);
   const [tellerConfig, setTellerConfig] = useState<{ applicationId: string; environment: string } | null>(null);
+  const hasOpenedModal = useRef(false);
 
-  // Redirect if not authenticated
+  // Open signup modal once when unauthenticated (no redirect)
   useEffect(() => {
-    if (!user) {
-      router.push('/');
+    if (!user && !hasOpenedModal.current) {
+      hasOpenedModal.current = true;
+      openSignupModal();
     }
-  }, [user, router]);
+  }, [user]);
 
   // Load Teller config on mount
   useEffect(() => {
@@ -125,15 +131,37 @@ export default function ConnectPage() {
     open();
   }
 
-  // Show loading state if not authenticated (will redirect)
+  // Signup gate when not authenticated — same copy/styling as landing final CTA
   if (!user) {
     return (
-      <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
-        <div className="text-center">
-          <span className="text-4xl block mx-auto mb-4">⏳</span>
-          <p className="text-terminal-muted">Loading...</p>
+      <section
+        className="min-h-screen flex items-center justify-center py-24 border-t border-profit/20 px-4"
+        style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-5xl sm:text-6xl font-bold text-profit mb-6 leading-tight whitespace-nowrap">
+            Connect your bank → see your P&L.
+          </h2>
+          <p className="text-xl text-terminal-text mb-6 max-w-2xl mx-auto">
+            Real P&L in ~60 seconds. No credit card. Cancel anytime.
+          </p>
+          <p className="text-sm text-terminal-muted mb-8 max-w-xl mx-auto font-mono">
+            Sign up → connect bank → get your report. That&apos;s it.
+          </p>
+          <button
+            onClick={openSignupModal}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank – Free
+            <span>→</span>
+          </button>
+          <p className="mt-6">
+            <Link href="/" className="text-sm font-mono text-terminal-muted hover:text-profit transition-colors">
+              Back to home
+            </Link>
+          </p>
         </div>
-      </div>
+      </section>
     );
   }
 

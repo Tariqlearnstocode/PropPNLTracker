@@ -1,5 +1,8 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { CopyShareLinkButton } from '@/components/CopyShareLinkButton';
+import { FAQAccordion } from '@/components/FAQ';
+import { homepageFAQs } from '@/lib/faq-data';
 
 export const metadata: Metadata = {
   title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees | Topstep, FTMO, Rise',
@@ -54,10 +57,9 @@ export default function LandingPage() {
               </p>
               {/* Trust + SEO: security + supported firms */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 mt-8 text-xs text-terminal-muted font-mono">
-                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Teller</span>
                 <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Read-only</span>
                 <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Encrypted</span>
-                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Topstep, FTMO, Rise, Wise</span>
+                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> 50 Firms Supported</span>
               </div>
             </div>
 
@@ -359,10 +361,7 @@ export default function LandingPage() {
                   <span className="text-lg font-semibold text-profit">$12,450</span>
                 </div>
               </div>
-              <button className="w-full px-4 py-2 bg-profit text-terminal-bg rounded-md text-sm font-medium hover:bg-profit/90 transition-colors flex items-center justify-center gap-2">
-                <span>🔗</span>
-                Copy Share Link
-              </button>
+              <CopyShareLinkButton />
             </div>
           </div>
         </div>
@@ -529,49 +528,33 @@ export default function LandingPage() {
 
       {/* FAQ Section */}
       <section className="py-24 bg-terminal-card border-t border-profit/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-12 text-center">
-            FAQ
-          </h2>
-          <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Do I need a credit card for the free report?</h3>
-              <p className="text-terminal-text">
-                No. Connect your bank, get your report. No card required. Add Pro later if you want weekly updates.
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20 items-start">
+            {/* Left: heading + link */}
+            <div className="lg:sticky lg:top-28">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-profit/20 bg-profit/5 mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-profit" />
+                <span className="text-xs font-mono text-profit/80 tracking-wide">FAQ</span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl font-bold text-terminal-text mb-4 leading-tight">
+                Questions?
+                <span className="block text-profit mt-1">Answers.</span>
+              </h2>
+              <p className="text-terminal-muted mb-8 leading-relaxed">
+                The most common things traders ask before connecting their bank.
               </p>
+              <Link
+                href="/faq"
+                className="inline-flex items-center gap-2 text-sm font-mono text-profit hover:text-profit/80 transition-colors group"
+              >
+                See all FAQs
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </Link>
             </div>
+
+            {/* Right: accordion */}
             <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Does this connect to my prop firm accounts?</h3>
-              <p className="text-terminal-text">
-                No—we connect to your bank. We track real payouts and real fees from your account.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Is this secure?</h3>
-              <p className="text-terminal-text">
-                Yes. We use Teller (used by tax and finance apps). Read-only connection—we never see your password or store it. You can disconnect anytime.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">What firms do you support?</h3>
-              <p className="text-terminal-text mb-3">
-                We auto-detect transactions from virtually every prop firm — Topstep, FTMO, Apex, The5ers, Earn2Trade, Bulenox, TradeDay, TakeProfitTrader, Tradeify, FundedNext, Leeloo, Elite Trader Funding, and dozens more. We also recognize all major payout processors like Rise, Wise, and Stripe.
-              </p>
-              <p className="text-terminal-text">
-                If we miss a transaction, you can manually assign it to a firm in your dashboard. This way your P&L stays accurate even if your firm uses an unusual payment description.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">How often does it update?</h3>
-              <p className="text-terminal-text">
-                Free Trial = no updates. Pro = updates weekly. One-time pull = snapshot report.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-terminal-text mb-2">Can I cancel?</h3>
-              <p className="text-terminal-text">
-                Yes. Cancel Pro anytime—no questions asked. Your free report stays.
-              </p>
+              <FAQAccordion faqs={homepageFAQs} />
             </div>
           </div>
         </div>

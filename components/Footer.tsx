@@ -1,53 +1,55 @@
 import Link from 'next/link';
+import Image from 'next/image';
+
+const linkClass = 'text-xs font-mono text-terminal-muted hover:text-profit transition-colors block py-0.5';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-terminal-bg border-t border-terminal-border mt-auto print:hidden">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Logo & Copyright */}
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-profit rounded flex items-center justify-center">
-              <svg className="w-4 h-4 text-terminal-bg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <span className="text-sm text-terminal-muted">
-              © {currentYear}, Prop PNL
-            </span>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Row 1: Logo | Product (stacked) · Resources (stacked) · Legal (stacked) */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+            <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
+            <span className="text-xs text-terminal-muted font-mono">© {currentYear}</span>
+          </Link>
 
-          {/* Links */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
-            <Link href="/pricing" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Pricing
-            </Link>
-            <Link href="/security" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/disclaimers" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Terms of Use
-            </Link>
-            <Link href="/security" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Security
-            </Link>
-            <Link href="/disclaimers" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Disclaimers
-            </Link>
-            <Link href="mailto:support@example.com" className="text-terminal-muted hover:text-terminal-text transition-colors">
-              Contact Us
-            </Link>
-          </div>
+          <nav className="flex flex-wrap gap-x-8 gap-y-4 sm:gap-x-10">
+            <div>
+              <div className="text-xs font-mono font-medium text-terminal-text uppercase tracking-wider mb-2">Product</div>
+              <div className="flex flex-col">
+                <Link href="/pricing" className={linkClass}>Pricing</Link>
+                <Link href="/connect" className={linkClass}>Connect Bank</Link>
+                <Link href="/leaderboard" className={linkClass}>Leaderboard</Link>
+                <Link href="/faq" className={linkClass}>FAQ</Link>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-mono font-medium text-terminal-text uppercase tracking-wider mb-2">Resources</div>
+              <div className="flex flex-col">
+                <Link href="/firms" className={linkClass}>Firms</Link>
+                <Link href="/blog" className={linkClass}>Blog</Link>
+                <Link href="/guide" className={linkClass}>Guide</Link>
+                <Link href="/compare" className={linkClass}>Compare</Link>
+                <a href="mailto:support@example.com" className={linkClass}>Contact</a>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-mono font-medium text-terminal-text uppercase tracking-wider mb-2">Legal</div>
+              <div className="flex flex-col">
+                <Link href="/security" className={linkClass}>Security</Link>
+                <Link href="/disclaimers" className={linkClass}>Disclaimers</Link>
+              </div>
+            </div>
+          </nav>
         </div>
 
-        {/* Secondary Links */}
+        {/* Row 2: Do not sell or share */}
         <div className="mt-4 pt-4 border-t border-terminal-border text-center">
-          <Link
-            href="/security#gdpr"
-            className="text-xs text-terminal-muted hover:text-terminal-text transition-colors"
-          >
+          <Link href="/security#gdpr" className={`${linkClass} text-xs`}>
             Do Not Sell or Share My Personal Information
           </Link>
         </div>
