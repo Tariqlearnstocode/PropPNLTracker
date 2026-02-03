@@ -1,6 +1,5 @@
 'use client';
 
-import { Lock } from 'lucide-react';
 
 interface TransactionsTeaserProps {
   transactionCount: number;
@@ -33,7 +32,7 @@ export function TransactionsTeaser({ transactionCount, onGetStarted }: Transacti
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center p-6 bg-terminal-card border border-terminal-border rounded-2xl shadow-xl max-w-sm animate-fade-in">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-profit/10 mb-4">
-            <Lock className="w-6 h-6 text-profit" />
+            <span className="text-2xl text-profit">🔒</span>
           </div>
           <h3 className="text-base font-semibold text-terminal-text mb-2">
             {transactionCount > 0

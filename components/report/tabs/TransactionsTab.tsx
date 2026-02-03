@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { PNLReport, formatCurrency, formatDate } from '@/lib/pnl-calculations';
 import { ConfidenceBadge } from '../ui/ConfidenceBadge';
-import { Edit2, X } from 'lucide-react';
 
 interface TransactionsTabProps {
   transactionsWithAssignments: PNLReport['transactions'];
@@ -212,7 +211,7 @@ export function TransactionsTab({
                                   onClick={() => onOpenAssignmentModal(txn.id)}
                                   className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium font-mono text-accent-blue hover:text-accent-blue/80 hover:bg-accent-blue/10 rounded transition-colors touch-manipulation"
                                 >
-                                  <Edit2 className="w-3 h-3" />
+                                  <span>✏️</span>
                                   {assignedFirm ? 'Edit' : 'Assign'}
                                 </button>
                                 <button
@@ -220,7 +219,7 @@ export function TransactionsTab({
                                   className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium font-mono text-terminal-muted hover:text-loss hover:bg-loss-dim rounded transition-colors touch-manipulation"
                                   title="Not a prop firm transaction"
                                 >
-                                  <X className="w-3 h-3" />
+                                  <span>✕</span>
                                   Dismiss
                                 </button>
                               </div>
@@ -286,7 +285,7 @@ export function TransactionsTab({
                             onClick={() => onOpenAssignmentModal(txn.id)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium font-mono text-accent-blue hover:text-accent-blue/80 hover:bg-accent-blue/10 rounded transition-colors touch-manipulation"
                           >
-                            <Edit2 className="w-3 h-3" />
+                            <span>✏️</span>
                             {assignedFirm ? 'Edit' : 'Assign'}
                           </button>
                         </td>

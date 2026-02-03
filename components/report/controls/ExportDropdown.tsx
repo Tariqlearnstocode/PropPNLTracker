@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Download, ChevronDown, FileDown, FileText, Receipt, DollarSign, Building2, CalendarDays } from 'lucide-react';
 
 interface ExportDropdownProps {
   onExportTransactions: () => void;
@@ -52,9 +51,9 @@ export function ExportDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 px-2.5 py-1.5 bg-terminal-card border border-terminal-border hover:bg-terminal-card-hover text-terminal-text rounded-lg transition-colors text-xs font-mono"
       >
-        <Download className="w-3.5 h-3.5 text-terminal-muted" />
+        <span className="text-terminal-muted">⬇️</span>
         <span>Export</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-terminal-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className={`text-terminal-muted transition-transform inline-block ${isOpen ? 'rotate-180' : ''}`}>▼</span>
       </button>
       {isOpen && (
         <>
@@ -69,38 +68,38 @@ export function ExportDropdown({
             {menuItem(
               'All Transactions',
               'Every transaction with details',
-              <FileDown className="w-4 h-4 text-terminal-muted" />,
+              <span className="text-terminal-muted">📥</span>,
               onExportTransactions,
             )}
             {menuItem(
               'Purchases Only',
               'Fees & expenses for accounting',
-              <Receipt className="w-4 h-4 text-loss/70" />,
+              <span className="text-loss/70">🧾</span>,
               onExportPurchases,
             )}
             {menuItem(
               'Payouts Only',
               'Deposits & income received',
-              <DollarSign className="w-4 h-4 text-profit/70" />,
+              <span className="text-profit/70">💰</span>,
               onExportPayouts,
             )}
             {menuItem(
               'Monthly Summary',
               'Monthly P&L breakdown',
-              <CalendarDays className="w-4 h-4 text-terminal-muted" />,
+              <span className="text-terminal-muted">📅</span>,
               onExportMonthlySummary,
             )}
             {menuItem(
               'Firm Breakdown',
               'Per-firm P&L and ROI',
-              <Building2 className="w-4 h-4 text-terminal-muted" />,
+              <span className="text-terminal-muted">🏢</span>,
               onExportFirmBreakdown,
             )}
             <div className="border-t border-terminal-border">
               {menuItem(
                 'Print / Save PDF',
                 'Print current view',
-                <FileText className="w-4 h-4 text-terminal-muted" />,
+                <span className="text-terminal-muted">📄</span>,
                 onExportPDF,
                 true,
               )}

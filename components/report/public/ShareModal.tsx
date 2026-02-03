@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Copy, Link } from 'lucide-react';
 
 // Simple social icons (inline SVG for consistency)
 function TwitterIcon({ className }: { className?: string }) {
@@ -93,7 +92,7 @@ export function ShareModal({
           onClick={onClose}
           className="absolute top-4 right-4 text-terminal-muted hover:text-terminal-text transition-colors"
         >
-          <X className="w-5 h-5" />
+          <span className="text-lg">✕</span>
         </button>
 
         <h3 className="text-lg font-semibold text-terminal-text mb-4">Share</h3>
@@ -106,7 +105,7 @@ export function ShareModal({
             className="w-10 h-10 rounded-full border border-terminal-border flex items-center justify-center text-terminal-muted hover:text-terminal-text hover:border-terminal-border-light transition-colors"
             title="Copy link"
           >
-            <Copy className="w-4 h-4" />
+            <span>📋</span>
           </button>
           <a
             href={twitterUrl}
@@ -132,7 +131,7 @@ export function ShareModal({
           <p className="text-xs font-mono text-terminal-muted uppercase tracking-wider mb-2">Or copy link</p>
           <div className="flex items-center gap-2">
             <div className="flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border border-terminal-border bg-terminal-bg">
-              <Link className="w-4 h-4 text-terminal-muted shrink-0" />
+              <span className="text-terminal-muted shrink-0">🔗</span>
               <input
                 type="text"
                 readOnly

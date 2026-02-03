@@ -1,6 +1,5 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
 
 interface PublicInlineCTAProps {
   message: string;
@@ -21,7 +20,7 @@ export function PublicInlineCTA({ message, ctaText = 'Start tracking free', onGe
             className="flex items-center gap-1.5 px-4 py-2 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-lg transition-colors flex-shrink-0"
           >
             {ctaText}
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>→</span>
           </button>
         </div>
       </div>

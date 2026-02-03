@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Save } from 'lucide-react';
 
 interface BulkAssignModalProps {
   isOpen: boolean;
@@ -49,7 +48,7 @@ export function BulkAssignModal({
               onClick={handleClose}
               className="text-terminal-muted hover:text-terminal-text transition-colors"
             >
-              <X className="w-5 h-5" />
+              <span className="text-lg">✕</span>
             </button>
           </div>
         </div>
@@ -107,7 +106,7 @@ export function BulkAssignModal({
             disabled={!bulkAssignFirmName.trim()}
             className="px-4 py-2 bg-profit text-terminal-bg rounded-lg transition-colors disabled:bg-terminal-card disabled:border disabled:border-terminal-border disabled:text-terminal-muted disabled:cursor-not-allowed font-medium flex items-center gap-2 hover:bg-profit/90"
           >
-            <Save className="w-4 h-4" />
+            <span>💾</span>
             Assign All
           </button>
         </div>

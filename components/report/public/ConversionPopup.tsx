@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, TrendingUp, Shield, Zap } from 'lucide-react';
 
 interface ConversionPopupProps {
   displayName?: string | null;
@@ -69,13 +68,13 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           onClick={handleDismiss}
           className="absolute top-4 right-4 text-terminal-muted hover:text-terminal-text transition-colors"
         >
-          <X className="w-5 h-5" />
+          <span className="text-lg">✕</span>
         </button>
 
         {/* Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-profit/10 border border-profit/20 rounded-full mb-4">
-            <TrendingUp className="w-3.5 h-3.5 text-profit" />
+            <span className="text-profit">📈</span>
             <span className="text-[11px] font-mono font-medium text-profit uppercase tracking-wider">
               Free to use
             </span>
@@ -95,7 +94,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
         <div className="space-y-3 mb-6">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-profit/10 flex items-center justify-center flex-shrink-0">
-              <Zap className="w-4 h-4 text-profit" />
+              <span className="text-profit text-lg">⚡</span>
             </div>
             <div>
               <div className="text-sm font-medium text-terminal-text">Connect in 60 seconds</div>
@@ -104,7 +103,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           </div>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-profit/10 flex items-center justify-center flex-shrink-0">
-              <Shield className="w-4 h-4 text-profit" />
+              <span className="text-profit text-lg">🛡️</span>
             </div>
             <div>
               <div className="text-sm font-medium text-terminal-text">Bank-level security</div>
@@ -113,7 +112,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           </div>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-profit/10 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-4 h-4 text-profit" />
+              <span className="text-profit text-lg">📈</span>
             </div>
             <div>
               <div className="text-sm font-medium text-terminal-text">Automatic firm detection</div>

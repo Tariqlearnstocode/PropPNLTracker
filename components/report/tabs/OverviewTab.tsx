@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { PNLReport, formatCurrency, formatMonth, formatDate } from '@/lib/pnl-calculations';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 import { MonthlyPNLHeatmap } from '../ui/MonthlyPNLHeatmap';
 import { TopFirmsTable } from '../ui/TopFirmsTable';
 
@@ -183,7 +182,7 @@ export function OverviewTab({
           onClick={() => setShowMonthlyDetail(!showMonthlyDetail)}
           className="flex items-center gap-1.5 mt-4 pt-3 border-t border-terminal-border w-full text-left text-[11px] font-mono uppercase tracking-wider text-terminal-muted hover:text-terminal-text transition-colors"
         >
-          {showMonthlyDetail ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          {showMonthlyDetail ? <span className="text-sm">▲</span> : <span className="text-sm">▼</span>}
           {showMonthlyDetail ? 'Hide' : 'Show'} monthly breakdown
         </button>
 

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Save } from 'lucide-react';
 import { PNLReport, formatCurrency, formatDate } from '@/lib/pnl-calculations';
 
 interface AssignmentModalProps {
@@ -57,7 +56,7 @@ export function AssignmentModal({
             }}
             className="text-terminal-muted hover:text-terminal-text transition-colors"
           >
-            <X className="w-5 h-5" />
+            <span className="text-lg">✕</span>
           </button>
         </div>
 
@@ -110,7 +109,7 @@ export function AssignmentModal({
             disabled={!displayFirmName.trim()}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-profit text-terminal-bg font-medium rounded-lg transition-colors disabled:bg-terminal-card disabled:border disabled:border-terminal-border disabled:text-terminal-muted disabled:cursor-not-allowed hover:bg-profit/90 touch-manipulation"
           >
-            <Save className="w-4 h-4" />
+            <span>💾</span>
             Save Assignment
           </button>
           {manualAssignments[transaction.id] && (

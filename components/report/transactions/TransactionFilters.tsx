@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Search } from 'lucide-react';
 import { formatMonth } from '@/lib/pnl-calculations';
 
 interface TransactionFiltersProps {
@@ -30,7 +29,7 @@ export function TransactionFilters({
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
           <input
             type="text"
             placeholder="Search transactions..."

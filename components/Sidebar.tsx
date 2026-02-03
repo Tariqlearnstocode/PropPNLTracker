@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FileCheck, User, LogOut, Settings, BarChart3, Menu, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSidebar } from '@/contexts/SidebarContext';
 
@@ -75,13 +74,13 @@ export default function Sidebar() {
           {isOpen ? (
             <Link href="/" className="flex items-center gap-2 min-w-0">
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                <FileCheck className="w-5 h-5 text-white" />
+                <span className="text-white text-lg">✅</span>
               </div>
               <span className="font-semibold text-gray-900">Income Verifier</span>
             </Link>
           ) : (
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mx-auto">
-              <FileCheck className="w-5 h-5 text-white" />
+              <span className="text-white text-lg">✅</span>
             </div>
           )}
           <button
@@ -89,7 +88,7 @@ export default function Sidebar() {
             className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
             aria-label={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
-            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {isOpen ? <span className="text-lg">✕</span> : <span className="text-lg">☰</span>}
           </button>
         </div>
 
@@ -104,7 +103,7 @@ export default function Sidebar() {
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <BarChart3 className="w-5 h-5 flex-shrink-0" />
+              <span className="flex-shrink-0 text-lg">📊</span>
               {isOpen && <span className="text-sm font-medium">View Report</span>}
             </Link>
           )}
@@ -117,7 +116,7 @@ export default function Sidebar() {
                 : 'text-gray-700 hover:bg-gray-100'
             }`}
           >
-            <Settings className="w-5 h-5 flex-shrink-0" />
+            <span className="flex-shrink-0 text-lg">⚙️</span>
             {isOpen && <span className="text-sm font-medium">Settings</span>}
           </Link>
         </nav>
@@ -126,7 +125,7 @@ export default function Sidebar() {
         <div className="border-t border-gray-200 p-4 space-y-2">
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="w-4 h-4 text-gray-600" />
+              <span className="text-gray-600 text-base">👤</span>
             </div>
             {isOpen && (
               <div className="min-w-0 flex-1">
@@ -139,7 +138,7 @@ export default function Sidebar() {
             disabled={signingOut}
             className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
+            <span className="flex-shrink-0 text-lg">🚪</span>
             {isOpen && (
               <span className="text-sm font-medium">
                 {signingOut ? 'Signing out...' : 'Sign Out'}

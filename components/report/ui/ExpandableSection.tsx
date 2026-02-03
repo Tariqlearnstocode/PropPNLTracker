@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronUp, ChevronDown } from 'lucide-react';
 
 interface ExpandableSectionProps {
   title: string;
@@ -19,9 +18,9 @@ export function ExpandableSection({ title, defaultOpen = false, children }: Expa
       >
         <span className="font-semibold text-gray-900">{title}</span>
         {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-gray-500" />
+          <span className="text-gray-500 text-lg">▲</span>
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-500" />
+          <span className="text-gray-500 text-lg">▼</span>
         )}
       </button>
       {isOpen && (

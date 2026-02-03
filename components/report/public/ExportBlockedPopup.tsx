@@ -1,6 +1,5 @@
 'use client';
 
-import { X, Download } from 'lucide-react';
 
 interface ExportBlockedPopupProps {
   open: boolean;
@@ -23,12 +22,12 @@ export function ExportBlockedPopup({ open, onClose, onGetStarted }: ExportBlocke
           onClick={onClose}
           className="absolute top-4 right-4 text-terminal-muted hover:text-terminal-text transition-colors"
         >
-          <X className="w-5 h-5" />
+          <span className="text-lg">✕</span>
         </button>
 
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-terminal-muted/10 border border-terminal-border rounded-full mb-4">
-            <Download className="w-3.5 h-3.5 text-terminal-muted" />
+            <span className="text-terminal-muted">⬇️</span>
             <span className="text-[11px] font-mono font-medium text-terminal-muted uppercase tracking-wider">
               Export
             </span>

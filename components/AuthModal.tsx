@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 type AuthMode = 'signin' | 'signup' | 'reset';
@@ -161,7 +160,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
             </p>
           </div>
           <button onClick={handleClose} className="text-terminal-muted hover:text-terminal-text">
-            <X className="w-5 h-5" />
+            <span className="text-lg">✕</span>
           </button>
         </div>
 
@@ -242,7 +241,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
             disabled={loading || resetEmailSent}
             className="w-full py-3 px-4 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            {loading && <span className="inline-block animate-pulse text-base">⏳</span>}
             {mode === 'signup' ? 'Create Account' : mode === 'signin' ? 'Sign In' : 'Send Reset Link'}
           </button>
         </form>

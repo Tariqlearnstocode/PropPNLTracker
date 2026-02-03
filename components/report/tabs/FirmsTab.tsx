@@ -2,7 +2,6 @@
 
 import React, { useMemo } from 'react';
 import { PNLReport, formatCurrency } from '@/lib/pnl-calculations';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { ConfidenceBadge } from '../ui/ConfidenceBadge';
 import {
   BarChart,
@@ -209,8 +208,8 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                     }`}>
                       <div className="flex items-center justify-end gap-1">
                         {isPositive
-                          ? <ArrowUpRight className="w-3 h-3" />
-                          : <ArrowDownRight className="w-3 h-3" />
+                          ? <span className="text-sm">↗</span>
+                          : <span className="text-sm">↘</span>
                         }
                         {isPositive ? '+' : ''}{formatCurrency(firm.netPNL)}
                       </div>

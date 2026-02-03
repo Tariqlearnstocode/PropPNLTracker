@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/Toasts/use-toast';
-import { Wallet, Loader2, ArrowRight, Check, TrendingUp, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTellerConnect } from 'teller-connect-react';
 import Link from 'next/link';
@@ -131,7 +130,7 @@ export default function ConnectPage() {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-profit mx-auto mb-4" />
+          <span className="text-4xl block mx-auto mb-4">⏳</span>
           <p className="text-terminal-muted">Loading...</p>
         </div>
       </div>
@@ -156,7 +155,7 @@ export default function ConnectPage() {
         <div className="bg-terminal-card rounded-xl border border-terminal-border p-8 sm:p-12 mb-8">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 bg-profit-dim rounded-full flex items-center justify-center mx-auto mb-6">
-              <Wallet className="w-10 h-10 text-profit" />
+              <span className="text-4xl">👛</span>
             </div>
 
             <h2 className="text-2xl font-bold text-terminal-text mb-4">
@@ -164,7 +163,7 @@ export default function ConnectPage() {
             </h2>
 
             <p className="text-terminal-muted mb-8">
-              We'll securely connect to your bank account and automatically analyze all transactions
+              We&apos;ll securely connect to your bank account and automatically analyze all transactions
               to identify prop firm payouts and fees. Your bank credentials are never stored.
             </p>
 
@@ -175,14 +174,14 @@ export default function ConnectPage() {
             >
               {connecting ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>⏳</span>
                   Connecting...
                 </>
               ) : (
                 <>
-                  <Wallet className="w-5 h-5" />
+                  <span>👛</span>
                   Connect Bank Account
-                  <ArrowRight className="w-5 h-5" />
+                  <span>→</span>
                 </>
               )}
             </button>
@@ -197,7 +196,7 @@ export default function ConnectPage() {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
             <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-profit" />
+              <span className="text-2xl text-profit">🛡️</span>
             </div>
             <h3 className="font-semibold text-terminal-text mb-2">Secure & Private</h3>
             <p className="text-sm text-terminal-muted">
@@ -207,7 +206,7 @@ export default function ConnectPage() {
 
           <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
             <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
-              <TrendingUp className="w-6 h-6 text-profit" />
+              <span className="text-2xl text-profit">📈</span>
             </div>
             <h3 className="font-semibold text-terminal-text mb-2">Automatic Tracking</h3>
             <p className="text-sm text-terminal-muted">
@@ -217,7 +216,7 @@ export default function ConnectPage() {
 
           <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
             <div className="w-12 h-12 bg-profit-dim rounded-lg flex items-center justify-center mb-4">
-              <Check className="w-6 h-6 text-profit" />
+              <span className="text-2xl text-profit">✓</span>
             </div>
             <h3 className="font-semibold text-terminal-text mb-2">Instant Reports</h3>
             <p className="text-sm text-terminal-muted">

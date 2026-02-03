@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { RefreshCw, Circle, Link } from 'lucide-react';
 import { formatDate } from '@/lib/pnl-calculations';
 import { CombinedDateSelector } from './CombinedDateSelector';
 import { FirmFilter } from './FirmFilter';
@@ -174,7 +173,7 @@ export function ReportHeader({
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2 animate-pulse">
-                <Circle className="w-2 h-2 fill-profit text-profit drop-shadow-[0_0_6px_rgba(0,230,118,0.4)]" />
+                <span className="inline-block w-2 h-2 rounded-full bg-profit drop-shadow-[0_0_6px_rgba(0,230,118,0.4)]" />
               </span>
               <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">
                 Live
@@ -207,7 +206,7 @@ export function ReportHeader({
                   : 'border-terminal-border text-terminal-muted hover:text-terminal-text hover:border-terminal-border-light'
               }`}
             >
-              <Link className="w-3 h-3" />
+              <span className="text-xs">🔗</span>
               {copied ? 'Copied!' : 'Share'}
             </button>
             {!isPublicView && (
@@ -222,7 +221,7 @@ export function ReportHeader({
                   }`}
                   title={hasRefreshedToday ? alreadyRefreshedMessage : 'Refresh transaction data'}
                 >
-                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span className={isRefreshing ? 'inline-block animate-spin text-sm' : 'text-sm'}>{isRefreshing ? '⏳' : '🔄'}</span>
                   {isRefreshing ? 'Syncing...' : 'Sync'}
                 </button>
                 {hasRefreshedToday && refreshedAgoText && nextRefreshAt && (

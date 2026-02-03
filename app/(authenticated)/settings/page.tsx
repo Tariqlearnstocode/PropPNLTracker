@@ -5,18 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toasts/use-toast';
-import {
-  Settings,
-  User,
-  Mail,
-  Wallet,
-  Trash2,
-  Plus,
-  AlertTriangle,
-  Calendar,
-  Loader2,
-  BarChart3
-} from 'lucide-react';
 
 interface ConnectedAccount {
   id: string;
@@ -169,7 +157,7 @@ export default function SettingsPage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-profit" />
+        <span className="text-4xl block text-profit">⏳</span>
       </div>
     );
   }
@@ -189,7 +177,7 @@ export default function SettingsPage() {
                 href={`/report/${reportToken}`}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors flex-shrink-0"
               >
-                <BarChart3 className="w-4 h-4" />
+                <span>📊</span>
                 Back to Report
               </Link>
             )}
@@ -200,7 +188,7 @@ export default function SettingsPage() {
         <div className="bg-terminal-card rounded-xl border border-terminal-border p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-profit-dim rounded-lg flex items-center justify-center">
-              <User className="w-5 h-5 text-profit" />
+              <span className="text-profit text-lg">👤</span>
             </div>
             <h2 className="text-xl font-semibold text-terminal-text">Account Information</h2>
           </div>
@@ -208,7 +196,7 @@ export default function SettingsPage() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-terminal-text flex items-center gap-2 mb-1">
-                <Mail className="w-4 h-4" />
+                <span>✉️</span>
                 Email
               </label>
               <p className="text-terminal-text">{user.email}</p>
@@ -217,7 +205,7 @@ export default function SettingsPage() {
             {user.user_metadata?.name && (
               <div>
                 <label className="text-sm font-medium text-terminal-text flex items-center gap-2 mb-1">
-                  <User className="w-4 h-4" />
+                  <span>👤</span>
                   Name
                 </label>
                 <p className="text-terminal-text">{user.user_metadata.name}</p>
@@ -226,7 +214,7 @@ export default function SettingsPage() {
 
             <div>
               <label className="text-sm font-medium text-terminal-text flex items-center gap-2 mb-1">
-                <Calendar className="w-4 h-4" />
+                <span>📅</span>
                 Member Since
               </label>
               <p className="text-terminal-text">
@@ -241,7 +229,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-profit-dim rounded-lg flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-profit" />
+                <span className="text-profit text-lg">👛</span>
               </div>
               <h2 className="text-xl font-semibold text-terminal-text">Connected Bank Accounts</h2>
             </div>
@@ -249,24 +237,24 @@ export default function SettingsPage() {
               href="/connect"
               className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg text-sm transition-colors"
             >
-              <Plus className="w-4 h-4" />
+              <span>➕</span>
               Add Account
             </Link>
           </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-profit" />
+              <span className="text-profit text-xl">⏳</span>
             </div>
           ) : accounts.length === 0 ? (
             <div className="text-center py-12">
-              <Wallet className="w-12 h-12 text-terminal-muted mx-auto mb-4" />
+              <span className="text-4xl text-terminal-muted block mx-auto mb-4">👛</span>
               <p className="text-terminal-muted mb-4">No bank accounts connected</p>
               <Link
                 href="/connect"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
               >
-                <Plus className="w-4 h-4" />
+                <span>➕</span>
                 Connect Your First Account
               </Link>
             </div>
@@ -291,7 +279,7 @@ export default function SettingsPage() {
                       </div>
                       <div className="space-y-1 text-sm text-terminal-muted">
                         <p className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
+                          <span>📅</span>
                           Last synced: {formatDate(account.last_synced_at)}
                         </p>
                       </div>
@@ -303,9 +291,9 @@ export default function SettingsPage() {
                       aria-label="Delete account"
                     >
                       {deletingAccountId === account.account_id ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>⏳</span>
                       ) : (
-                        <Trash2 className="w-5 h-5" />
+                        <span className="text-lg">🗑️</span>
                       )}
                     </button>
                   </div>
@@ -314,7 +302,7 @@ export default function SettingsPage() {
                   {showDeleteAccountConfirm === account.account_id && (
                     <div className="mt-4 p-4 bg-loss-dim border border-loss/30 rounded-lg">
                       <div className="flex items-start gap-3 mb-3">
-                        <AlertTriangle className="w-5 h-5 text-loss flex-shrink-0 mt-0.5" />
+                        <span className="text-loss flex-shrink-0 mt-0.5">⚠️</span>
                         <div className="flex-1">
                           <h4 className="font-semibold text-loss mb-1">Delete Account?</h4>
                           <p className="text-sm text-loss/80">
@@ -349,7 +337,7 @@ export default function SettingsPage() {
         <div className="bg-terminal-card rounded-xl border border-loss/30 p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-loss-dim rounded-lg flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-loss" />
+              <span className="text-loss">⚠️</span>
             </div>
             <h2 className="text-xl font-semibold text-loss">Danger Zone</h2>
           </div>
@@ -398,7 +386,7 @@ export default function SettingsPage() {
                       >
                         {deletingUser ? (
                           <span className="flex items-center gap-2">
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>⏳</span>
                             Deleting...
                           </span>
                         ) : (

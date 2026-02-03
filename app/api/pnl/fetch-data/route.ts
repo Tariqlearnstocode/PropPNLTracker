@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     let finalRawData = rawTellerData;
-    let finalManualAssignments: Record<string, string> = (existingReport?.manual_assignments as Record<string, string>) || {};
+    const finalManualAssignments: Record<string, string> = (existingReport?.manual_assignments as Record<string, string>) || {};
 
     if (existingReport?.raw_teller_data) {
       const existingData = existingReport.raw_teller_data as any;

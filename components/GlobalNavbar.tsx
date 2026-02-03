@@ -113,12 +113,21 @@ export default function GlobalNavbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <span className="relative flex h-6 w-6">
-            <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
-          </span>
-          <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+            <span className="relative flex h-6 w-6">
+              <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+            </span>
+            <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-4">
+            <Link href="/firms" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Firms</Link>
+            <Link href="/blog" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Blog</Link>
+            <Link href="/guide" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Guide</Link>
+            <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Compare</Link>
+            <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Leaderboard</Link>
+          </nav>
+        </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={() => handleOpenAuthModal('signin')}

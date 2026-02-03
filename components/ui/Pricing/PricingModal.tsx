@@ -1,6 +1,5 @@
 'use client';
 
-import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toasts/use-toast';
@@ -136,7 +135,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
             onClick={onClose}
             className="p-2 hover:bg-terminal-card-hover rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-terminal-muted" />
+            <span className="text-terminal-muted text-lg">✕</span>
           </button>
         </div>
 

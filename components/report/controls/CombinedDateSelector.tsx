@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
 import { formatDate } from '@/lib/pnl-calculations';
 
 interface CombinedDateSelectorProps {
@@ -60,9 +59,9 @@ export function CombinedDateSelector({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 bg-terminal-card border border-terminal-border rounded-lg px-2.5 py-1.5 text-sm hover:bg-terminal-card-hover transition-colors"
       >
-        <Calendar className="w-3.5 h-3.5 text-terminal-muted" />
+        <span className="text-terminal-muted">📅</span>
         <span className="text-terminal-text font-mono text-xs">{getDisplayText()}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-terminal-muted transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className={`text-terminal-muted transition-transform inline-block ${isOpen ? 'rotate-180' : ''}`}>▼</span>
       </button>
 
       {isOpen && (

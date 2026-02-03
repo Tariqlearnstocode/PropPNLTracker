@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatCurrency } from '@/lib/pnl-calculations';
 
 interface DailyPNLCalendarProps {
@@ -97,7 +96,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
             onClick={() => navigateMonth('prev')}
             className="p-2 hover:bg-terminal-card-hover rounded-lg transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-terminal-text/60" />
+            <span className="text-terminal-text/60 text-lg">‹</span>
           </button>
           <h3 className="text-sm font-mono uppercase tracking-widest text-terminal-text">
             {(() => {
@@ -110,7 +109,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
             onClick={() => navigateMonth('next')}
             className="p-2 hover:bg-terminal-card-hover rounded-lg transition-colors"
           >
-            <ChevronRight className="w-5 h-5 text-terminal-text/60" />
+            <span className="text-terminal-text/60 text-lg">›</span>
           </button>
         </div>
         <button

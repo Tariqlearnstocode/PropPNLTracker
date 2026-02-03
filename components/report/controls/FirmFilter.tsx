@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Filter, ChevronDown, X } from 'lucide-react';
 
 interface FirmFilterProps {
   allFirmNames: string[];
@@ -52,9 +51,9 @@ export function FirmFilter({
             : 'bg-terminal-card border-terminal-border text-terminal-text hover:bg-terminal-card-hover'
         }`}
       >
-        <Filter className={`w-3.5 h-3.5 ${selectedFirms.length > 0 ? 'text-profit' : 'text-terminal-muted'}`} />
+        <span className={selectedFirms.length > 0 ? 'text-profit' : 'text-terminal-muted'}>🔍</span>
         <span className="font-mono text-xs">{getDisplayText()}</span>
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${selectedFirms.length > 0 ? 'text-profit/60' : 'text-terminal-muted'} ${isOpen ? 'rotate-180' : ''}`} />
+        <span className={`transition-transform inline-block ${selectedFirms.length > 0 ? 'text-profit/60' : 'text-terminal-muted'} ${isOpen ? 'rotate-180' : ''}`}>▼</span>
       </button>
 
       {isOpen && (
@@ -85,7 +84,7 @@ export function FirmFilter({
                         onClick={() => onToggleFirm(firmName)}
                         className="hover:text-white transition-colors"
                       >
-                        <X className="w-3 h-3" />
+                        <span>✕</span>
                       </button>
                     </span>
                   ))}

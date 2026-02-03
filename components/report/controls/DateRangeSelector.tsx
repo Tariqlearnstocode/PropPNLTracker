@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Calendar } from 'lucide-react';
 
 interface DateRangeSelectorProps {
   startDate: string;
@@ -18,7 +17,7 @@ export function DateRangeSelector({
 }: DateRangeSelectorProps) {
   return (
     <div className="flex items-center gap-1 md:gap-2 bg-white border border-gray-300 rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm">
-      <Calendar className="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+      <span className="text-gray-400 flex-shrink-0 text-sm md:text-base">📅</span>
       <input
         type="date"
         value={startDate}

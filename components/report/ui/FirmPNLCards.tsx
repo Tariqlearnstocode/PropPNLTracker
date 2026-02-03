@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { PNLReport, formatCurrency } from '@/lib/pnl-calculations';
 
 interface FirmPNLCardsProps {
@@ -35,9 +34,9 @@ export function FirmPNLCards({ perFirmBreakdown }: FirmPNLCardsProps) {
               </div>
               <div className={`p-1.5 rounded-lg flex-shrink-0 ${isPositive ? 'bg-profit-dim' : 'bg-loss-dim'}`}>
                 {isPositive ? (
-                  <ArrowUpRight className="w-4 h-4 text-profit" />
+                  <span className="text-profit text-lg">↗</span>
                 ) : (
-                  <ArrowDownRight className="w-4 h-4 text-loss" />
+                  <span className="text-loss text-lg">↘</span>
                 )}
               </div>
             </div>

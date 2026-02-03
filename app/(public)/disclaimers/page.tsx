@@ -99,7 +99,7 @@ export default function DisclaimersPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-terminal-text mb-4">6. Accuracy & No Warranties</h2>
             <p className="text-terminal-text leading-relaxed mb-4">
-              The report is provided "as is" and "as available."
+              The report is provided &quot;as is&quot; and &quot;as available.&quot;
             </p>
             <p className="text-terminal-text leading-relaxed mb-4">
               We make no representations or warranties, express or implied, regarding the accuracy, completeness, reliability, or timeliness of the information contained in this report.

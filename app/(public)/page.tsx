@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { ArrowRight, TrendingUp, Check, Wallet, BarChart3, Shield, Zap, Lock, Clock, FileText, Users, Database, LineChart, RefreshCw, Share2, X } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees | Topstep, FTMO, Rise',
@@ -26,22 +25,22 @@ export default function LandingPage() {
             {/* Left: headline + CTA only */}
             <div className="text-center lg:text-left">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
-                Prop firm P&L—
-                <span className="block mt-2 text-profit">bank-verified.</span>
+                Are you actually profitable?
+                <span className="block mt-2 text-profit">Your bank knows.</span>
               </h1>
               <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
-                Connect your bank. We track payouts and fees from Topstep, FTMO, The5ers, Rise and more—your true profit and loss in ~60 seconds.
+                We connect to your bank and track real payouts and fees. No manual entry. No missing costs. Just your true prop firm P&L.
               </p>
               <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
-                No spreadsheets. No manual entry. One connection.
+                Topstep, FTMO, The5ers, Rise and more — ~60 seconds to set up.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
                 <Link
                   href="/connect"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
                 >
-                  Connect Your Bank – Free
-                  <ArrowRight className="w-4 h-4" />
+                  Get Your Real P&L — Free
+                  <span>→</span>
                 </Link>
                 <Link
                   href="/pricing"
@@ -55,10 +54,10 @@ export default function LandingPage() {
               </p>
               {/* Trust + SEO: security + supported firms */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 mt-8 text-xs text-terminal-muted font-mono">
-                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Teller</span>
-                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Read-only</span>
-                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Encrypted</span>
-                <span className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-profit" /> Topstep, FTMO, Rise, Wise</span>
+                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Teller</span>
+                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Read-only</span>
+                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Encrypted</span>
+                <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Topstep, FTMO, Rise, Wise</span>
               </div>
             </div>
 
@@ -88,7 +87,7 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="bg-terminal-card rounded border border-terminal-border p-6 h-48 flex items-center justify-center">
-                  <LineChart className="w-16 h-16 text-terminal-muted" />
+                  <span className="text-5xl text-terminal-muted">📈</span>
                 </div>
               </div>
             </div>
@@ -102,7 +101,7 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight text-center">
               Spreadsheets lie.
-              <span className="block mt-2">Bank accounts don't.</span>
+              <span className="block mt-2">Bank accounts don&apos;t.</span>
             </h2>
             <p className="text-lg text-terminal-text mb-8 text-center max-w-2xl mx-auto">
               Real money slips through when you guess. Resets, challenge fees, and subscriptions add up—most traders don&apos;t run the numbers until it&apos;s too late.
@@ -117,7 +116,7 @@ export default function LandingPage() {
               <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
                 <div className="text-lg font-semibold text-terminal-text mb-2">Hidden costs</div>
                 <p className="text-terminal-text text-sm">
-                  Those "small" $50 resets add up to thousands.
+                  Those &quot;small&quot; $50 resets add up to thousands.
                 </p>
               </div>
               <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
@@ -129,7 +128,7 @@ export default function LandingPage() {
             </div>
             <div className="mt-12 text-center">
               <p className="text-xl text-terminal-muted italic">
-                "I think I'm profitable… but I'm not really sure."
+                &quot;I think I&apos;m profitable… but I&apos;m not really sure.&quot;
               </p>
             </div>
           </div>
@@ -189,28 +188,28 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
-              <Zap className="w-8 h-8 text-profit mb-4" />
+              <span className="text-3xl block mb-4">⚡</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Auto-categorized</h3>
               <p className="text-terminal-text">
                 Payouts vs. fees—we recognize Rise, Wise, Stripe and tag them so you don&apos;t have to.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
-              <Users className="w-8 h-8 text-accent-blue mb-4" />
+              <span className="text-3xl block mb-4">👥</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Multi-account</h3>
               <p className="text-terminal-text">
                 Up to 5 bank accounts in one view—see your full picture without switching tabs.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
-              <Share2 className="w-8 h-8 text-accent-purple mb-4" />
+              <span className="text-3xl block mb-4">🔗</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Shareable link</h3>
               <p className="text-terminal-text">
                 One link to prove bank-verified P&L. Investors and followers see the real numbers.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
-              <FileText className="w-8 h-8 text-accent-amber mb-4" />
+              <span className="text-3xl block mb-4">📄</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Export for taxes</h3>
               <p className="text-terminal-text">
                 CSV or PDF in one tap—hand it to your accountant and done.
@@ -219,31 +218,31 @@ export default function LandingPage() {
           </div>
           <div className="mt-12 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Monthly P&L breakdown</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Per-prop-firm profit breakdown</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Automatic prop firm matching</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Charts + dashboard</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Export CSV/PDF</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Shareable public P&L link</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-terminal-text">
-              <Check className="w-5 h-5 text-profit" />
+              <span className="text-profit">✓</span>
               <span>Transaction search & filters</span>
             </div>
           </div>
@@ -297,7 +296,7 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
             >
               Connect Your Bank – Free
-              <ArrowRight className="w-4 h-4" />
+              <span>→</span>
             </Link>
           </div>
         </div>
@@ -317,21 +316,21 @@ export default function LandingPage() {
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <div>
                     <div className="font-medium text-terminal-text">Build trust publicly</div>
                     <div className="text-terminal-text text-sm">Show followers and investors bank-verified results</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <div>
                     <div className="font-medium text-terminal-text">Coaching & mentorship</div>
                     <div className="text-terminal-text text-sm">Credibility when you need to prove your track record</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <div>
                     <div className="font-medium text-terminal-text">Accountability</div>
                     <div className="text-terminal-text text-sm">Share progress with partners—one link, always current</div>
@@ -361,7 +360,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <button className="w-full px-4 py-2 bg-profit text-terminal-bg rounded-md text-sm font-medium hover:bg-profit/90 transition-colors flex items-center justify-center gap-2">
-                <Share2 className="w-4 h-4" />
+                <span>🔗</span>
                 Copy Share Link
               </button>
             </div>
@@ -383,7 +382,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
-              <Lock className="w-8 h-8 text-profit mx-auto mb-4" />
+              <span className="text-3xl block mx-auto mb-4 text-center">🔒</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Read-only</h3>
               <p className="text-terminal-text text-sm">
                 We read transactions only. No withdrawals, no transfers, no payments—ever.
@@ -391,7 +390,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
-              <Shield className="w-8 h-8 text-profit mx-auto mb-4" />
+              <span className="text-3xl block mx-auto mb-4 text-center">🛡️</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Encrypted</h3>
               <p className="text-terminal-text text-sm">
                 Data encrypted at rest and in transit. Same standards banks use.
@@ -399,7 +398,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
-              <Wallet className="w-8 h-8 text-profit mx-auto mb-4" />
+              <span className="text-3xl block mx-auto mb-4 text-center">👛</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">No stored logins</h3>
               <p className="text-terminal-text text-sm">
                 We never store your bank login. Connect via Teller; disconnect anytime.
@@ -431,19 +430,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">1 bank account</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">3 months history</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Full dashboard + breakdowns</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <X className="w-5 h-5 text-terminal-muted mt-0.5 flex-shrink-0" />
+                  <span className="text-terminal-muted mt-0.5 flex-shrink-0">✕</span>
                   <span className="text-sm text-terminal-muted">No transaction updates</span>
                 </li>
               </ul>
@@ -468,19 +467,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Up to 5 bank accounts</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">12 month history</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Weekly transaction updates</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Always up to date</span>
                 </li>
               </ul>
@@ -501,19 +500,19 @@ export default function LandingPage() {
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Up to 5 bank accounts</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">12 month history</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Exportable report</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-profit mt-0.5 flex-shrink-0" />
+                  <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <span className="text-sm text-terminal-text">Single instant snapshot</span>
                 </li>
               </ul>
@@ -596,7 +595,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
           >
             Connect Your Bank – Free
-            <ArrowRight className="w-4 h-4" />
+            <span>→</span>
           </Link>
         </div>
       </section>
