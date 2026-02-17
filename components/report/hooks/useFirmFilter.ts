@@ -14,7 +14,7 @@ export function useFirmFilter(
   const allFirmNames = useMemo(() => {
     const firms = perFirmBreakdown.map(f => f.firmName);
     // Add custom firms from manual assignments
-    const customFirms = Object.values(manualAssignments).filter(f => !firms.includes(f));
+    const customFirms = Object.values(manualAssignments).filter(f => f !== '__dismissed__' && !firms.includes(f));
     return [...firms, ...customFirms];
   }, [perFirmBreakdown, manualAssignments]);
   
