@@ -120,13 +120,6 @@ export default function GlobalNavbar() {
             </span>
             <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-4">
-            <Link href="/firms" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Firms</Link>
-            <Link href="/blog" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Blog</Link>
-            <Link href="/guide" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Guide</Link>
-            <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Compare</Link>
-            <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Leaderboard</Link>
-          </nav>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button

@@ -46,7 +46,7 @@ export default function LandingPage() {
                   <span>→</span>
                 </Link>
                 <Link
-                  href="/pricing"
+                  href="#pricing"
                   className="inline-flex items-center px-5 py-2.5 font-mono text-xs font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors"
                 >
                   View Plans
@@ -408,7 +408,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-24 bg-terminal-bg border-t border-profit/10">
+      <section id="pricing" className="py-24 bg-terminal-bg border-t border-profit/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-5xl sm:text-6xl font-bold text-terminal-text mb-6 leading-tight">
@@ -483,7 +483,7 @@ export default function LandingPage() {
                 </li>
               </ul>
               <Link
-                href="/pricing"
+                href="/connect"
                 className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
               >
                 Go Pro
@@ -516,7 +516,7 @@ export default function LandingPage() {
                 </li>
               </ul>
               <Link
-                href="/pricing"
+                href="/connect"
                 className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
               >
                 Get One-Time Sync
@@ -543,13 +543,6 @@ export default function LandingPage() {
               <p className="text-terminal-muted mb-8 leading-relaxed">
                 The most common things traders ask before connecting their bank.
               </p>
-              <Link
-                href="/faq"
-                className="inline-flex items-center gap-2 text-sm font-mono text-profit hover:text-profit/80 transition-colors group"
-              >
-                See all FAQs
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
             </div>
 
             {/* Right: accordion */}

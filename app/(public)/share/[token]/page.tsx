@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import ReportContent from '../../report/[token]/ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
-import type { PNLReport } from '@/lib/pnl-calculations';
+import type { PNLReport, RawFinancialData } from '@/lib/pnl-calculations';
 import { getReportBySlugOrToken } from '@/lib/report-resolver';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getURL } from '@/utils/helpers';
@@ -36,13 +36,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const report = await getReportBySlugOrToken(supabaseAdmin, token);
-    if (!report || (report as { status: string }).status !== 'completed') return defaultMetadata;
+    if (!report || (report as unknown as { status: string }).status !== 'completed') return defaultMetadata;
 
     let pnlData: PNLReport | null = null;
     const manualAssignments = (report as { manual_assignments?: object }).manual_assignments || {};
 
-    if ((report as { raw_teller_data?: unknown }).raw_teller_data) {
-      pnlData = calculatePNLReport((report as { raw_teller_data: unknown }).raw_teller_data, manualAssignments);
+    if ((report as { raw_teller_data?: RawFinancialData }).raw_teller_data) {
+      pnlData = calculatePNLReport((report as { raw_teller_data: RawFinancialData }).raw_teller_data, manualAssignments);
     } else if ((report as { pnl_data?: PNLReport }).pnl_data) {
       pnlData = (report as { pnl_data: PNLReport }).pnl_data;
     }
