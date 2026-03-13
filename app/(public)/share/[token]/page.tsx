@@ -39,12 +39,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!report || (report as unknown as { status: string }).status !== 'completed') return defaultMetadata;
 
     let pnlData: PNLReport | null = null;
-    const manualAssignments = (report as { manual_assignments?: object }).manual_assignments || {};
+    const manualAssignments = ((report as unknown as { manual_assignments?: Record<string, string> }).manual_assignments || {}) as Record<string, string>;
 
-    if ((report as { raw_teller_data?: RawFinancialData }).raw_teller_data) {
-      pnlData = calculatePNLReport((report as { raw_teller_data: RawFinancialData }).raw_teller_data, manualAssignments);
-    } else if ((report as { pnl_data?: PNLReport }).pnl_data) {
-      pnlData = (report as { pnl_data: PNLReport }).pnl_data;
+    if ((report as unknown as { raw_teller_data?: RawFinancialData }).raw_teller_data) {
+      pnlData = calculatePNLReport((report as unknown as { raw_teller_data: RawFinancialData }).raw_teller_data, manualAssignments);
+    } else if ((report as unknown as { pnl_data?: PNLReport }).pnl_data) {
+      pnlData = (report as unknown as { pnl_data: PNLReport }).pnl_data;
     }
 
     if (!pnlData) return defaultMetadata;
@@ -94,7 +94,7 @@ export default async function SharePage({ params }: PageProps) {
     );
   }
 
-  if ((report as { status: string }).status !== 'completed') {
+  if ((report as unknown as { status: string }).status !== 'completed') {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
         <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
@@ -105,7 +105,21 @@ export default async function SharePage({ params }: PageProps) {
     );
   }
 
-  const reportRow = report as {
+  if ((report as unknown as { is_public?: boolean }).is_public === false) {
+    return (
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
+        <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 text-center max-w-md">
+          <h1 className="text-xl font-semibold text-terminal-text mb-2">Report is Private</h1>
+          <p className="text-terminal-muted mb-4">The owner has made this report private.</p>
+          <Link href="/" className="inline-block px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-lg transition-colors">
+            Go Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const reportRow = report as unknown as {
     id: string;
     user_id: string;
     report_token: string;
@@ -114,9 +128,9 @@ export default async function SharePage({ params }: PageProps) {
     updated_at: string;
     display_name: string | null;
     share_slug: string | null;
-    raw_teller_data?: unknown;
+    raw_teller_data?: RawFinancialData;
     pnl_data?: PNLReport;
-    manual_assignments?: object;
+    manual_assignments?: Record<string, string>;
   };
   let pnlData: PNLReport | null = null;
   const manualAssignments = reportRow.manual_assignments || {};
@@ -152,7 +166,7 @@ export default async function SharePage({ params }: PageProps) {
         id: reportRow.id,
         user_id: reportRow.user_id,
         report_token: reportRow.report_token,
-        account_id: reportRow.account_id,
+        account_id: reportRow.account_id || '',
         created_at: reportRow.created_at,
         updated_at: reportRow.updated_at,
         display_name: reportRow.display_name || null,

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getReportBySlugOrToken } from '@/lib/report-resolver';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
-import type { PNLReport } from '@/lib/pnl-calculations';
+import type { PNLReport, RawFinancialData } from '@/lib/pnl-calculations';
 
 export const runtime = 'nodejs';
 
@@ -141,17 +141,17 @@ export async function GET(request: NextRequest) {
     }
 
     const report = await getReportBySlugOrToken(supabaseAdmin, token);
-    if (!report || (report as { status: string }).status !== 'completed') {
+    if (!report || (report as unknown as { status: string }).status !== 'completed') {
       return generateFallbackImage();
     }
 
     let pnlData: PNLReport | null = null;
-    const manualAssignments = (report as { manual_assignments?: object }).manual_assignments || {};
+    const manualAssignments = ((report as unknown as { manual_assignments?: Record<string, string> }).manual_assignments || {}) as Record<string, string>;
 
-    if ((report as { raw_teller_data?: unknown }).raw_teller_data) {
-      pnlData = calculatePNLReport((report as { raw_teller_data: unknown }).raw_teller_data, manualAssignments);
-    } else if ((report as { pnl_data?: PNLReport }).pnl_data) {
-      pnlData = (report as { pnl_data: PNLReport }).pnl_data;
+    if ((report as unknown as { raw_teller_data?: RawFinancialData }).raw_teller_data) {
+      pnlData = calculatePNLReport((report as unknown as { raw_teller_data: RawFinancialData }).raw_teller_data, manualAssignments);
+    } else if ((report as unknown as { pnl_data?: PNLReport }).pnl_data) {
+      pnlData = (report as unknown as { pnl_data: PNLReport }).pnl_data;
     }
 
     if (!pnlData) {

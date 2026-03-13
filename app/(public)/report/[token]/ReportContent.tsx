@@ -63,6 +63,10 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const [displayName, setDisplayName] = useState(report.display_name || '');
   const [shareSlug, setShareSlug] = useState(report.share_slug ?? null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isPublicToggle, setIsPublicToggle] = useState(false);
+  const [showOnLeaderboard, setShowOnLeaderboard] = useState(false);
+  const [togglingPublic, setTogglingPublic] = useState(false);
+  const [togglingLeaderboard, setTogglingLeaderboard] = useState(false);
 
   const handleGetStarted = useCallback(() => setAuthModalOpen(true), []);
 
@@ -89,6 +93,48 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
       return () => setReportNav(null);
     }
   }, [isPublicView, displayName, report.display_name, setReportNav, handleGetStarted]);
+
+  // Fetch visibility preferences (owner view only)
+  useEffect(() => {
+    if (isPublicView) return;
+    Promise.all([
+      fetch('/api/pnl/public-toggle').then(r => r.ok ? r.json() : null),
+      fetch('/api/pnl/leaderboard-toggle').then(r => r.ok ? r.json() : null),
+    ]).then(([pubData, lbData]) => {
+      if (pubData) setIsPublicToggle(pubData.isPublic ?? false);
+      if (lbData) setShowOnLeaderboard(lbData.showOnLeaderboard ?? false);
+    }).catch(() => {});
+  }, [isPublicView]);
+
+  const handleTogglePublic = async () => {
+    if (togglingPublic) return;
+    setTogglingPublic(true);
+    const newValue = !isPublicToggle;
+    try {
+      const res = await fetch('/api/pnl/public-toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublic: newValue }),
+      });
+      if (res.ok) setIsPublicToggle(newValue);
+    } catch {}
+    setTogglingPublic(false);
+  };
+
+  const handleToggleLeaderboard = async () => {
+    if (togglingLeaderboard) return;
+    setTogglingLeaderboard(true);
+    const newValue = !showOnLeaderboard;
+    try {
+      const res = await fetch('/api/pnl/leaderboard-toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showOnLeaderboard: newValue }),
+      });
+      if (res.ok) setShowOnLeaderboard(newValue);
+    } catch {}
+    setTogglingLeaderboard(false);
+  };
 
   // Use custom hooks
   const dateRange = useDateRange(monthlyBreakdown);
@@ -351,6 +397,57 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6">
 
+        {/* Visibility Controls */}
+        {!isPublicView && (
+          <div className="mb-4 bg-terminal-card border border-terminal-border rounded-xl px-4 py-3">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">Visibility</span>
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-xs font-mono text-terminal-muted">Display name</span>
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    onBlur={() => handleSaveDisplayName(displayName)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleSaveDisplayName(displayName); }}
+                    placeholder="Anonymous"
+                    className="w-32 px-2 py-1 text-xs font-mono bg-terminal-bg border border-terminal-border rounded text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit"
+                  />
+                </div>
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <span className="text-xs font-mono text-terminal-muted">Public link</span>
+                  <button
+                    onClick={handleTogglePublic}
+                    disabled={togglingPublic}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      isPublicToggle ? 'bg-profit' : 'bg-terminal-border'
+                    } ${togglingPublic ? 'opacity-50' : ''}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                      isPublicToggle ? 'translate-x-[18px]' : 'translate-x-[3px]'
+                    }`} />
+                  </button>
+                </label>
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <span className="text-xs font-mono text-terminal-muted">Leaderboard</span>
+                  <button
+                    onClick={handleToggleLeaderboard}
+                    disabled={togglingLeaderboard}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      showOnLeaderboard ? 'bg-profit' : 'bg-terminal-border'
+                    } ${togglingLeaderboard ? 'opacity-50' : ''}`}
+                  >
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                      showOnLeaderboard ? 'translate-x-[18px]' : 'translate-x-[3px]'
+                    }`} />
+                  </button>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Needs Assignment Banner */}
         {!isPublicView && needsAssignmentTransactions.length > 0 && (
           <div className="mb-4 bg-accent-amber/10 border border-accent-amber/30 rounded-xl p-4 flex items-start gap-3">
@@ -452,7 +549,7 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
           {activeTab === 'transactions' && (
             isPublicView ? (
               <TransactionsTeaser
-                transactionCount={transactions.length}
+                transactionCount={transactions.filter(t => t.match.type === 'deposit' || t.match.type === 'fee').length}
                 onGetStarted={handleGetStarted}
               />
             ) : (

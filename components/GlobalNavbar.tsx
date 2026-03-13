@@ -120,6 +120,9 @@ export default function GlobalNavbar() {
             </span>
             <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
           </Link>
+          <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+            Leaderboard
+          </Link>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button

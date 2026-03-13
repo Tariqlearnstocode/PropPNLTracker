@@ -51,12 +51,23 @@ export function ShareModal({
 
   const handleCopy = async () => {
     const url = shareUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // ignore
+      // Fallback for non-secure contexts (e.g. HTTP dev server)
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 

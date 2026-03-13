@@ -182,10 +182,14 @@ export function ReportHeader({
             <span className="text-[11px] font-mono text-terminal-muted">
               Updated {formatDate(report.updated_at)}
             </span>
-            <span className="text-terminal-border">·</span>
-            <span className="text-[11px] font-mono text-terminal-muted">
-              {accounts.length} {accounts.length === 1 ? 'account' : 'accounts'}
-            </span>
+            {!isPublicView && (
+              <>
+                <span className="text-terminal-border">·</span>
+                <span className="text-[11px] font-mono text-terminal-muted">
+                  {accounts.length} {accounts.length === 1 ? 'account' : 'accounts'}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

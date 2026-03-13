@@ -47,7 +47,7 @@ export async function DELETE(request: NextRequest) {
       const manualAssignments = (report.manual_assignments as Record<string, string>) || {};
       const removedTxnIds = new Set((raw.transactions || []).filter((t: any) => t.account_id === account_id).map((t: any) => t.id));
       const filteredManual = { ...manualAssignments };
-      removedTxnIds.forEach((id) => delete filteredManual[id]);
+      removedTxnIds.forEach((id) => delete filteredManual[id as string]);
 
       const updatedRaw = {
         ...raw,
