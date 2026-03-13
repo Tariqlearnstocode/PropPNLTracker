@@ -103,7 +103,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           </div>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-profit/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-profit text-lg">🛡️</span>
+              <span className="text-profit text-lg">🔐</span>
             </div>
             <div>
               <div className="text-sm font-medium text-terminal-text">Bank-level security</div>

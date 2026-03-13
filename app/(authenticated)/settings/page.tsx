@@ -229,7 +229,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-profit-dim rounded-lg flex items-center justify-center">
-                <span className="text-profit text-lg">👛</span>
+                <span className="text-profit text-lg">🏦</span>
               </div>
               <h2 className="text-xl font-semibold text-terminal-text">Connected Bank Accounts</h2>
             </div>
@@ -248,7 +248,7 @@ export default function SettingsPage() {
             </div>
           ) : accounts.length === 0 ? (
             <div className="text-center py-12">
-              <span className="text-4xl text-terminal-muted block mx-auto mb-4">👛</span>
+              <span className="text-4xl text-terminal-muted block mx-auto mb-4">🏦</span>
               <p className="text-terminal-muted mb-4">No bank accounts connected</p>
               <Link
                 href="/connect"

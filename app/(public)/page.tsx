@@ -7,7 +7,7 @@ import { homepageFAQs } from '@/lib/faq-data';
 export const metadata: Metadata = {
   title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees | Topstep, FTMO, Rise',
   description:
-    'Track your prop firm P&L automatically. Connect your bank—we track payouts and fees from Topstep, FTMO, The5ers, Rise and more. Your true profit and loss in ~60 seconds. No spreadsheets.',
+    'Track your prop firm P&L automatically. Connect your bank and we track payouts and fees from Topstep, FTMO, The5ers, Rise and more. Your true profit and loss in ~60 seconds. No spreadsheets.',
   openGraph: {
     title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees',
     description:
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-terminal-bg">
-      {/* Hero — minimal copy, two-column: message left, dashboard right */}
+      {/* Hero: minimal copy, two-column: message left, dashboard right */}
       <section
         className="relative overflow-hidden pt-20 pb-16 sm:pt-28 sm:pb-20"
         style={{ background: 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 30%, #0a0a0f 100%)' }}
@@ -29,20 +29,20 @@ export default function LandingPage() {
             <div className="text-center lg:text-left">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
                 Are you actually profitable?
-                <span className="block mt-2 text-profit">Your bank knows.</span>
+                <span className="block mt-2 text-profit whitespace-nowrap">Your bank knows.</span>
               </h1>
               <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
                 We connect to your bank and track real payouts and fees. No manual entry. No missing costs. Just your true prop firm P&L.
               </p>
               <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
-                Topstep, FTMO, The5ers, Rise and more — ~60 seconds to set up.
+                Topstep, FTMO, The5ers, Rise and more. ~60 seconds to set up.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
                 <Link
                   href="/connect"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
                 >
-                  Get Your Real P&L — Free
+                  Get Your Real P&L - Free
                   <span>→</span>
                 </Link>
                 <Link
@@ -63,33 +63,136 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right: dashboard preview = visual break, less wall of text */}
-            <div className="rounded-lg border border-profit/20 bg-terminal-card overflow-hidden shadow-xl">
-              <div className="bg-terminal-card border-b border-terminal-border px-4 py-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-terminal-muted" />
+            {/* Right: dashboard preview — mirrors real product */}
+            <div className="rounded-lg border border-profit/20 bg-terminal-card overflow-hidden shadow-xl shadow-profit/5">
+              {/* Browser chrome */}
+              <div className="bg-terminal-card border-b border-terminal-border px-4 py-2.5 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
                 </div>
-                <div className="text-xs text-terminal-muted font-mono">prop-firm-pnl-tracker.com</div>
+                <div className="text-[10px] text-terminal-muted font-mono tracking-wide">proppnl.com/report</div>
+                <div className="w-12" />
               </div>
-              <div className="p-6 sm:p-8 bg-terminal-bg">
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
-                    <div className="text-xl font-semibold text-terminal-text">$12,450</div>
-                    <div className="text-xs text-terminal-muted">Total PNL</div>
+
+              <div className="p-4 sm:p-5 bg-terminal-bg space-y-3">
+                {/* Header row */}
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-terminal-text font-semibold">Trading Report</span>
+                    <span className="flex items-center gap-1 text-[9px] font-mono text-profit"><span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse inline-block" />Live</span>
                   </div>
-                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
-                    <div className="text-xl font-semibold text-terminal-text">8</div>
-                    <div className="text-xs text-terminal-muted">Firms</div>
-                  </div>
-                  <div className="bg-terminal-card rounded border border-terminal-border p-4">
-                    <div className="text-xl font-semibold text-terminal-text">24</div>
-                    <div className="text-xs text-terminal-muted">Months</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-mono text-terminal-muted px-2 py-0.5 rounded border border-terminal-border">YTD</span>
+                    <span className="text-[9px] font-mono text-terminal-muted px-2 py-0.5 rounded border border-terminal-border">All</span>
                   </div>
                 </div>
-                <div className="bg-terminal-card rounded border border-terminal-border p-6 h-48 flex items-center justify-center">
-                  <span className="text-5xl text-terminal-muted">📈</span>
+
+                {/* Hero stat cards */}
+                <div className="grid grid-cols-5 gap-2">
+                  <div className="col-span-2 bg-terminal-card rounded border border-terminal-border p-3">
+                    <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Net PNL</div>
+                    <div className="text-2xl font-semibold font-mono text-profit leading-none">+$3,541</div>
+                    <div className="text-[9px] font-mono text-profit/60 mt-1">+12.4% margin</div>
+                  </div>
+                  <div className="bg-terminal-card rounded border border-terminal-border p-3">
+                    <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Deposits</div>
+                    <div className="text-sm font-semibold font-mono text-profit leading-none">+$32,141</div>
+                    <div className="text-[9px] font-mono text-terminal-muted mt-1">27 payouts</div>
+                  </div>
+                  <div className="bg-terminal-card rounded border border-terminal-border p-3">
+                    <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Fees</div>
+                    <div className="text-sm font-semibold font-mono text-loss leading-none">-$28,600</div>
+                    <div className="text-[9px] font-mono text-terminal-muted mt-1">164 purchases</div>
+                  </div>
+                  <div className="bg-terminal-card rounded border border-terminal-border p-3">
+                    <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Firms</div>
+                    <div className="text-sm font-semibold font-mono text-terminal-text leading-none">7</div>
+                    <div className="text-[9px] font-mono text-terminal-muted mt-1">tracked</div>
+                  </div>
+                </div>
+
+                {/* Monthly heatmap */}
+                <div>
+                  <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1.5">Monthly PNL</div>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {[
+                      { m: "Oct '25", v: -474, p: false },
+                      { m: "Nov '25", v: 1380, p: true },
+                      { m: "Dec '25", v: -856, p: false },
+                      { m: "Jan '26", v: 2940, p: true },
+                      { m: "Feb '26", v: 1125, p: true },
+                      { m: "Mar '26", v: -574, p: false },
+                      { m: "Apr", v: 0, p: null },
+                      { m: "May", v: 0, p: null },
+                    ].map((mo) => (
+                      <div
+                        key={mo.m}
+                        className="rounded border border-terminal-border px-2 py-1.5"
+                        style={{
+                          background:
+                            mo.p === true
+                              ? `rgba(0, 230, 118, ${Math.min(0.15, (mo.v / 5000) * 0.15)})`
+                              : mo.p === false
+                              ? `rgba(255, 82, 82, ${Math.min(0.15, (Math.abs(mo.v) / 5000) * 0.15)})`
+                              : 'transparent',
+                        }}
+                      >
+                        <div className="text-[8px] font-mono text-terminal-muted">{mo.m}</div>
+                        <div
+                          className={`text-[10px] font-mono font-semibold ${
+                            mo.p === true ? 'text-profit' : mo.p === false ? 'text-loss' : 'text-terminal-muted/30'
+                          }`}
+                        >
+                          {mo.p === null ? '—' : `${mo.v > 0 ? '+' : ''}$${Math.abs(mo.v).toLocaleString()}`}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mini firm rankings */}
+                <div>
+                  <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1.5">Firm Rankings</div>
+                  <div className="bg-terminal-card rounded border border-terminal-border overflow-hidden">
+                    <table className="w-full text-[10px] font-mono">
+                      <thead>
+                        <tr className="border-b border-terminal-border text-terminal-muted">
+                          <th className="text-left py-1.5 px-2 font-normal">#</th>
+                          <th className="text-left py-1.5 px-2 font-normal">Firm</th>
+                          <th className="text-right py-1.5 px-2 font-normal">Net PNL</th>
+                          <th className="text-right py-1.5 px-2 font-normal">ROI</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-terminal-text">
+                        <tr className="border-b border-terminal-border/50">
+                          <td className="py-1.5 px-2 text-terminal-muted">1</td>
+                          <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-profit mr-1.5" />Topstep</td>
+                          <td className="py-1.5 px-2 text-right text-profit">+$5,616</td>
+                          <td className="py-1.5 px-2 text-right text-profit">↗ 68%</td>
+                        </tr>
+                        <tr className="border-b border-terminal-border/50">
+                          <td className="py-1.5 px-2 text-terminal-muted">2</td>
+                          <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-profit mr-1.5" />Apex</td>
+                          <td className="py-1.5 px-2 text-right text-profit">+$2,430</td>
+                          <td className="py-1.5 px-2 text-right text-profit">↗ 31%</td>
+                        </tr>
+                        <tr className="border-b border-terminal-border/50">
+                          <td className="py-1.5 px-2 text-terminal-muted">3</td>
+                          <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-loss mr-1.5" />The5ers</td>
+                          <td className="py-1.5 px-2 text-right text-loss">-$1,992</td>
+                          <td className="py-1.5 px-2 text-right text-loss">↘ -38%</td>
+                        </tr>
+                        <tr>
+                          <td className="py-1.5 px-2 text-terminal-muted">4</td>
+                          <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-loss mr-1.5" />MyFundedFX</td>
+                          <td className="py-1.5 px-2 text-right text-loss">-$2,513</td>
+                          <td className="py-1.5 px-2 text-right text-loss">↘ -54%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
@@ -106,7 +209,7 @@ export default function LandingPage() {
               <span className="block mt-2">Bank accounts don&apos;t.</span>
             </h2>
             <p className="text-lg text-terminal-text mb-8 text-center max-w-2xl mx-auto">
-              Real money slips through when you guess. Resets, challenge fees, and subscriptions add up—most traders don&apos;t run the numbers until it&apos;s too late.
+              Real money slips through when you guess. Resets, challenge fees, and subscriptions add up, and most traders don&apos;t run the numbers until it&apos;s too late.
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-12">
               <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
@@ -145,17 +248,17 @@ export default function LandingPage() {
               One click → Real P&L
             </h2>
             <p className="text-lg text-terminal-muted mb-8">
-              Connect your bank. Get the numbers that actually matter—so you can stop guessing and start deciding.
+              Connect your bank. Get the numbers that actually matter, so you can stop guessing and start deciding.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Total payouts</div>
-              <p className="text-terminal-text text-sm">Every dollar that hit your account—one place</p>
+              <p className="text-terminal-text text-sm">Every dollar that hit your account, in one place</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Total fees paid</div>
-              <p className="text-terminal-text text-sm">Resets, challenges, subs—so you see true cost</p>
+              <p className="text-terminal-text text-sm">Resets, challenges, subs. So you see true cost</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Net P&L</div>
@@ -167,7 +270,7 @@ export default function LandingPage() {
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Profit per firm</div>
-              <p className="text-terminal-text text-sm">Which firms pay off—and which don&apos;t</p>
+              <p className="text-terminal-text text-sm">Which firms pay off, and which don&apos;t</p>
             </div>
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
               <div className="text-lg font-semibold text-terminal-text mb-2">Zero manual entry</div>
@@ -193,14 +296,14 @@ export default function LandingPage() {
               <span className="text-3xl block mb-4">⚡</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Auto-categorized</h3>
               <p className="text-terminal-text">
-                Payouts vs. fees—we recognize Rise, Wise, Stripe and tag them so you don&apos;t have to.
+                Payouts vs. fees: we recognize Rise, Wise, Stripe and tag them so you don&apos;t have to.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
               <span className="text-3xl block mb-4">👥</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Multi-account</h3>
               <p className="text-terminal-text">
-                Up to 5 bank accounts in one view—see your full picture without switching tabs.
+                Up to 5 bank accounts in one view. See your full picture without switching tabs.
               </p>
             </div>
             <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">
@@ -214,7 +317,7 @@ export default function LandingPage() {
               <span className="text-3xl block mb-4">📄</span>
               <h3 className="text-xl font-semibold text-terminal-text mb-3">Export for taxes</h3>
               <p className="text-terminal-text">
-                CSV or PDF in one tap—hand it to your accountant and done.
+                CSV or PDF in one tap. Hand it to your accountant and done.
               </p>
             </div>
           </div>
@@ -314,7 +417,7 @@ export default function LandingPage() {
                 <span className="block mt-2">without screenshots</span>
               </h2>
               <p className="text-lg text-terminal-text mb-8 leading-relaxed">
-                Proof beats promises. A public link shows your real payouts, fees, and net P&L—no screenshots, no doubt.
+                Proof beats promises. A public link shows your real payouts, fees, and net P&L. No screenshots, no doubt.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -335,7 +438,7 @@ export default function LandingPage() {
                   <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                   <div>
                     <div className="font-medium text-terminal-text">Accountability</div>
-                    <div className="text-terminal-text text-sm">Share progress with partners—one link, always current</div>
+                    <div className="text-terminal-text text-sm">Share progress with partners. One link, always current</div>
                   </div>
                 </div>
               </div>
@@ -375,7 +478,7 @@ export default function LandingPage() {
               You stay in control
             </h2>
             <p className="text-lg text-terminal-text leading-relaxed">
-              Your credentials never touch our servers. We use Teller (same tech as tax and finance apps)—read-only, so we can&apos;t move money or see your password.
+              Your credentials never touch our servers. We use Teller (same tech as tax and finance apps), read-only, so we can&apos;t move money or see your password.
             </p>
           </div>
 
@@ -384,12 +487,12 @@ export default function LandingPage() {
               <span className="text-3xl block mx-auto mb-4 text-center">🔒</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Read-only</h3>
               <p className="text-terminal-text text-sm">
-                We read transactions only. No withdrawals, no transfers, no payments—ever.
+                We read transactions only. No withdrawals, no transfers, no payments. Ever.
               </p>
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
-              <span className="text-3xl block mx-auto mb-4 text-center">🛡️</span>
+              <span className="text-3xl block mx-auto mb-4 text-center">🔐</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">Encrypted</h3>
               <p className="text-terminal-text text-sm">
                 Data encrypted at rest and in transit. Same standards banks use.
@@ -397,7 +500,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-terminal-bg rounded-lg border border-terminal-border p-8 text-center">
-              <span className="text-3xl block mx-auto mb-4 text-center">👛</span>
+              <span className="text-3xl block mx-auto mb-4 text-center">🙈</span>
               <h3 className="text-lg font-semibold text-terminal-text mb-2">No stored logins</h3>
               <p className="text-terminal-text text-sm">
                 We never store your bank login. Connect via Teller; disconnect anytime.
@@ -553,7 +656,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA — gradient bookend with navbar */}
+      {/* CTA: gradient bookend with navbar */}
       <section
         className="py-24 border-t border-profit/20"
         style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}
