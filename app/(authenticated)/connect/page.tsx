@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/components/ui/Toasts/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTellerConnect } from 'teller-connect-react';
@@ -16,12 +16,14 @@ function openSignupModal() {
 export default function ConnectPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const [connecting, setConnecting] = useState(false);
   const [tellerConfig, setTellerConfig] = useState<{ applicationId: string; environment: string } | null>(null);
   const hasOpenedModal = useRef(false);
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
   const [showPricing, setShowPricing] = useState(false);
+  const paymentSuccess = searchParams.get('payment') === 'success';
 
   // Open signup modal once when unauthenticated (no redirect)
   useEffect(() => {
@@ -32,8 +34,12 @@ export default function ConnectPage() {
   }, [user]);
 
   // Check if user has an active plan before allowing bank connection
+  // If payment=success, poll until the webhook records the payment
   useEffect(() => {
     if (!user) return;
+
+    let attempts = 0;
+    let cancelled = false;
 
     async function checkSubscription() {
       try {
@@ -42,22 +48,28 @@ export default function ConnectPage() {
           const data = await response.json();
           if (data.hasSubscription) {
             setHasPaid(true);
-          } else {
-            setHasPaid(false);
-            setShowPricing(true);
+            return;
           }
-        } else {
-          setHasPaid(false);
-          setShowPricing(true);
         }
       } catch {
-        setHasPaid(false);
-        setShowPricing(true);
+        // Fall through to retry or show pricing
       }
+
+      // If returning from Stripe checkout, poll for webhook to complete
+      if (paymentSuccess && attempts < 10 && !cancelled) {
+        attempts++;
+        setTimeout(checkSubscription, 2000);
+        return;
+      }
+
+      setHasPaid(false);
+      setShowPricing(true);
     }
 
     checkSubscription();
-  }, [user]);
+
+    return () => { cancelled = true; };
+  }, [user, paymentSuccess]);
 
   // Load Teller config on mount
   useEffect(() => {
@@ -192,11 +204,16 @@ export default function ConnectPage() {
     );
   }
 
-  // Show loading while checking subscription
+  // Show loading while checking subscription / waiting for payment confirmation
   if (hasPaid === null) {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
-        <span className="text-4xl block text-profit">⏳</span>
+        <div className="text-center">
+          <span className="text-4xl block text-profit mb-4">⏳</span>
+          {paymentSuccess && (
+            <p className="text-terminal-muted text-sm">Confirming your payment...</p>
+          )}
+        </div>
       </div>
     );
   }
