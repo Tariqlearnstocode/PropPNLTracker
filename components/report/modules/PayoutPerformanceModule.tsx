@@ -1,17 +1,10 @@
 'use client';
 
 import React from 'react';
-import { formatCurrency, formatDate } from '@/lib/pnl-calculations';
+import { formatCurrency, formatDate, type PayoutPerformanceStats } from '@/lib/pnl-calculations';
 
 interface PayoutPerformanceModuleProps {
-  stats: {
-    totalPayouts: number;
-    averagePayoutSize: number;
-    payoutFrequency: number;
-    largestPayout?: { amount: number; date: string; firmName?: string };
-    smallestPayout?: { amount: number; date: string };
-    averageDaysBetweenPayouts: number;
-  };
+  stats: PayoutPerformanceStats;
 }
 
 export function PayoutPerformanceModule({ stats }: PayoutPerformanceModuleProps) {

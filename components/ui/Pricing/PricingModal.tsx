@@ -62,8 +62,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
       if (data.url) {
         window.location.href = data.url;
       }
-    } catch (error) {
-      console.error('Checkout error:', error);
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to start checkout. Please try again.',

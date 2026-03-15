@@ -4,11 +4,10 @@
  */
 export function ReportPageShell() {
   return (
-    <div className="min-h-screen text-terminal-text" style={{ backgroundColor: '#0a0a0f' }}>
+    <div className="min-h-screen text-terminal-text bg-terminal-bg">
       {/* Sticky header shell */}
       <div
-        className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]"
-        style={{ backgroundColor: '#0e0e14' }}
+        className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)] bg-terminal-header"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5">
           {/* Title row */}

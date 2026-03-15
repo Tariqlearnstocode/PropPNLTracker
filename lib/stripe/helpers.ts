@@ -11,20 +11,20 @@ import Stripe from 'stripe';
 export async function getOrCreateStripeCustomer(userId: string, email: string, name?: string | null) {
   // If Stripe is not configured, return null
   if (!isStripeConfigured() || !stripe) {
-    console.log('Stripe not configured, skipping customer creation');
     return null;
   }
 
   const supabase = await createClient();
 
   // First, check if user has a subscription (subscription table is source of truth)
-  const { data: subscription, error: subscriptionError } = await supabase
-    .from('stripe_subscriptions' as any)
+  const { data: subscription } = await supabase
+    // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+    .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
     .select('stripe_customer_id')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(1)
-    .maybeSingle() as { data: { stripe_customer_id: string } | null; error: any };
+    .maybeSingle() as { data: { stripe_customer_id: string } | null; error: Error | null };
 
   if (subscription?.stripe_customer_id) {
     // Verify customer still exists in Stripe
@@ -35,9 +35,8 @@ export async function getOrCreateStripeCustomer(userId: string, email: string, n
       if (!customer.deleted) {
         return subscription.stripe_customer_id;
       }
-    } catch (error) {
+    } catch {
       // Customer doesn't exist in Stripe, will create new one below
-      console.error('Error retrieving customer from Stripe:', error);
     }
   }
 
@@ -46,11 +45,11 @@ export async function getOrCreateStripeCustomer(userId: string, email: string, n
     .from('users')
     .select('stripe_customer_id')
     .eq('id', userId)
-    .maybeSingle() as { data: { stripe_customer_id: string | null } | null; error: any };
+    // TODO: Replace cast with generated Supabase types for users table
+    .maybeSingle() as { data: { stripe_customer_id: string | null } | null; error: { code: string; message: string } | null };
 
   if (userError && userError.code !== 'PGRST116') {
-    // PGRST116 is "no rows returned" which is expected, log other errors
-    console.error('Error checking users table:', userError);
+    // PGRST116 is "no rows returned" which is expected
   }
 
   if (user?.stripe_customer_id) {
@@ -60,43 +59,38 @@ export async function getOrCreateStripeCustomer(userId: string, email: string, n
         user.stripe_customer_id
       );
       if (!customer.deleted) {
-        console.log(`Found existing Stripe customer ${user.stripe_customer_id} for user ${userId}`);
         return user.stripe_customer_id;
       }
-    } catch (error) {
+    } catch {
       // Customer doesn't exist in Stripe, create new one
-      console.error('Error retrieving customer from Stripe:', error);
     }
   }
 
   // No existing customer found - create new one
-  console.log(`Creating new Stripe customer for user ${userId}`);
   const customerData: Stripe.CustomerCreateParams = {
     email,
     metadata: {
       user_id: userId,
     },
   };
-  
+
   // Add name if provided
   if (name) {
     customerData.name = name;
   }
-  
+
   const customer = await stripe!.customers.create(customerData);
 
   // Store in database (users table)
   // Use admin client to bypass RLS for updating stripe_customer_id
   const { error: updateError } = await supabaseAdmin
     .from('users')
-    .update({ stripe_customer_id: customer.id } as any)
+    // TODO: Replace cast with generated Supabase types
+    .update({ stripe_customer_id: customer.id } as unknown as Record<string, unknown>)
     .eq('id', userId);
 
   if (updateError) {
-    console.error('Error saving customer to database:', updateError);
     throw new Error(`Failed to save Stripe customer to database: ${updateError.message}`);
-  } else {
-    console.log(`Saved Stripe customer ${customer.id} to database for user ${userId}`);
   }
 
   return customer.id;
@@ -113,121 +107,10 @@ export async function getActiveSubscription(userId: string) {
     .select('*')
     .eq('user_id', userId)
     .eq('status', 'active')
-    .single() as { data: any };
+    // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+    .single() as { data: Record<string, unknown> | null };
 
   return subscription;
-}
-
-/**
- * Report verification usage to Stripe meter
- * Used for tracking/analytics only - limits are enforced in application code
- * Subscriptions have fixed limits (10 for Starter, 50 for Pro) - no overage billing
- */
-export async function reportVerificationUsage(
-  userId: string,
-  verificationId: string,
-  customerId: string
-) {
-  const supabase = await createClient();
-  const meterId = await getMeterId();
-
-  try {
-    // Report usage to Stripe meter for tracking
-    // Use verification_id as identifier to ensure uniqueness per verification
-    // This prevents duplicate event errors when multiple verifications are created quickly
-    // Value must be in payload per meter configuration (value_settings.event_payload_key: 'value')
-    // Stripe requires all payload values to be strings
-    // Stripe also requires stripe_customer_id in the payload to identify the customer
-    if (!stripe) {
-      console.log('Stripe not configured, skipping meter event');
-      return null;
-    }
-    const meterEvent = await stripe.billing.meterEvents.create({
-      event_name: 'verification.created',
-      identifier: verificationId, // Unique per verification to prevent duplicate errors
-      payload: {
-        stripe_customer_id: customerId, // Required by Stripe to identify the customer
-        verification_id: verificationId,
-        user_id: userId,
-        value: '1', // Value must be in payload per meter configuration (as string)
-      },
-    });
-
-    // Store in database for audit
-    // Use supabaseAdmin to bypass RLS (server-side operation)
-    const { error: insertError } = await supabaseAdmin.from('meter_events' as any).insert({
-      user_id: userId,
-      verification_id: verificationId,
-      stripe_event_id: (meterEvent as any).id || null,
-      meter_id: meterId,
-      event_name: 'verification.created',
-      value: 1,
-    } as any);
-
-    if (insertError) {
-      console.error('Error storing meter event in database:', insertError);
-      // Don't throw - Stripe event was created successfully, DB insert is just for audit
-    }
-
-    return meterEvent;
-  } catch (error) {
-    console.error('Error reporting usage to Stripe:', error);
-    throw error;
-  }
-}
-
-/**
- * Create one-time payment for pay-as-you-go verification
- */
-export async function createOneTimePayment(
-  customerId: string,
-  verificationId: string,
-  amount: number
-) {
-  if (!stripe) {
-    throw new Error('Stripe is not configured');
-  }
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount,
-      currency: 'usd',
-      customer: customerId,
-      metadata: {
-        verification_id: verificationId,
-        type: 'pay_as_you_go',
-      },
-    });
-
-    return paymentIntent;
-  } catch (error) {
-    console.error('Error creating payment intent:', error);
-    throw error;
-  }
-}
-
-/**
- * Get subscription item ID for usage reporting
- * This is needed to report meter events
- */
-export async function getSubscriptionItemId(
-  subscriptionId: string
-): Promise<string | null> {
-  if (!stripe) {
-    console.log('Stripe not configured, cannot get subscription item');
-    return null;
-  }
-  try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-
-    // Find the first subscription item (we no longer use usage-based pricing)
-    // This function is kept for backwards compatibility but may not be needed
-    const item = subscription.items.data[0];
-
-    return item?.id || null;
-  } catch (error) {
-    console.error('Error getting subscription item:', error);
-    return null;
-  }
 }
 
 /**
@@ -244,7 +127,8 @@ export async function getCurrentPeriodUsage(
 
     // Get subscription from database (has period dates synced from Stripe webhooks)
     const { data: dbSubscription } = await supabase
-      .from('stripe_subscriptions' as any)
+      // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
       .select('current_period_start, current_period_end')
       .eq('stripe_subscription_id', subscriptionId)
       .eq('user_id', userId)
@@ -260,15 +144,15 @@ export async function getCurrentPeriodUsage(
     } else {
       // Fallback: fetch from Stripe API if database doesn't have dates
       if (!stripe) {
-        console.warn('Stripe not configured, cannot fetch subscription from API');
         return 0;
       }
       const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
-      const periodStartTimestamp = (stripeSubscription as any).current_period_start;
-      const periodEndTimestamp = (stripeSubscription as any).current_period_end;
+      // TODO: current_period_start/end exist at runtime but not in this Stripe types version
+      const subRecord = stripeSubscription as unknown as Record<string, number>;
+      const periodStartTimestamp = subRecord.current_period_start;
+      const periodEndTimestamp = subRecord.current_period_end;
 
       if (!periodStartTimestamp || !periodEndTimestamp) {
-        console.warn('Subscription missing period dates in both DB and Stripe, returning 0 usage');
         return 0;
       }
 
@@ -278,13 +162,13 @@ export async function getCurrentPeriodUsage(
 
     // Validate dates are valid
     if (isNaN(periodStart.getTime()) || isNaN(periodEnd.getTime())) {
-      console.warn('Invalid period dates in subscription, returning 0 usage');
       return 0;
     }
 
     // Query meter events for this user in current period
     const { data: events } = await supabase
-      .from('meter_events' as any)
+      // TODO: Replace cast with generated Supabase types for meter_events table
+      .from('meter_events' as unknown as 'meter_events')
       .select('value')
       .eq('user_id', userId)
       .eq('meter_id', meterId)
@@ -295,41 +179,8 @@ export async function getCurrentPeriodUsage(
     const totalUsage = events?.reduce((sum, event) => sum + (event.value || 0), 0) || 0;
 
     return totalUsage;
-  } catch (error) {
-    console.error('Error getting current period usage:', error);
+  } catch {
     // Fallback: return 0 if we can't get usage (allows verification)
     return 0;
-  }
-}
-
-/**
- * Get subscription usage summary for current period
- * Note: This function may not be used since we're not using usage-based billing
- */
-export async function getUsageSummary(subscriptionId: string) {
-  if (!stripe) {
-    throw new Error('Stripe is not configured');
-  }
-  try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const meterId = await getMeterId();
-
-    // Get usage for current period
-    // Note: listUsageRecordSummaries might not be available in current Stripe API version
-    // Using type assertion as workaround
-    const usageRecords = await (stripe.subscriptionItems as any).listUsageRecordSummaries(
-      subscription.items.data[0].id,
-      {
-        limit: 1,
-      }
-    );
-
-    return {
-      subscription,
-      usageRecords: usageRecords?.data || [],
-    };
-  } catch (error) {
-    console.error('Error getting usage summary:', error);
-    throw error;
   }
 }

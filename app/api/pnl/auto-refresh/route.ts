@@ -12,7 +12,7 @@ const AUTO_REFRESH_FREQUENCY: 'weekly' | 'monthly' = 'monthly';
  * POST /api/pnl/auto-refresh
  * 
  * Auto-refresh endpoint for subscription users
- * Should be called by a cron job (Vercel Cron, external service, etc.)
+ * Should be called by a cron job (e.g. Railway cron, external service, etc.)
  * 
  * IMPORTANT: This endpoint requires access tokens to call Teller API.
  * Options for handling this:
@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
       .eq('status', 'active');
 
     if (subError) {
-      console.error('Error fetching subscriptions:', subError);
       return NextResponse.json(
         { error: 'Failed to fetch subscriptions' },
         { status: 500 }
@@ -58,8 +57,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const userIds = subscriptions.map((s: any) => s.user_id);
-    console.log(`Found ${userIds.length} users with active subscriptions`);
+    const userIds = subscriptions.map((s: { user_id: string }) => s.user_id);
 
     // Get connected accounts for these users
     const { data: connectedAccounts, error: accountsError } = await supabaseAdmin
@@ -68,7 +66,6 @@ export async function POST(request: NextRequest) {
       .in('user_id', userIds);
 
     if (accountsError) {
-      console.error('Error fetching connected accounts:', accountsError);
       return NextResponse.json(
         { error: 'Failed to fetch connected accounts' },
         { status: 500 }
@@ -89,14 +86,13 @@ export async function POST(request: NextRequest) {
       ? 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
       : 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
 
-    const accountsNeedingRefresh = connectedAccounts.filter((ca: any) => {
+    const accountsNeedingRefresh = connectedAccounts.filter((ca: { user_id: string; account_id: string; last_synced_at: string | null }) => {
       if (!ca.last_synced_at) return true; // Never synced
       const lastSynced = new Date(ca.last_synced_at).getTime();
       const timeSinceSync = now.getTime() - lastSynced;
       return timeSinceSync >= refreshThreshold;
     });
 
-    console.log(`${accountsNeedingRefresh.length} accounts need refresh`);
 
     // TODO: Implement actual refresh logic
     // This requires access tokens to call Teller API
@@ -113,17 +109,16 @@ export async function POST(request: NextRequest) {
       total_subscriptions: userIds.length,
       total_connected_accounts: connectedAccounts.length,
       accounts_needing_refresh: accountsNeedingRefresh.length,
-      accounts: accountsNeedingRefresh.map((ca: any) => ({
+      accounts: accountsNeedingRefresh.map((ca: { user_id: string; account_id: string; last_synced_at: string | null }) => ({
         user_id: ca.user_id,
         account_id: ca.account_id,
         last_synced_at: ca.last_synced_at,
       })),
       note: 'Full auto-refresh implementation requires access token strategy (see code comments)',
     });
-  } catch (error: any) {
-    console.error('Error in auto-refresh:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', details: error?.message },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

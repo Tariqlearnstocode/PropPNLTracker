@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
+
+const publicToggleSchema = z.object({
+  isPublic: z.boolean(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +16,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { isPublic } = await request.json();
-
-    if (typeof isPublic !== 'boolean') {
-      return NextResponse.json({ error: 'isPublic must be a boolean' }, { status: 400 });
+    let body: z.infer<typeof publicToggleSchema>;
+    try {
+      body = publicToggleSchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
     }
+
+    const { isPublic } = body;
 
     const { error } = await supabaseAdmin
       .from('pnl_reports')
@@ -24,13 +35,11 @@ export async function POST(request: NextRequest) {
       .eq('status', 'completed');
 
     if (error) {
-      console.error('Error updating public preference:', error);
       return NextResponse.json({ error: 'Failed to update preference' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, isPublic });
-  } catch (error) {
-    console.error('Public toggle error:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -58,8 +67,7 @@ export async function GET() {
       reportToken: report?.report_token ?? null,
       displayName: report?.display_name ?? null,
     });
-  } catch (error) {
-    console.error('Public get error:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

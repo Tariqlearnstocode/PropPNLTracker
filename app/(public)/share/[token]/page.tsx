@@ -140,7 +140,7 @@ export default async function SharePage({ params }: PageProps) {
   } else if (reportRow.pnl_data) {
     pnlData = reportRow.pnl_data;
     if (pnlData && pnlData.transactions) {
-      pnlData.transactions = pnlData.transactions.map((txn: any) => {
+      pnlData.transactions = pnlData.transactions.map((txn) => {
         if (!txn.match) {
           return { ...txn, match: { type: 'unmatched' as const, firmName: null, confidence: 'low' as const } };
         }

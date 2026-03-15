@@ -4,9 +4,10 @@ import React from 'react';
 import { ROIModule } from '../modules/ROIModule';
 import { GrowthTrendsModule } from '../modules/GrowthTrendsModule';
 import { FirmComparisonModule } from '../modules/FirmComparisonModule';
+import type { TradingStats } from '@/lib/pnl-calculations';
 
 interface EfficiencyTabProps {
-  tradingStats: any;
+  tradingStats: TradingStats;
 }
 
 export function EfficiencyTab({ tradingStats }: EfficiencyTabProps) {

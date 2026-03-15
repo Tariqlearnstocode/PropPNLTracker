@@ -18,7 +18,6 @@ export async function createVerificationsMeter() {
     );
 
     if (existingMeter) {
-      console.log('Meter already exists:', existingMeter.id);
       return existingMeter;
     }
 
@@ -34,10 +33,8 @@ export async function createVerificationsMeter() {
       },
     });
 
-    console.log('Created meter:', meter.id);
     return meter;
   } catch (error) {
-    console.error('Error creating meter:', error);
     throw error;
   }
 }

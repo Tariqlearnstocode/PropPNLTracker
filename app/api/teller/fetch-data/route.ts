@@ -3,8 +3,17 @@ import { supabaseAdmin } from '@/utils/supabase/admin';
 import { sendCompletionEmail } from '@/utils/email';
 import { checkRateLimit } from '@/utils/rate-limit';
 import https from 'https';
+import { z } from 'zod';
 
 const TELLER_API_URL = 'https://api.teller.io';
+
+interface TellerAccount {
+  id: string;
+  name?: string;
+  type?: string;
+  enrollment_id?: string;
+  [key: string]: unknown;
+}
 
 /**
  * Teller API requires Basic Auth with access_token as username and empty password
@@ -58,16 +67,24 @@ async function tellerFetch(url: string, options: { method?: string; headers: Rec
   });
 }
 
+const bodySchema = z.object({
+  access_token: z.string().min(1),
+  verification_token: z.string().min(1),
+});
+
 export async function POST(request: NextRequest) {
   try {
-    const { access_token, verification_token } = await request.json();
-
-    if (!access_token || !verification_token) {
+    let body: z.infer<typeof bodySchema>;
+    try {
+      body = bodySchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'Access token and verification token are required' },
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
+
+    const { access_token, verification_token } = body;
 
     // Rate limiting: 5 Teller API calls per hour per verification token
     // This prevents abuse of the external Teller API (costs money)
@@ -99,7 +116,6 @@ export async function POST(request: NextRequest) {
 
     if (!accountsRes.ok) {
       const errData = await accountsRes.json().catch(() => ({}));
-      console.error('Failed to fetch accounts:', errData);
       return NextResponse.json(
         { error: 'Failed to fetch accounts', details: errData },
         { status: accountsRes.status }
@@ -110,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Fetch balances for each account
     const accountsWithBalances = await Promise.all(
-      accounts.map(async (account: any) => {
+      accounts.map(async (account: TellerAccount) => {
         try {
           const balanceRes = await tellerFetch(
             `${TELLER_API_URL}/accounts/${account.id}/balances`,
@@ -130,7 +146,7 @@ export async function POST(request: NextRequest) {
     const startDate = twelveMonthsAgo.toISOString().split('T')[0];
     const endDate = new Date().toISOString().split('T')[0];
 
-    let allTransactions: any[] = [];
+    let allTransactions: Record<string, unknown>[] = [];
 
     for (const account of accounts) {
       try {
@@ -142,8 +158,7 @@ export async function POST(request: NextRequest) {
           const transactions = await txnRes.json();
           allTransactions = allTransactions.concat(transactions);
         }
-      } catch (err) {
-        console.error(`Failed to fetch transactions for account ${account.id}:`, err);
+      } catch {
       }
     }
 
@@ -171,11 +186,10 @@ export async function POST(request: NextRequest) {
         raw_plaid_data: rawTellerData, // Reusing the same column for Teller data
         status: 'completed',
         completed_at: new Date().toISOString(),
-      } as any)
+      } as unknown as Record<string, unknown>)
       .eq('verification_token', verification_token);
 
     if (updateError) {
-      console.error('Error saving report:', updateError);
       return NextResponse.json(
         { error: 'Failed to save report data' },
         { status: 500 }
@@ -194,50 +208,42 @@ export async function POST(request: NextRequest) {
           requestedByName: verificationBefore.requested_by_name || 'Requesting Party',
           verificationLink: reportLink,
         });
-      } catch (emailError) {
-        console.error('Failed to send completion email:', emailError);
+      } catch {
         // Don't fail the request if email fails
       }
     }
 
     // 5. Delete all account connections to stop recurring charges
     // Teller charges per active enrollment, so we must disconnect after fetching
-    console.log(`Disconnecting ${accounts.length} account(s) from Teller...`);
-    
     const disconnectResults = await Promise.all(
-      accounts.map(async (account: any) => {
+      accounts.map(async (account: TellerAccount) => {
       try {
           const deleteRes = await tellerFetch(`${TELLER_API_URL}/accounts/${account.id}`, {
           method: 'DELETE',
             headers,
           });
           if (deleteRes.ok) {
-            console.log(`Successfully disconnected account ${account.id}`);
             return { id: account.id, success: true };
           } else {
             const errText = await deleteRes.text().catch(() => 'Unknown error');
-            console.error(`Failed to disconnect account ${account.id}: ${errText}`);
             return { id: account.id, success: false, error: errText };
           }
-        } catch (err: any) {
-          console.error(`Error disconnecting account ${account.id}:`, err?.message);
-          return { id: account.id, success: false, error: err?.message };
+        } catch (err: unknown) {
+          return { id: account.id, success: false, error: err instanceof Error ? err.message : 'Unknown error' };
       }
       })
     );
     
     const disconnectedCount = disconnectResults.filter(r => r.success).length;
-    console.log(`Disconnected ${disconnectedCount}/${accounts.length} accounts from Teller`);
 
     return NextResponse.json({ 
       success: true,
       disconnected: disconnectedCount,
       total_accounts: accounts.length
     });
-  } catch (error: any) {
-    console.error('Error fetching Teller data:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to fetch financial data', details: error?.message },
+      { error: 'Failed to fetch financial data', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

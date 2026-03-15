@@ -1,7 +1,8 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { cache } from 'react';
 
-type TypedSupabaseClient = SupabaseClient<any> | any;
+// TODO: Replace with generated Supabase database types when available
+type TypedSupabaseClient = SupabaseClient;
 
 export const getUser = cache(async (supabase: TypedSupabaseClient) => {
   const {

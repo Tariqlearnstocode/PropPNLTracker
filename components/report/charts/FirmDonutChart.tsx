@@ -59,8 +59,10 @@ export function FirmDonutChart({ perFirmBreakdown }: FirmDonutChartProps) {
           </Pie>
           <Tooltip
             contentStyle={{ backgroundColor: '#111118', border: '1px solid #1e1e2a', borderRadius: '8px', padding: '8px' }}
-            formatter={(value: any, name: any, props: any) => {
-              return [`${formatCurrency(props.payload.netPNL)}`, props.payload.name];
+            formatter={(_value, _name, props) => {
+              const data = props.payload as { netPNL: number; name: string } | undefined;
+              if (!data) return [String(_value ?? ''), String(_name ?? '')];
+              return [`${formatCurrency(data.netPNL)}`, data.name];
             }}
           />
         </PieChart>

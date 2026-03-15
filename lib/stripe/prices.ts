@@ -1,4 +1,5 @@
 import { stripe as _stripe } from './client';
+import Stripe from 'stripe';
 
 const stripe = _stripe!;
 
@@ -23,13 +24,15 @@ export async function setupProductsAndPrices() {
     } else {
       productId = productSearch.data[0].id;
     }
-    console.log('Product ID:', productId);
-
     // Create prices
-    const prices = {
-      payAsYouGo: null as any,
-      starterRecurring: null as any,
-      proRecurring: null as any,
+    const prices: {
+      payAsYouGo: Stripe.Price | null;
+      starterRecurring: Stripe.Price | null;
+      proRecurring: Stripe.Price | null;
+    } = {
+      payAsYouGo: null,
+      starterRecurring: null,
+      proRecurring: null,
     };
 
     // Pay-as-you-go (one-time)
@@ -42,7 +45,6 @@ export async function setupProductsAndPrices() {
       },
     });
     prices.payAsYouGo = payAsYouGoPrice;
-    console.log('Pay-as-you-go price:', payAsYouGoPrice.id);
 
     // Starter recurring ($59/mo)
     const starterRecurring = await stripe.prices.create({
@@ -58,7 +60,6 @@ export async function setupProductsAndPrices() {
       },
     });
     prices.starterRecurring = starterRecurring;
-    console.log('Starter recurring price:', starterRecurring.id);
 
     // Pro recurring ($199/mo)
     const proRecurring = await stripe.prices.create({
@@ -74,14 +75,12 @@ export async function setupProductsAndPrices() {
       },
     });
     prices.proRecurring = proRecurring;
-    console.log('Pro recurring price:', proRecurring.id);
 
     return {
       productId,
       prices,
     };
   } catch (error) {
-    console.error('Error setting up products and prices:', error);
     throw error;
   }
 }

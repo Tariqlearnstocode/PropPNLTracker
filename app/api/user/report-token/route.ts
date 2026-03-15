@@ -25,10 +25,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ reportToken: report.report_token });
-  } catch (error: any) {
-    console.error('Error in GET /api/user/report-token:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message },
+      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

@@ -4,9 +4,10 @@ import React from 'react';
 import { ActivityStatsModule } from '../modules/ActivityStatsModule';
 import { PurchaseFrequencyModule } from '../modules/PurchaseFrequencyModule';
 import { PayoutPerformanceModule } from '../modules/PayoutPerformanceModule';
+import type { TradingStats } from '@/lib/pnl-calculations';
 
 interface ActivityTabProps {
-  tradingStats: any;
+  tradingStats: TradingStats;
 }
 
 export function ActivityTab({ tradingStats }: ActivityTabProps) {

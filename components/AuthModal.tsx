@@ -67,8 +67,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
             userId: signUpData.user.id,
             email: signUpData.user.email || email,
           }),
-        }).catch((stripeError) => {
-          console.error('Error creating Stripe customer:', stripeError);
+        }).catch(() => {
           // Don't fail sign up if Stripe customer creation fails
           // Customer will be created lazily on first payment
         });
@@ -80,8 +79,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
       if (onAuthSuccess) {
         await onAuthSuccess();
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create account');
     } finally {
       setLoading(false);
     }
@@ -106,9 +105,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
       if (onAuthSuccess) {
         await onAuthSuccess();
       }
-    } catch (err: any) {
-      console.error('Sign in error:', err);
-      setError(err.message || 'Failed to sign in');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to sign in');
       setLoading(false);
     }
   };
@@ -126,8 +124,8 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
       if (resetError) throw resetError;
 
       setResetEmailSent(true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to send reset email');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset email');
     } finally {
       setLoading(false);
     }

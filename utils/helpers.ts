@@ -4,12 +4,8 @@ export const getURL = (path: string = '') => {
     process?.env?.NEXT_PUBLIC_SITE_URL &&
     process.env.NEXT_PUBLIC_SITE_URL.trim() !== ''
       ? process.env.NEXT_PUBLIC_SITE_URL
-      : // If not set, check for NEXT_PUBLIC_VERCEL_URL, which is automatically set by Vercel.
-        process?.env?.NEXT_PUBLIC_VERCEL_URL &&
-          process.env.NEXT_PUBLIC_VERCEL_URL.trim() !== ''
-        ? process.env.NEXT_PUBLIC_VERCEL_URL
-        : // If neither is set, default to localhost for local development.
-          'http://localhost:3000/';
+      : // Default to localhost for local development.
+        'http://localhost:3000/';
 
   // Trim the URL and remove trailing slash if exists.
   url = url.replace(/\/+$/, '');
@@ -20,23 +16,6 @@ export const getURL = (path: string = '') => {
 
   // Concatenate the URL and the path.
   return path ? `${url}/${path}` : url;
-};
-
-export const postData = async ({
-  url,
-  data
-}: {
-  url: string;
-  data?: any;
-}) => {
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    credentials: 'same-origin',
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
 };
 
 export const toDateTime = (secs: number) => {

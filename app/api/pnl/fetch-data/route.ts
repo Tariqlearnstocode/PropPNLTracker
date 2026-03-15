@@ -2,12 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { checkRateLimit } from '@/utils/rate-limit';
-import { calculatePNLReport } from '@/lib/pnl-calculations';
+import { calculatePNLReport, type RawFinancialData } from '@/lib/pnl-calculations';
 import { getActiveSubscription } from '@/lib/stripe/helpers';
 import { encryptToken } from '@/utils/teller-token-encryption';
 import https from 'https';
+import { z } from 'zod';
 
 const TELLER_API_URL = 'https://api.teller.io';
+
+interface TellerAccount {
+  id: string;
+  name?: string;
+  type?: string;
+  enrollment_id?: string;
+  [key: string]: unknown;
+}
 
 // ============ CONFIGURATION ============
 // Auto-refresh frequency for subscription users
@@ -72,6 +81,11 @@ async function tellerFetch(url: string, options: { method?: string; headers: Rec
   });
 }
 
+const fetchDataSchema = z.object({
+  access_token: z.string().min(1),
+  account_id: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -81,14 +95,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { access_token, account_id } = await request.json();
-
-    if (!access_token) {
+    let body: z.infer<typeof fetchDataSchema>;
+    try {
+      body = fetchDataSchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'Access token is required' },
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
+
+    const { access_token, account_id } = body;
 
     // Rate limiting: 5 Teller API calls per hour per user
     const rateLimit = checkRateLimit(`pnl-fetch:${user.id}`, 5, 60 * 60 * 1000);
@@ -119,7 +136,6 @@ export async function POST(request: NextRequest) {
 
     if (!accountsRes.ok) {
       const errData = await accountsRes.json().catch(() => ({}));
-      console.error('Failed to fetch accounts:', errData);
       return NextResponse.json(
         { error: 'Failed to fetch accounts', details: errData },
         { status: accountsRes.status }
@@ -130,7 +146,7 @@ export async function POST(request: NextRequest) {
     
     // Filter to specific account if provided
     if (account_id) {
-      accounts = accounts.filter((acc: any) => acc.id === account_id);
+      accounts = accounts.filter((acc: TellerAccount) => acc.id === account_id);
     }
 
     if (accounts.length === 0) {
@@ -142,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Fetch balances for each account
     const accountsWithBalances = await Promise.all(
-      accounts.map(async (account: any) => {
+      accounts.map(async (account: TellerAccount) => {
         try {
           const balanceRes = await tellerFetch(
             `${TELLER_API_URL}/accounts/${account.id}/balances`,
@@ -161,7 +177,7 @@ export async function POST(request: NextRequest) {
     const hasSubscription = !!subscription;
 
     // 4. Get last_synced_at for all accounts (for merge mode)
-    const accountIds = accounts.map((acc: any) => acc.id);
+    const accountIds = accounts.map((acc: TellerAccount) => acc.id);
     const { data: connectedAccounts } = await supabaseAdmin
       .from('connected_accounts')
       .select('account_id, last_synced_at')
@@ -169,7 +185,7 @@ export async function POST(request: NextRequest) {
       .in('account_id', accountIds);
 
     const lastSyncedMap = new Map<string, string>();
-    connectedAccounts?.forEach((ca: any) => {
+    connectedAccounts?.forEach((ca: { account_id: string; last_synced_at: string | null }) => {
       if (ca.last_synced_at) {
         lastSyncedMap.set(ca.account_id, ca.last_synced_at);
       }
@@ -178,7 +194,7 @@ export async function POST(request: NextRequest) {
     // 5. Fetch transactions for each account
     // For subscription users with existing reports: fetch from last_synced_at - 1 day (merge mode)
     // For new reports or non-subscription users: fetch last 12 months (full fetch)
-    let allTransactions: any[] = [];
+    let allTransactions: Record<string, unknown>[] = [];
     const endDate = new Date().toISOString().split('T')[0];
     const defaultStartDate = (() => {
       const twelveMonthsAgo = new Date();
@@ -196,11 +212,9 @@ export async function POST(request: NextRequest) {
           const lastSynced = new Date(lastSyncedMap.get(account.id)!);
           lastSynced.setDate(lastSynced.getDate() - SYNC_OVERLAP_DAYS);
           startDate = lastSynced.toISOString().split('T')[0];
-          console.log(`Account ${account.id}: merge mode, fetching from ${startDate} (${SYNC_OVERLAP_DAYS} day overlap)`);
         } else {
           // Full fetch mode: last 12 months
           startDate = defaultStartDate;
-          console.log(`Account ${account.id}: full fetch, fetching from ${startDate}`);
         }
 
         const txnRes = await tellerFetch(
@@ -211,8 +225,7 @@ export async function POST(request: NextRequest) {
           const transactions = await txnRes.json();
           allTransactions = allTransactions.concat(transactions);
         }
-      } catch (err) {
-        console.error(`Failed to fetch transactions for account ${account.id}:`, err);
+      } catch {
       }
     }
 
@@ -249,24 +262,24 @@ export async function POST(request: NextRequest) {
     const finalManualAssignments: Record<string, string> = (existingReport?.manual_assignments as Record<string, string>) || {};
 
     if (existingReport?.raw_teller_data) {
-      const existingData = existingReport.raw_teller_data as any;
+      const existingData = existingReport.raw_teller_data as RawFinancialData;
       const existingTransactions = existingData.transactions || [];
       const newTransactions = rawTellerData.transactions || [];
 
-      const transactionMap = new Map<string, any>();
-      existingTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
-      newTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
+      const transactionMap = new Map<string, Record<string, unknown>>();
+      existingTransactions.forEach((txn) => transactionMap.set(txn.id as string, txn));
+      newTransactions.forEach((txn) => transactionMap.set(txn.id as string, txn));
       const mergedTransactions = Array.from(transactionMap.values());
       mergedTransactions.sort((a, b) => {
-        const dateA = new Date(a.date || a.created_at || 0).getTime();
-        const dateB = new Date(b.date || b.created_at || 0).getTime();
+        const dateA = new Date(String(a.date || a.created_at || 0)).getTime();
+        const dateB = new Date(String(b.date || b.created_at || 0)).getTime();
         return dateB - dateA;
       });
 
       const existingAccounts = existingData.accounts || [];
-      const accountMap = new Map<string, any>();
-      existingAccounts.forEach((acc: any) => accountMap.set(acc.id, acc));
-      (rawTellerData.accounts || []).forEach((acc: any) => accountMap.set(acc.id, acc));
+      const accountMap = new Map<string, Record<string, unknown>>();
+      existingAccounts.forEach((acc) => accountMap.set(acc.id as string, acc));
+      (rawTellerData.accounts || []).forEach((acc) => accountMap.set(acc.id as string, acc));
       const mergedAccounts = Array.from(accountMap.values());
 
       finalRawData = {
@@ -278,7 +291,6 @@ export async function POST(request: NextRequest) {
           end: endDate,
         },
       };
-      console.log(`Merged ${existingTransactions.length} existing + ${newTransactions.length} new = ${mergedTransactions.length} total transactions`);
     }
 
     const pnlReport = calculatePNLReport(finalRawData, finalManualAssignments);
@@ -313,7 +325,7 @@ export async function POST(request: NextRequest) {
     }
 
     for (const account of accounts) {
-      const accountUpdateData: any = {
+      const accountUpdateData: Record<string, unknown> = {
         user_id: user.id,
         account_id: account.id,
         account_name: account.name,
@@ -329,33 +341,28 @@ export async function POST(request: NextRequest) {
           accountUpdateData.encrypted_access_token = encryptToken(access_token);
           accountUpdateData.token_encrypted_at = new Date().toISOString();
           accountUpdateData.can_refresh_daily = true;
-        } catch (error: any) {
-          console.error(`Error encrypting token for account ${account.id}:`, error);
+        } catch {
         }
       }
       const { error: accountError } = await supabaseAdmin
         .from('connected_accounts')
         .upsert(accountUpdateData, { onConflict: 'user_id,account_id' });
-      if (accountError) console.error('Error storing connected account:', accountError);
     }
-
-    console.log(`Keeping ${accounts.length} enrollment(s) active for refresh`);
 
     return NextResponse.json({
       success: true,
       report_count: 1,
       total_accounts: accounts.length,
       reportToken,
-      accounts: accounts.map((acc: any) => ({
+      accounts: accounts.map((acc: TellerAccount) => ({
         account_id: acc.id,
         report_token: reportToken,
         success: true,
       })),
     });
-  } catch (error: any) {
-    console.error('Error fetching PNL data:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to fetch PNL data', details: error?.message },
+      { error: 'Failed to fetch PNL data', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

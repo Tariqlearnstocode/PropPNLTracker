@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { PNLReport, formatDate, formatMonth, calculateTradingStats, calculatePerFirmBreakdown } from '@/lib/pnl-calculations';
-import { safeNumber, exportToCSV, exportToPDF } from '@/lib/report-utils';
+import { PNLReport, formatDate, calculateTradingStats, calculatePerFirmBreakdown } from '@/lib/pnl-calculations';
 
 // UI Components
 import { TabbedSection } from '@/components/report/ui/TabbedSection';
@@ -15,6 +14,7 @@ import { AnalyticsTab } from '@/components/report/tabs/AnalyticsTab';
 
 // Control Components
 import { ReportHeader } from '@/components/report/controls/ReportHeader';
+import { VisibilityControls } from '@/components/report/controls/VisibilityControls';
 
 // Modal Components
 import { AssignmentModal } from '@/components/report/modals/AssignmentModal';
@@ -24,13 +24,19 @@ import { BulkAssignModal } from '@/components/report/modals/BulkAssignModal';
 import { useManualAssignments } from '@/components/report/hooks/useManualAssignments';
 import { useDateRange } from '@/components/report/hooks/useDateRange';
 import { useFirmFilter } from '@/components/report/hooks/useFirmFilter';
+import { useExportHandlers } from '@/components/report/hooks/useExportHandlers';
 
 // Public view conversion components
 import { ConversionPopup } from '@/components/report/public/ConversionPopup';
 import { PublicInlineCTA } from '@/components/report/public/PublicInlineCTA';
 import { TransactionsTeaser } from '@/components/report/public/TransactionsTeaser';
+import { PublicCTABanner } from '@/components/report/public/PublicCTABanner';
 import { AuthModal } from '@/components/AuthModal';
 import { useReportNav } from '@/contexts/ReportNavContext';
+
+// UI elements
+import { NeedsAssignmentBanner } from '@/components/report/ui/NeedsAssignmentBanner';
+import { SelectedFirmsDisplay } from '@/components/report/ui/SelectedFirmsDisplay';
 
 interface Props {
   report: {
@@ -202,88 +208,20 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const displayFees = firmFilter.filteredFees;
 
   // Export handlers
-  const dateStamp = new Date().toISOString().split('T')[0];
-
-  // Get the currently filtered transactions (respects date + firm filters)
-  const exportTransactions = useMemo(() => {
-    const firmNames = firmFilter.selectedFirms;
-    let txns = filteredTransactions.filter(t => t.match.type === 'deposit' || t.match.type === 'fee');
-    if (firmNames.length > 0) {
-      txns = txns.filter(t => t.match.firmName && firmNames.includes(t.match.firmName));
-    }
-    return txns.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [filteredTransactions, firmFilter.selectedFirms]);
-
-  const formatTxnRow = (t: typeof exportTransactions[0]) => ({
-    Date: t.date.split('T')[0],
-    Type: t.match.type === 'deposit' ? 'Payout' : 'Purchase',
-    Amount: t.match.type === 'deposit' ? t.amount : -t.amount,
-    Firm: t.match.firmName ?? 'Unassigned',
-    Description: t.name,
+  const {
+    handleExportTransactions,
+    handleExportPurchases,
+    handleExportPayouts,
+    handleExportMonthlySummary,
+    handleExportFirmBreakdown,
+    handleExportPDF,
+  } = useExportHandlers({
+    filteredTransactions,
+    selectedFirms: firmFilter.selectedFirms,
+    filteredMonthlyBreakdown: dateRange.filteredMonthlyBreakdown,
+    filteredFirmBreakdown: firmFilter.filteredFirmBreakdown,
+    dateFilteredFirmBreakdown,
   });
-
-  const handleExportTransactions = () => {
-    exportToCSV(exportTransactions.map(formatTxnRow), `transactions-${dateStamp}.csv`);
-  };
-
-  const handleExportPurchases = () => {
-    const purchases = exportTransactions.filter(t => t.match.type === 'fee');
-    exportToCSV(
-      purchases.map(t => ({
-        Date: t.date.split('T')[0],
-        Amount: t.amount,
-        Firm: t.match.firmName ?? 'Unassigned',
-        Description: t.name,
-      })),
-      `purchases-${dateStamp}.csv`,
-    );
-  };
-
-  const handleExportPayouts = () => {
-    const payouts = exportTransactions.filter(t => t.match.type === 'deposit');
-    exportToCSV(
-      payouts.map(t => ({
-        Date: t.date.split('T')[0],
-        Amount: t.amount,
-        Firm: t.match.firmName ?? 'Unassigned',
-        Description: t.name,
-      })),
-      `payouts-${dateStamp}.csv`,
-    );
-  };
-
-  const handleExportMonthlySummary = () => {
-    const csvData = dateRange.filteredMonthlyBreakdown.map(month => ({
-      Month: formatMonth(month.month),
-      Deposits: month.deposits,
-      Fees: month.fees,
-      'Net PNL': month.netPNL,
-      'Running Total': month.runningTotal,
-      Transactions: month.transactionCount,
-    }));
-    exportToCSV(csvData, `monthly-summary-${dateStamp}.csv`);
-  };
-
-  const handleExportFirmBreakdown = () => {
-    const firms = firmFilter.selectedFirms.length > 0
-      ? firmFilter.filteredFirmBreakdown
-      : dateFilteredFirmBreakdown;
-    const csvData = [...firms]
-      .sort((a, b) => b.netPNL - a.netPNL)
-      .map(f => ({
-        Firm: f.firmName,
-        Deposits: f.deposits,
-        Fees: f.fees,
-        'Net PNL': f.netPNL,
-        'ROI %': f.fees > 0 ? ((f.netPNL / f.fees) * 100).toFixed(1) : '0',
-        Transactions: f.transactionCount,
-      }));
-    exportToCSV(csvData, `firm-breakdown-${dateStamp}.csv`);
-  };
-
-  const handleExportPDF = () => {
-    exportToPDF();
-  };
 
   // Display name handler
   const handleSaveDisplayName = async (name: string) => {
@@ -294,8 +232,7 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reportId: report.id, displayName: name }),
       });
-    } catch (e) {
-      console.error('Failed to save display name', e);
+    } catch {
     }
   };
 
@@ -317,17 +254,12 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
       }
 
       return data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw error;
     }
   };
 
   // Modal handlers
-  const handleOpenAssignmentModal = (transactionId: string) => {
-    setSelectedTransactionForAssignment(transactionId);
-    setAssignmentModalOpen(true);
-  };
-
   const handleCloseAssignmentModal = () => {
     setAssignmentModalOpen(false);
     setSelectedTransactionForAssignment(null);
@@ -345,8 +277,8 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
   const selectedTransaction = transactions.find(t => t.id === selectedTransactionForAssignment) || null;
 
   return (
-    <div className="min-h-screen text-terminal-text" style={{ backgroundColor: '#0a0a0f' }}>
-      <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]" style={{ backgroundColor: '#0e0e14' }}>
+    <div className="min-h-screen text-terminal-text bg-terminal-bg">
+      <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)] bg-terminal-header">
         <ReportHeader
           report={report}
           accounts={accounts}
@@ -399,109 +331,36 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
 
         {/* Visibility Controls */}
         {!isPublicView && (
-          <div className="mb-4 bg-terminal-card border border-terminal-border rounded-xl px-4 py-3">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">Visibility</span>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono text-terminal-muted">Display name</span>
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    onBlur={() => handleSaveDisplayName(displayName)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleSaveDisplayName(displayName); }}
-                    placeholder="Anonymous"
-                    className="w-32 px-2 py-1 text-xs font-mono bg-terminal-bg border border-terminal-border rounded text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit"
-                  />
-                </div>
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <span className="text-xs font-mono text-terminal-muted">Public link</span>
-                  <button
-                    onClick={handleTogglePublic}
-                    disabled={togglingPublic}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                      isPublicToggle ? 'bg-profit' : 'bg-terminal-border'
-                    } ${togglingPublic ? 'opacity-50' : ''}`}
-                  >
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                      isPublicToggle ? 'translate-x-[18px]' : 'translate-x-[3px]'
-                    }`} />
-                  </button>
-                </label>
-                <label className="flex items-center gap-2.5 cursor-pointer">
-                  <span className="text-xs font-mono text-terminal-muted">Leaderboard</span>
-                  <button
-                    onClick={handleToggleLeaderboard}
-                    disabled={togglingLeaderboard}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                      showOnLeaderboard ? 'bg-profit' : 'bg-terminal-border'
-                    } ${togglingLeaderboard ? 'opacity-50' : ''}`}
-                  >
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                      showOnLeaderboard ? 'translate-x-[18px]' : 'translate-x-[3px]'
-                    }`} />
-                  </button>
-                </label>
-              </div>
-            </div>
-          </div>
+          <VisibilityControls
+            displayName={displayName}
+            onDisplayNameChange={setDisplayName}
+            onSaveDisplayName={handleSaveDisplayName}
+            isPublicToggle={isPublicToggle}
+            onTogglePublic={handleTogglePublic}
+            togglingPublic={togglingPublic}
+            showOnLeaderboard={showOnLeaderboard}
+            onToggleLeaderboard={handleToggleLeaderboard}
+            togglingLeaderboard={togglingLeaderboard}
+          />
         )}
 
         {/* Needs Assignment Banner */}
-        {!isPublicView && needsAssignmentTransactions.length > 0 && (
-          <div className="mb-4 bg-accent-amber/10 border border-accent-amber/30 rounded-xl p-4 flex items-start gap-3">
-            <svg className="w-5 h-5 text-accent-amber flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-accent-amber mb-0.5">
-                {needsAssignmentTransactions.length} transaction{needsAssignmentTransactions.length > 1 ? 's' : ''} need{needsAssignmentTransactions.length === 1 ? 's' : ''} assignment
-              </div>
-              <div className="text-xs font-mono text-terminal-muted">
-                Unassigned transactions aren&apos;t included in your P&L. Assign them to a firm or dismiss if they&apos;re not prop firm related.
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                setActiveTab('transactions');
-                setTransactionView('needs-assignment');
-              }}
-              className="px-3 py-1.5 text-xs font-mono font-medium text-accent-amber border border-accent-amber/30 hover:bg-accent-amber/20 rounded-lg transition-colors flex-shrink-0"
-            >
-              Review
-            </button>
-          </div>
+        {!isPublicView && (
+          <NeedsAssignmentBanner
+            count={needsAssignmentTransactions.length}
+            onReview={() => {
+              setActiveTab('transactions');
+              setTransactionView('needs-assignment');
+            }}
+          />
         )}
 
         {/* Selected Firms Display */}
-        {firmFilter.selectedFirms.length > 0 && (
-          <div className="mb-4 bg-profit-dim border border-profit/20 rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-wrap">
-                <span className="text-xs font-medium text-terminal-muted uppercase tracking-wider">
-                  Filtering {firmFilter.selectedFirms.length} firm{firmFilter.selectedFirms.length > 1 ? 's' : ''}
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {firmFilter.selectedFirms.map(firmName => (
-                    <button
-                      key={firmName}
-                      onClick={() => firmFilter.toggleFirm(firmName)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-profit/20 text-profit border border-profit/30 rounded text-xs font-mono font-medium hover:bg-profit/30 transition-colors"
-                    >
-                      {firmName}
-                      <span className="ml-0.5 opacity-60">×</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button
-                onClick={() => firmFilter.setSelectedFirms([])}
-                className="px-3 py-1.5 text-xs text-terminal-muted hover:text-terminal-text font-medium transition-colors"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-        )}
+        <SelectedFirmsDisplay
+          selectedFirms={firmFilter.selectedFirms}
+          onToggleFirm={firmFilter.toggleFirm}
+          onClearFirms={() => firmFilter.setSelectedFirms([])}
+        />
 
         {/* Main Content */}
         <TabbedSection>
@@ -639,38 +498,11 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
 
       {/* Upgraded CTA Banner for public viewers */}
       {isPublicView && !ctaDismissed && (
-        <div className="fixed bottom-0 inset-x-0 z-50 border-t border-profit/20 bg-terminal-card/95 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
-              <p className="text-xs text-terminal-text font-mono font-medium">
-                {displayName
-                  ? `Get your own P&L report like ${displayName}. Free — no card.`
-                  : 'See your own P&L breakdown — connect your bank in 60 seconds'
-                }
-              </p>
-              <span className="text-[10px] text-terminal-muted font-mono hidden sm:inline flex-shrink-0">
-                Free · No credit card
-              </span>
-            </div>
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <button
-                onClick={handleGetStarted}
-                className="px-4 py-1.5 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-md transition-colors"
-              >
-                Get Started Free
-              </button>
-              <button
-                onClick={() => setCtaDismissed(true)}
-                className="p-1 text-terminal-muted hover:text-terminal-text transition-colors"
-                aria-label="Dismiss banner"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+        <PublicCTABanner
+          displayName={displayName}
+          onGetStarted={handleGetStarted}
+          onDismiss={() => setCtaDismissed(true)}
+        />
       )}
 
       {/* Scroll-triggered conversion popup */}

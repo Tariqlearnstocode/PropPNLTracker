@@ -56,8 +56,8 @@ export function PerFirmChart({ perFirmBreakdown }: PerFirmChartProps) {
             borderRadius: '8px',
             padding: '8px 12px'
           }}
-          formatter={(value: any, name: any) => {
-            return value !== undefined ? formatCurrency(value) : '';
+          formatter={(value) => {
+            return value !== undefined ? formatCurrency(Number(value)) : '';
           }}
           labelFormatter={(label, payload) => {
             return payload?.[0]?.payload?.fullName || label;

@@ -5,9 +5,10 @@ import { DailyPNLCalendar } from '../ui/DailyPNLCalendar';
 import { BestWorstModule } from '../modules/BestWorstModule';
 import { StreakModule } from '../modules/StreakModule';
 import { DayOfWeekPatternsModule } from '../modules/DayOfWeekPatternsModule';
+import type { TradingStats } from '@/lib/pnl-calculations';
 
 interface PerformanceTabProps {
-  tradingStats: any;
+  tradingStats: TradingStats;
 }
 
 export function PerformanceTab({ tradingStats }: PerformanceTabProps) {

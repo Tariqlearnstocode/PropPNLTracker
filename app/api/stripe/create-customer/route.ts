@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { isStripeConfigured } from '@/lib/stripe/client';
 import { getOrCreateStripeCustomer } from '@/lib/stripe/helpers';
+import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
   try {
     // If Stripe is not configured, return success (no-op)
     if (!isStripeConfigured()) {
-      console.log('Stripe not configured, skipping customer creation');
-      return NextResponse.json({ 
+      return NextResponse.json({
         customerId: null,
         message: 'Stripe not configured' 
       });
@@ -21,7 +21,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const customerSchema = z.object({
+      userId: z.string().min(1),
+      email: z.string().email(),
+    });
+
+    let body: z.infer<typeof customerSchema>;
+    try {
+      body = customerSchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
+    }
+
     const { userId, email } = body;
 
     // Verify the userId matches the authenticated user
@@ -36,13 +50,12 @@ export async function POST(request: NextRequest) {
     const customerId = await getOrCreateStripeCustomer(userId, email, name);
 
     return NextResponse.json({ customerId });
-  } catch (error: any) {
-    console.error('Error creating Stripe customer:', error);
+  } catch (error: unknown) {
     // Return success even on error - don't block signup
-    return NextResponse.json({ 
+    return NextResponse.json({
       customerId: null,
       error: 'Stripe customer creation failed',
-      details: error.message 
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }

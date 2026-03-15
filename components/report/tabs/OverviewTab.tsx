@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PNLReport, formatCurrency, formatMonth, formatDate } from '@/lib/pnl-calculations';
+import { PNLReport, formatCurrency, formatMonth, formatDate, type TradingStats } from '@/lib/pnl-calculations';
 import { MonthlyPNLHeatmap } from '../ui/MonthlyPNLHeatmap';
 import { TopFirmsTable } from '../ui/TopFirmsTable';
 
@@ -9,7 +9,7 @@ interface OverviewTabProps {
   filteredMonthlyBreakdown: PNLReport['monthlyBreakdown'];
   filteredFirmBreakdown: PNLReport['perFirmBreakdown'];
   allFirmBreakdown: PNLReport['perFirmBreakdown'];
-  tradingStats: any;
+  tradingStats: TradingStats;
   displayPNL: number;
   displayDeposits: number;
   displayFees: number;
@@ -42,8 +42,7 @@ export function OverviewTab({
         {/* Left: Net PNL */}
         <div className="relative overflow-hidden rounded-xl border border-terminal-border bg-terminal-card p-6 md:p-8">
           <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-[0.07] blur-[100px] pointer-events-none"
-            style={{ background: isProfit ? '#00e676' : '#ff5252' }}
+            className={`absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-[0.07] blur-[100px] pointer-events-none ${isProfit ? 'bg-profit' : 'bg-loss'}`}
           />
 
           <div className="relative z-10">

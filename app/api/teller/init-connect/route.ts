@@ -7,7 +7,6 @@ export async function GET(request: NextRequest) {
     const environment = process.env.TELLER_ENV || process.env.NEXT_PUBLIC_TELLER_ENV || 'development';
 
     if (!applicationId) {
-      console.error('TELLER_APPLICATION_ID is not configured');
       return NextResponse.json(
         { error: 'Teller configuration is not available' },
         { status: 500 }
@@ -18,10 +17,9 @@ export async function GET(request: NextRequest) {
       applicationId,
       environment: environment as 'sandbox' | 'development' | 'production',
     });
-  } catch (error: any) {
-    console.error('Error fetching Teller configuration:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to fetch Teller configuration', details: error.message },
+      { error: 'Failed to fetch Teller configuration', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

@@ -27,6 +27,7 @@ module.exports = {
           bg: '#0a0a0f',
           card: '#111118',
           'card-hover': '#16161f',
+          header: '#0e0e14',
           border: '#1e1e2a',
           'border-light': '#2a2a3a',
           muted: '#6b6b80',
@@ -37,17 +38,26 @@ module.exports = {
           dim: '#00e67620',
           muted: '#00e67640',
           glow: '#00e67610',
+          light: '#69f0ae',
         },
         loss: {
           DEFAULT: '#ff5252',
           dim: '#ff525220',
           muted: '#ff525240',
+          light: '#ff8a80',
         },
         accent: {
           blue: '#448aff',
           purple: '#7c4dff',
           amber: '#ffd740',
         },
+      },
+      backgroundImage: {
+        'gradient-nav': 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)',
+        'gradient-hero': 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 30%, #0a0a0f 100%)',
+        'gradient-hero-short': 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 100%)',
+        'gradient-profit-bar': 'linear-gradient(90deg, #00e676, #69f0ae)',
+        'gradient-loss-bar': 'linear-gradient(90deg, #ff5252, #ff8a80)',
       },
       keyframes: {
         'accordion-down': {

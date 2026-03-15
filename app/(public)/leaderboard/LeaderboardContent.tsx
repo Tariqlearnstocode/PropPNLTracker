@@ -88,8 +88,7 @@ export default function LeaderboardContent() {
     <div className="min-h-screen bg-terminal-bg">
       {/* Hero — compact inline bar */}
       <div
-        className="border-b border-terminal-border"
-        style={{ background: 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 100%)' }}
+        className="border-b border-terminal-border bg-gradient-hero-short"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -116,7 +115,7 @@ export default function LeaderboardContent() {
       </div>
 
       {/* Controls */}
-      <div className="sticky top-[57px] z-30 border-b border-terminal-border" style={{ backgroundColor: '#0e0e14' }}>
+      <div className="sticky top-[57px] z-30 border-b border-terminal-border bg-terminal-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between flex-wrap gap-3 py-3">
             {/* Time period */}

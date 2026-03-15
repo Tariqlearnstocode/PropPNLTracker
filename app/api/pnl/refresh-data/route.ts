@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
-import { calculatePNLReport } from '@/lib/pnl-calculations';
+import { calculatePNLReport, type RawFinancialData } from '@/lib/pnl-calculations';
 import { decryptToken } from '@/utils/teller-token-encryption';
 import https from 'https';
+import { z } from 'zod';
 
 const TELLER_API_URL = 'https://api.teller.io';
 const SYNC_OVERLAP_DAYS = 7; // Same as fetch-data endpoint
@@ -84,6 +85,10 @@ function hasRefreshedToday(lastRefreshAttempt: string | null): boolean {
  * Validates daily rate limit (once per day per account)
  * Fetches new transactions and merges with existing data
  */
+const refreshBodySchema = z.object({
+  account_id: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -93,7 +98,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { account_id } = await request.json();
+    let body: z.infer<typeof refreshBodySchema>;
+    try {
+      body = refreshBodySchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
+    }
+
+    const { account_id } = body;
 
     // Get connected accounts for this user that can refresh daily
     const { data: connectedAccounts, error: accountsError } = await supabaseAdmin
@@ -103,7 +118,6 @@ export async function POST(request: NextRequest) {
       .eq('can_refresh_daily', true);
 
     if (accountsError) {
-      console.error('Error fetching connected accounts:', accountsError);
       return NextResponse.json(
         { error: 'Failed to fetch connected accounts' },
         { status: 500 }
@@ -158,8 +172,7 @@ export async function POST(request: NextRequest) {
           let accessToken: string;
           try {
             accessToken = decryptToken(connectedAccount.encrypted_access_token!);
-          } catch (error: any) {
-            console.error(`Error decrypting token for account ${connectedAccount.account_id}:`, error);
+          } catch {
             return {
               account_id: connectedAccount.account_id,
               success: false,
@@ -181,7 +194,7 @@ export async function POST(request: NextRequest) {
           }
 
           const accounts = await accountsRes.json();
-          const account = accounts.find((acc: any) => acc.id === connectedAccount.account_id);
+          const account = accounts.find((acc: Record<string, unknown>) => acc.id === connectedAccount.account_id);
           if (!account) {
             return {
               account_id: connectedAccount.account_id,
@@ -251,22 +264,22 @@ export async function POST(request: NextRequest) {
             };
           }
 
-          const existingData = existingReport.raw_teller_data as any;
+          const existingData = existingReport.raw_teller_data as RawFinancialData;
           const existingTransactions = existingData.transactions || [];
 
-          const transactionMap = new Map<string, any>();
-          existingTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
-          newTransactions.forEach((txn: any) => transactionMap.set(txn.id, txn));
+          const transactionMap = new Map<string, Record<string, unknown>>();
+          existingTransactions.forEach((txn) => transactionMap.set(txn.id as string, txn));
+          newTransactions.forEach((txn: Record<string, unknown>) => transactionMap.set(txn.id as string, txn));
           const mergedTransactions = Array.from(transactionMap.values());
           mergedTransactions.sort((a, b) => {
-            const dateA = new Date(a.date || a.created_at || 0).getTime();
-            const dateB = new Date(b.date || b.created_at || 0).getTime();
+            const dateA = new Date(String(a.date || a.created_at || 0)).getTime();
+            const dateB = new Date(String(b.date || b.created_at || 0)).getTime();
             return dateB - dateA;
           });
 
           const existingAccounts = existingData.accounts || [];
-          const accountMap = new Map<string, any>();
-          existingAccounts.forEach((acc: any) => accountMap.set(acc.id, acc));
+          const accountMap = new Map<string, Record<string, unknown>>();
+          existingAccounts.forEach((acc) => accountMap.set(acc.id as string, acc));
           accountMap.set(accountWithBalances.id, accountWithBalances);
           const mergedAccounts = Array.from(accountMap.values());
 
@@ -320,12 +333,6 @@ export async function POST(request: NextRequest) {
             .eq('user_id', user.id)
             .eq('account_id', account.id);
 
-          if (accountUpdateError) {
-            console.error('Error updating connected account:', accountUpdateError);
-          }
-
-          console.log(`Refreshed account ${account.id}: ${existingTransactions.length} existing + ${newTransactions.length} new = ${mergedTransactions.length} total transactions`);
-
           return {
             account_id: connectedAccount.account_id,
             report_token: updatedReport.report_token,
@@ -333,12 +340,11 @@ export async function POST(request: NextRequest) {
             transactions_merged: mergedTransactions.length,
             new_transactions: newTransactions.length,
           };
-        } catch (error: any) {
-          console.error(`Error refreshing account ${connectedAccount.account_id}:`, error);
+        } catch (error: unknown) {
           return {
             account_id: connectedAccount.account_id,
             success: false,
-            error: error.message || 'Failed to refresh account',
+            error: error instanceof Error ? error.message : 'Failed to refresh account',
           };
         }
       })
@@ -352,10 +358,9 @@ export async function POST(request: NextRequest) {
       total: accountsToRefresh.length,
       results: refreshResults,
     });
-  } catch (error: any) {
-    console.error('Error refreshing PNL data:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to refresh PNL data', details: error?.message },
+      { error: 'Failed to refresh PNL data', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
+
+const deleteUserSchema = z.object({
+  confirmation: z.literal('DELETE'),
+});
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -11,11 +16,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { confirmation } = await request.json();
-
-    if (confirmation !== 'DELETE') {
+    let body: z.infer<typeof deleteUserSchema>;
+    try {
+      body = deleteUserSchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'Confirmation required. Please type DELETE to confirm.' },
+        { error: 'Confirmation required. Please type DELETE to confirm.', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
@@ -27,7 +33,6 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (reportsError) {
-      console.error('Error deleting reports:', reportsError);
       // Continue even if reports deletion fails
     }
 
@@ -38,7 +43,6 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (accountsError) {
-      console.error('Error deleting connected accounts:', accountsError);
       // Continue even if accounts deletion fails
     }
 
@@ -46,7 +50,6 @@ export async function DELETE(request: NextRequest) {
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id);
 
     if (deleteError) {
-      console.error('Error deleting user account:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete user account' },
         { status: 500 }
@@ -60,10 +63,9 @@ export async function DELETE(request: NextRequest) {
       success: true, 
       message: 'Account deleted successfully' 
     });
-  } catch (error: any) {
-    console.error('Error in DELETE /api/user/delete:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message },
+      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

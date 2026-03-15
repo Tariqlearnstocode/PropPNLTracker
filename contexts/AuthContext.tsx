@@ -8,7 +8,7 @@ import type { User, SupabaseClient } from '@supabase/supabase-js';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  supabase: SupabaseClient<any, 'public', any>;
+  supabase: SupabaseClient;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

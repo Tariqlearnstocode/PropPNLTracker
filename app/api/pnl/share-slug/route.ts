@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
 
 const SLUG_REGEX = /^[a-z0-9][a-z0-9-]{0,48}[a-z0-9]$/;
+
+const shareSlugSchema = z.object({
+  reportId: z.string().min(1),
+  shareSlug: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,11 +19,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { reportId, shareSlug } = await request.json();
-
-    if (!reportId) {
-      return NextResponse.json({ error: 'reportId is required' }, { status: 400 });
+    let body: z.infer<typeof shareSlugSchema>;
+    try {
+      body = shareSlugSchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
     }
+
+    const { reportId, shareSlug } = body;
 
     const slug = typeof shareSlug === 'string' ? shareSlug.trim().toLowerCase() : '';
 

@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
 
     // First, try to get from subscription
     const { data: subscription } = await supabase
-      .from('stripe_subscriptions' as any)
+      // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', user.id)
       .eq('status', 'active')
@@ -52,10 +53,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    console.error('Error creating portal session:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to create portal session', details: error.message },
+      { error: 'Failed to create portal session', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

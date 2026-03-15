@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/client';
-import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import Stripe from 'stripe';
 
@@ -17,7 +16,6 @@ export async function POST(request: NextRequest) {
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!webhookSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET is not set');
     return NextResponse.json(
       { error: 'Webhook secret not configured' },
       { status: 500 }
@@ -28,10 +26,10 @@ export async function POST(request: NextRequest) {
 
   try {
     event = stripe!.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err: any) {
-    console.error('Webhook signature verification failed:', err.message);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: `Webhook Error: ${message}` },
       { status: 400 }
     );
   }
@@ -70,14 +68,13 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        break;
     }
 
     return NextResponse.json({ received: true });
-  } catch (error: any) {
-    console.error('Error handling webhook:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Webhook handler failed', details: error.message },
+      { error: 'Webhook handler failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -86,7 +83,6 @@ export async function POST(request: NextRequest) {
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const userId = subscription.metadata?.user_id;
   if (!userId) {
-    console.error('No user_id in subscription metadata');
     return;
   }
 
@@ -106,17 +102,18 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       : subscription.metadata?.plan_tier || 'starter';
 
   // Save customer ID to users table (ensures we have it even if subscription is deleted)
-  const { error: customerError } = await supabaseAdmin
+  // TODO: Replace cast with generated Supabase types
+  await supabaseAdmin
     .from('users')
-    .update({ stripe_customer_id: customerId } as any)
+    .update({ stripe_customer_id: customerId } as unknown as Record<string, unknown>)
     .eq('id', userId);
 
-  if (customerError) {
-    console.error('Error saving customer ID:', customerError);
-  }
+  // TODO: current_period_start/end exist at runtime but not in this Stripe types version
+  const subRecord = subscription as unknown as Record<string, number>;
 
   // Upsert subscription in database
-  const { error: upsertError } = await supabaseAdmin.from('stripe_subscriptions' as any).upsert({
+  // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
+  await supabaseAdmin.from('stripe_subscriptions' as unknown as 'stripe_subscriptions').upsert({
     user_id: userId,
     stripe_subscription_id: subscription.id,
     stripe_customer_id: customerId,
@@ -125,79 +122,64 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     status: subscription.status,
     plan_tier: planTier,
     current_period_start: new Date(
-      (subscription as any).current_period_start * 1000
+      subRecord.current_period_start * 1000
     ).toISOString(),
     current_period_end: new Date(
-      (subscription as any).current_period_end * 1000
+      subRecord.current_period_end * 1000
     ).toISOString(),
     cancel_at_period_end: subscription.cancel_at_period_end,
     updated_at: new Date().toISOString(),
-  } as any);
-
-  if (upsertError) {
-    console.error('Error upserting subscription:', upsertError);
-  } else {
-    console.log(`Subscription ${subscription.id} updated for user ${userId}`);
-  }
+  } as unknown as Record<string, unknown>);
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const userId = subscription.metadata?.user_id;
   if (!userId) {
-    console.error('No user_id in subscription metadata');
     return;
   }
 
   // Update subscription status to canceled
-  const { error: updateError } = await supabaseAdmin
-    .from('stripe_subscriptions' as any)
+  // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
+  await supabaseAdmin
+    .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
     .update({
       status: 'canceled',
       updated_at: new Date().toISOString(),
-    } as any)
+    } as unknown as Record<string, unknown>)
     .eq('stripe_subscription_id', subscription.id);
-
-  if (updateError) {
-    console.error('Error updating subscription:', updateError);
-  } else {
-    console.log(`Subscription ${subscription.id} canceled for user ${userId}`);
-  }
 }
 
-async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
+
+async function handlePaymentSucceeded(_invoice: Stripe.Invoice) {
   // Payment succeeded - subscription is active
-  // This is handled by subscription.updated event, but we can log it
-  console.log(`Payment succeeded for invoice ${invoice.id}`);
+  // This is handled by subscription.updated event
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
+  // TODO: invoice.subscription exists at runtime but types differ across Stripe versions
+  const invoiceRecord = invoice as unknown as Record<string, unknown>;
+  const sub = invoiceRecord.subscription;
   const subscriptionId =
-    typeof (invoice as any).subscription === 'string'
-      ? (invoice as any).subscription
-      : (invoice as any).subscription?.id;
+    typeof sub === 'string'
+      ? sub
+      : (sub as { id?: string } | null)?.id;
 
   if (subscriptionId) {
     // Update subscription status to past_due
-    const { error: updateError } = await supabaseAdmin
-      .from('stripe_subscriptions' as any)
+    // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
+    await supabaseAdmin
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
       .update({
         status: 'past_due',
         updated_at: new Date().toISOString(),
-      } as any)
+      } as unknown as Record<string, unknown>)
       .eq('stripe_subscription_id', subscriptionId);
-
-    if (updateError) {
-      console.error('Error updating subscription status:', updateError);
-    } else {
-      console.log(`Payment failed for subscription ${subscriptionId}`);
-    }
   }
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.user_id;
   if (!userId) {
-    console.error('No user_id in checkout session metadata');
     return;
   }
 
@@ -209,16 +191,11 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // Save customer ID to users table (if not already saved)
   if (customerId) {
-    const { error: customerError } = await supabaseAdmin
+    // TODO: Replace cast with generated Supabase types
+    await supabaseAdmin
       .from('users')
-      .update({ stripe_customer_id: customerId } as any)
+      .update({ stripe_customer_id: customerId } as unknown as Record<string, unknown>)
       .eq('id', userId);
-
-    if (customerError) {
-      console.error('Error saving customer ID:', customerError);
-    } else {
-      console.log(`Customer ${customerId} saved for user ${userId}`);
-    }
   }
 
   // Only handle one-time payments (pay-as-you-go)
@@ -233,18 +210,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       : session.payment_intent?.id;
 
   // Update payment record to completed
-  const { error: updateError } = await supabaseAdmin
-    .from('one_time_payments' as any)
+  // TODO: Replace casts with generated Supabase types for one_time_payments table
+  await supabaseAdmin
+    .from('one_time_payments' as unknown as 'one_time_payments')
     .update({
       status: 'completed',
       stripe_payment_intent_id: paymentIntentId || null,
       completed_at: new Date().toISOString(),
-    } as any)
+    } as unknown as Record<string, unknown>)
     .eq('stripe_checkout_session_id', session.id);
-
-  if (updateError) {
-    console.error('Error updating one-time payment:', updateError);
-  } else {
-    console.log(`One-time payment completed for user ${userId}, session ${session.id}`);
-  }
 }

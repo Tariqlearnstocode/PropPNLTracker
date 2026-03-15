@@ -17,15 +17,13 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching connected accounts:', error);
       return NextResponse.json({ error: 'Failed to fetch accounts' }, { status: 500 });
     }
 
     return NextResponse.json({ accounts: accounts || [] });
-  } catch (error: any) {
-    console.error('Error in GET /api/accounts/list:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message },
+      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

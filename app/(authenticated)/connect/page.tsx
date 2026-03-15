@@ -40,15 +40,14 @@ export default function ConnectPage() {
             environment: data.environment,
           });
         }
-      } catch (err) {
-        console.error('Failed to load Teller configuration:', err);
+      } catch {
       }
     }
     fetchTellerConfig();
   }, []);
 
   // Handle Teller Connect success
-  const onTellerSuccess = useCallback(async (enrollment: any) => {
+  const onTellerSuccess = useCallback(async (enrollment: { accessToken: string }) => {
     if (!user) return;
 
     setConnecting(true);
@@ -79,11 +78,10 @@ export default function ConnectPage() {
       } else {
         throw new Error(data.error || 'Failed to fetch PNL data');
       }
-    } catch (error: any) {
-      console.error('Error fetching PNL data:', error);
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to process bank account data',
+        description: error instanceof Error ? error.message : 'Failed to process bank account data',
         variant: 'destructive',
       });
     } finally {
@@ -134,8 +132,7 @@ export default function ConnectPage() {
   if (!user) {
     return (
       <section
-        className="min-h-screen flex items-center justify-center py-24 border-t border-profit/20 px-4"
-        style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}
+        className="min-h-screen flex items-center justify-center py-24 border-t border-profit/20 px-4 bg-gradient-nav"
       >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-5xl sm:text-6xl font-bold text-profit mb-6 leading-tight whitespace-nowrap">
@@ -166,8 +163,7 @@ export default function ConnectPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-16"
-      style={{ background: 'linear-gradient(to bottom, rgba(0,230,118,0.06) 0%, rgba(0,230,118,0.02) 30%, #0a0a0f 100%)' }}
+      className="min-h-screen flex items-center justify-center px-4 py-16 bg-gradient-hero"
     >
       <div className="w-full max-w-md">
         {/* Logo */}

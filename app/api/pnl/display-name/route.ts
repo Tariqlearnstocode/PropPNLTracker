@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
+
+const displayNameSchema = z.object({
+  reportId: z.string().min(1),
+  displayName: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +17,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { reportId, displayName } = await request.json();
-
-    if (!reportId) {
-      return NextResponse.json({ error: 'reportId is required' }, { status: 400 });
+    let body: z.infer<typeof displayNameSchema>;
+    try {
+      body = displayNameSchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
     }
+
+    const { reportId, displayName } = body;
 
     // Verify ownership
     const { data: report } = await supabaseAdmin

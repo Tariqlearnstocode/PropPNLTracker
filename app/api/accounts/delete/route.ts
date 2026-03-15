@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { calculatePNLReport } from '@/lib/pnl-calculations';
+import { calculatePNLReport, type RawFinancialData } from '@/lib/pnl-calculations';
+import { z } from 'zod';
+
+const deleteAccountSchema = z.object({
+  account_id: z.string().min(1),
+});
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -11,14 +16,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { account_id } = await request.json();
-
-    if (!account_id) {
+    let body: z.infer<typeof deleteAccountSchema>;
+    try {
+      body = deleteAccountSchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'Account ID is required' },
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
+
+    const { account_id } = body;
 
     const { data: account, error: accountError } = await supabase
       .from('connected_accounts')
@@ -41,11 +49,11 @@ export async function DELETE(request: NextRequest) {
       .single();
 
     if (!reportError && report?.raw_teller_data) {
-      const raw = report.raw_teller_data as any;
-      const transactions = (raw.transactions || []).filter((t: any) => t.account_id !== account_id);
-      const accounts = (raw.accounts || []).filter((a: any) => a.id !== account_id);
+      const raw = report.raw_teller_data as RawFinancialData;
+      const transactions = (raw.transactions || []).filter((t) => t.account_id !== account_id);
+      const accounts = (raw.accounts || []).filter((a) => a.id !== account_id);
       const manualAssignments = (report.manual_assignments as Record<string, string>) || {};
-      const removedTxnIds = new Set((raw.transactions || []).filter((t: any) => t.account_id === account_id).map((t: any) => t.id));
+      const removedTxnIds = new Set((raw.transactions || []).filter((t) => t.account_id === account_id).map((t) => t.id as string));
       const filteredManual = { ...manualAssignments };
       removedTxnIds.forEach((id) => delete filteredManual[id as string]);
 
@@ -75,7 +83,6 @@ export async function DELETE(request: NextRequest) {
       .eq('account_id', account_id);
 
     if (deleteError) {
-      console.error('Error deleting connected account:', deleteError);
       return NextResponse.json(
         { error: 'Failed to delete account' },
         { status: 500 }
@@ -86,10 +93,9 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Account and associated data removed successfully',
     });
-  } catch (error: any) {
-    console.error('Error in DELETE /api/accounts/delete:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', message: error.message },
+      { error: 'Internal server error', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

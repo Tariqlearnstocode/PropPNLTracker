@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ReportContent from './ReportContent';
 import { calculatePNLReport } from '@/lib/pnl-calculations';
-import type { PNLReport } from '@/lib/pnl-calculations';
+import type { PNLReport, RawFinancialData } from '@/lib/pnl-calculations';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getURL } from '@/utils/helpers';
 import type { Metadata } from 'next';
@@ -125,7 +125,7 @@ interface PNLReportRow {
   user_id: string;
   report_token: string;
   account_id: string;
-  raw_teller_data: any;
+  raw_teller_data: RawFinancialData | null;
   pnl_data: PNLReport | null;
   manual_assignments: Record<string, string> | null;
   status: 'pending' | 'completed' | 'failed';

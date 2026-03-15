@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
 
 /**
  * GET /api/pnl/assignments?reportId=xxx
@@ -48,14 +49,18 @@ export async function GET(request: NextRequest) {
     const assignments = report.manual_assignments || {};
 
     return NextResponse.json({ assignments });
-  } catch (error) {
-    console.error('Error fetching assignments:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
+
+const assignmentsBodySchema = z.object({
+  reportId: z.string().min(1),
+  assignments: z.record(z.string(), z.string()),
+});
 
 /**
  * POST /api/pnl/assignments
@@ -71,21 +76,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { reportId, assignments } = await request.json();
-
-    if (!reportId) {
+    let body: z.infer<typeof assignmentsBodySchema>;
+    try {
+      body = assignmentsBodySchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'reportId is required' },
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
 
-    if (!assignments || typeof assignments !== 'object') {
-      return NextResponse.json(
-        { error: 'assignments must be an object' },
-        { status: 400 }
-      );
-    }
+    const { reportId, assignments } = body;
 
     // Fetch report to verify ownership
     const { data: report, error: fetchError } = await supabaseAdmin
@@ -113,7 +114,6 @@ export async function POST(request: NextRequest) {
       .eq('id', reportId);
 
     if (updateError) {
-      console.error('Error updating assignments:', updateError);
       return NextResponse.json(
         { error: 'Failed to save assignments' },
         { status: 500 }
@@ -121,8 +121,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error saving assignments:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

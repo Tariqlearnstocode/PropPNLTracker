@@ -13,7 +13,7 @@ export function safeNumber(value: number | null | undefined): number {
 /**
  * Exports data to CSV format and triggers download
  */
-export function exportToCSV(data: any[], filename: string) {
+export function exportToCSV(data: Record<string, unknown>[], filename: string) {
   if (data.length === 0) return;
   
   const headers = Object.keys(data[0]);

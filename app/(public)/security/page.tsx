@@ -174,7 +174,7 @@ export default function SecurityPage() {
             <h3 className="font-medium text-terminal-text mb-2">7.1 Hosting</h3>
             <ul className="list-disc list-inside text-terminal-text space-y-1 ml-4 mb-4">
               <li><strong>Database:</strong> Supabase (AWS infrastructure)</li>
-              <li><strong>Application:</strong> Vercel Edge Network</li>
+              <li><strong>Application:</strong> Edge-deployed Next.js</li>
               <li><strong>Region:</strong> Data stored in US-East</li>
             </ul>
 
@@ -204,7 +204,7 @@ export default function SecurityPage() {
             <ul className="list-disc list-inside text-terminal-text space-y-1 ml-4">
               <li><strong>Supabase:</strong> SOC 2 Type II</li>
               <li><strong>Teller:</strong> SOC 2 Type II, PCI DSS</li>
-              <li><strong>Vercel:</strong> SOC 2 Type II</li>
+              <li><strong>Hosting Provider:</strong> SOC 2 Type II</li>
             </ul>
           </section>
 

@@ -51,9 +51,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   if (authError) {
     // "Auth session missing" is expected when user is logged out - not a real error
-    if (!authError.message?.includes('Auth session missing')) {
-      console.error('RootLayout: Auth error:', authError.message, authError);
-    }
   }
 
   return (

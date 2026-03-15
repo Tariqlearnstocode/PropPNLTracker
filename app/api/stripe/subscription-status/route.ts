@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
     if (!subscription) {
       // Pay-as-you-go user - check if they have available payment
       const { data: availablePayment } = await supabase
-        .from('one_time_payments' as any)
+        // TODO: Replace cast with generated Supabase types for one_time_payments table
+        .from('one_time_payments' as unknown as 'one_time_payments')
         .select('id')
         .eq('user_id', user.id)
         .eq('status', 'completed')
@@ -51,17 +52,15 @@ export async function GET(request: NextRequest) {
 
     try {
       stripeSubscription = await stripe!.subscriptions.retrieve(
-        subscription.stripe_subscription_id
+        subscription.stripe_subscription_id as string
       );
 
       // Get current period usage from meter
-      const supabase = await createClient();
       currentUsage = await getCurrentPeriodUsage(
         user.id,
-        subscription.stripe_subscription_id
+        subscription.stripe_subscription_id as string
       );
-    } catch (error) {
-      console.error('Error fetching Stripe subscription:', error);
+    } catch {
     }
 
     const limit = subscription.plan_tier === 'starter' ? 10 : 50;
@@ -89,15 +88,15 @@ export async function GET(request: NextRequest) {
         ? {
             id: stripeSubscription.id,
             status: stripeSubscription.status,
-            current_period_start: (stripeSubscription as any).current_period_start,
-            current_period_end: (stripeSubscription as any).current_period_end,
+            // TODO: current_period_start/end exist at runtime but not in this Stripe types version
+            current_period_start: (stripeSubscription as unknown as Record<string, number>).current_period_start,
+            current_period_end: (stripeSubscription as unknown as Record<string, number>).current_period_end,
           }
         : null,
     });
-  } catch (error: any) {
-    console.error('Error checking subscription status:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

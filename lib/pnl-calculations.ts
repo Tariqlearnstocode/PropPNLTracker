@@ -144,8 +144,8 @@ export type MatchConfidence = 'high' | 'medium' | 'low';
 // ============ RAW DATA TYPES ============
 
 export interface RawFinancialData {
-  accounts: any[];
-  transactions: any[];
+  accounts: Record<string, unknown>[];
+  transactions: Record<string, unknown>[];
   fetched_at: string;
   date_range: {
     start: string;
@@ -250,73 +250,84 @@ function detectProvider(rawData: RawFinancialData): 'plaid' | 'teller' {
 /**
  * Normalize accounts from either provider
  */
-function normalizeAccounts(accounts: any[], provider: 'plaid' | 'teller'): NormalizedAccount[] {
+function normalizeAccounts(accounts: Record<string, unknown>[], provider: 'plaid' | 'teller'): NormalizedAccount[] {
   if (provider === 'teller') {
-    return accounts.map((acc) => ({
-      id: acc.id,
-      name: acc.name || 'Unknown Account',
-      officialName: null,
-      type: acc.type || 'depository',
-      subtype: acc.subtype || null,
-      mask: acc.last_four || null,
-      currentBalance: acc.balances?.ledger ? parseFloat(acc.balances.ledger) : null,
-      availableBalance: acc.balances?.available ? parseFloat(acc.balances.available) : null,
-      institution: acc.institution?.name || null,
-    }));
+    return accounts.map((acc) => {
+      const balances = acc.balances as Record<string, unknown> | undefined;
+      const institution = acc.institution as Record<string, unknown> | undefined;
+      return {
+        id: String(acc.id ?? ''),
+        name: String(acc.name || 'Unknown Account'),
+        officialName: null,
+        type: String(acc.type || 'depository'),
+        subtype: acc.subtype ? String(acc.subtype) : null,
+        mask: acc.last_four ? String(acc.last_four) : null,
+        currentBalance: balances?.ledger ? parseFloat(String(balances.ledger)) : null,
+        availableBalance: balances?.available ? parseFloat(String(balances.available)) : null,
+        institution: institution?.name ? String(institution.name) : undefined,
+      };
+    });
   }
-  
+
   // Plaid format
-  return accounts.map((acc) => ({
-    id: acc.account_id,
-    name: acc.name || 'Unknown Account',
-    officialName: acc.official_name || null,
-    type: acc.type || 'depository',
-    subtype: acc.subtype || null,
-    mask: acc.mask || null,
-    currentBalance: acc.balances?.current ?? null,
-    availableBalance: acc.balances?.available ?? null,
-    institution: undefined,
-  }));
+  return accounts.map((acc) => {
+    const balances = acc.balances as Record<string, unknown> | undefined;
+    return {
+      id: String(acc.account_id ?? ''),
+      name: String(acc.name || 'Unknown Account'),
+      officialName: acc.official_name ? String(acc.official_name) : null,
+      type: String(acc.type || 'depository'),
+      subtype: acc.subtype ? String(acc.subtype) : null,
+      mask: acc.mask ? String(acc.mask) : null,
+      currentBalance: balances?.current != null ? Number(balances.current) : null,
+      availableBalance: balances?.available != null ? Number(balances.available) : null,
+      institution: undefined,
+    };
+  });
 }
 
 /**
  * Normalize transactions from either provider
  */
-function normalizeTransactions(transactions: any[], provider: 'plaid' | 'teller'): NormalizedTransaction[] {
+function normalizeTransactions(transactions: Record<string, unknown>[], provider: 'plaid' | 'teller'): NormalizedTransaction[] {
   if (provider === 'teller') {
     return transactions.map((t) => {
-      const amount = parseFloat(t.amount);
+      const amount = parseFloat(String(t.amount ?? 0));
       // In Teller: positive amount = money IN (deposit), negative amount = money OUT (fee)
       const isIncome = amount > 0;
-      
+      const details = t.details as Record<string, unknown> | undefined;
+      const counterparty = details?.counterparty as Record<string, unknown> | undefined;
+
       return {
-        id: t.id,
-        accountId: t.account_id,
+        id: String(t.id ?? ''),
+        accountId: String(t.account_id ?? ''),
         amount: Math.abs(amount),
-        date: t.date,
+        date: String(t.date ?? ''),
         // Use description first - it contains the FULL transaction text
-        name: t.description || t.details?.counterparty?.name || 'Unknown',
-        category: t.details?.category || null,
+        name: String(t.description || counterparty?.name || 'Unknown'),
+        category: details?.category ? String(details.category) : null,
         pending: t.status === 'pending',
         isIncome,
-        runningBalance: t.running_balance ? parseFloat(t.running_balance) : null,
+        runningBalance: t.running_balance ? parseFloat(String(t.running_balance)) : null,
       };
     });
   }
-  
+
   // Plaid format
   return transactions.map((t) => {
+    const numAmount = Number(t.amount ?? 0);
     // In Plaid: positive amount = money out, negative amount = money in
-    const isIncome = t.amount < 0;
-    
+    const isIncome = numAmount < 0;
+    const category = t.category as unknown[] | undefined;
+
     return {
-      id: t.transaction_id,
-      accountId: t.account_id,
-      amount: Math.abs(t.amount),
-      date: t.date,
-      name: t.merchant_name || t.name || 'Unknown',
-      category: t.category?.[0] || null,
-      pending: t.pending || false,
+      id: String(t.transaction_id ?? ''),
+      accountId: String(t.account_id ?? ''),
+      amount: Math.abs(numAmount),
+      date: String(t.date ?? ''),
+      name: String(t.merchant_name || t.name || 'Unknown'),
+      category: category?.[0] ? String(category[0]) : null,
+      pending: !!t.pending,
       isIncome,
       runningBalance: null, // Plaid doesn't provide running balance
     };

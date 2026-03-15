@@ -37,11 +37,8 @@ export function DepositsFeesBreakdown({ deposits, fees }: DepositsFeesBreakdownP
           </div>
           <div className="w-full bg-terminal-border rounded-full h-2 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${depositsPercentage}%`,
-                background: 'linear-gradient(90deg, #00e676, #69f0ae)',
-              }}
+              className="h-full rounded-full transition-all duration-700 ease-out bg-gradient-profit-bar"
+              style={{ width: `${depositsPercentage}%` }}
             />
           </div>
         </div>
@@ -54,11 +51,8 @@ export function DepositsFeesBreakdown({ deposits, fees }: DepositsFeesBreakdownP
           </div>
           <div className="w-full bg-terminal-border rounded-full h-2 overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${feesPercentage}%`,
-                background: 'linear-gradient(90deg, #ff5252, #ff8a80)',
-              }}
+              className="h-full rounded-full transition-all duration-700 ease-out bg-gradient-loss-bar"
+              style={{ width: `${feesPercentage}%` }}
             />
           </div>
         </div>

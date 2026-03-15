@@ -23,8 +23,7 @@ export default function Sidebar() {
             setReportToken(data.reportToken);
           }
         })
-        .catch(err => {
-          console.error('Error fetching report token:', err);
+        .catch(() => {
         });
     } else {
       setReportToken(null);
@@ -47,8 +46,7 @@ export default function Sidebar() {
     
     try {
       await supabase.auth.signOut();
-    } catch (err) {
-      console.error('Sign out error:', err);
+    } catch {
     } finally {
       setSigningOut(false);
     }

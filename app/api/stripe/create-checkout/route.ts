@@ -3,6 +3,11 @@ import { createClient } from '@/utils/supabase/server';
 import { stripe, isStripeConfigured } from '@/lib/stripe/client';
 import { getOrCreateStripeCustomer } from '@/lib/stripe/helpers';
 import { validatePriceIds } from '@/lib/stripe/prices';
+import { z } from 'zod';
+
+const checkoutSchema = z.object({
+  plan: z.enum(['starter', 'pro']),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,15 +25,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { plan } = body; // 'starter' or 'pro'
-
-    if (!plan || !['starter', 'pro'].includes(plan)) {
+    let body: z.infer<typeof checkoutSchema>;
+    try {
+      body = checkoutSchema.parse(await request.json());
+    } catch (err) {
       return NextResponse.json(
-        { error: 'Invalid plan. Must be "starter" or "pro"' },
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
         { status: 400 }
       );
     }
+
+    const { plan } = body;
 
     const prices = validatePriceIds();
 
@@ -79,10 +86,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
-    console.error('Error creating checkout session:', error);
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: 'Failed to create checkout session', details: error.message },
+      { error: 'Failed to create checkout session', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

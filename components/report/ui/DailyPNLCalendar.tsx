@@ -193,8 +193,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
             {/* Week total */}
             <div
               key={`week-total-${weekIdx}`}
-              className="h-20 border border-terminal-border/60 rounded flex flex-col items-center justify-center p-1.5"
-              style={{ backgroundColor: 'rgba(17, 17, 24, 0.8)' }}
+              className="h-20 border border-terminal-border/60 rounded flex flex-col items-center justify-center p-1.5 bg-terminal-card/80"
             >
               <div className="text-[11px] font-mono font-bold text-terminal-text/50 mb-1">W{weekIdx + 1}</div>
               {(() => {

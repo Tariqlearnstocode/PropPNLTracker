@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
+import { z } from 'zod';
+
+const leaderboardSchema = z.object({
+  showOnLeaderboard: z.boolean(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +16,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { showOnLeaderboard } = await request.json();
-
-    if (typeof showOnLeaderboard !== 'boolean') {
-      return NextResponse.json({ error: 'showOnLeaderboard must be a boolean' }, { status: 400 });
+    let body: z.infer<typeof leaderboardSchema>;
+    try {
+      body = leaderboardSchema.parse(await request.json());
+    } catch (err) {
+      return NextResponse.json(
+        { error: 'Invalid request body', details: (err as z.ZodError).errors },
+        { status: 400 }
+      );
     }
+
+    const { showOnLeaderboard } = body;
 
     // Update the user's report
     const { error } = await supabaseAdmin
@@ -25,13 +36,11 @@ export async function POST(request: NextRequest) {
       .eq('status', 'completed');
 
     if (error) {
-      console.error('Error updating leaderboard preference:', error);
       return NextResponse.json({ error: 'Failed to update preference' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, showOnLeaderboard });
-  } catch (error) {
-    console.error('Leaderboard toggle error:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -55,8 +64,7 @@ export async function GET() {
     return NextResponse.json({
       showOnLeaderboard: report?.show_on_leaderboard ?? false,
     });
-  } catch (error) {
-    console.error('Leaderboard get error:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

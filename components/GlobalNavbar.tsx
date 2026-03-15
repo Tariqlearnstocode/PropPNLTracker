@@ -30,7 +30,7 @@ export default function GlobalNavbar() {
     const displayName = reportNav?.displayName ?? null;
     const onGetStarted = reportNav?.onGetStarted ?? (() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } })));
     return (
-      <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+      <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -70,7 +70,7 @@ export default function GlobalNavbar() {
     const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
     return (
-      <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+      <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -111,7 +111,7 @@ export default function GlobalNavbar() {
   const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-profit/20" style={{ background: 'linear-gradient(to right, rgba(0,230,118,0.1), rgba(0,230,118,0.05), #0e0e14)' }}>
+    <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">

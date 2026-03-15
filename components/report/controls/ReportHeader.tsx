@@ -140,10 +140,10 @@ export function ReportHeader({
         description: 'Your transaction data has been updated.',
       });
       window.location.reload();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Refresh Failed',
-        description: error.message || 'Failed to refresh data. Please try again later.',
+        description: error instanceof Error ? error.message : 'Failed to refresh data. Please try again later.',
         variant: 'destructive',
       });
     } finally {
@@ -152,7 +152,7 @@ export function ReportHeader({
   };
 
   return (
-    <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)]" style={{ backgroundColor: '#0e0e14' }}>
+    <div className="sticky top-0 z-50 border-b border-terminal-border shadow-[0_1px_0_0_rgba(0,230,118,0.08)] bg-terminal-header">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5">
         <div className="mb-3 opacity-0 animate-fade-in stagger-1">
           <h1 className="font-display font-semibold tracking-tight text-terminal-text text-xl md:text-2xl">

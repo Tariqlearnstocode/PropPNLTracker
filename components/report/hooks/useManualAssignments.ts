@@ -15,8 +15,7 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
           const data = await response.json();
           setManualAssignments(data.assignments || {});
         }
-      } catch (e) {
-        console.error('Failed to load manual assignments', e);
+      } catch {
       }
     };
     loadAssignments();
@@ -42,12 +41,10 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
       if (!response.ok) {
         // Revert on error
         setManualAssignments(previousAssignments);
-        console.error('Failed to save assignment');
       }
-    } catch (e) {
+    } catch {
       // Revert on error
       setManualAssignments(previousAssignments);
-      console.error('Failed to save assignment', e);
     }
   };
   
@@ -72,12 +69,10 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
       if (!response.ok) {
         // Revert on error
         setManualAssignments(previousAssignments);
-        console.error('Failed to remove assignment');
       }
-    } catch (e) {
+    } catch {
       // Revert on error
       setManualAssignments(previousAssignments);
-      console.error('Failed to remove assignment', e);
     }
   };
   
@@ -107,15 +102,13 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
       if (!response.ok) {
         // Revert on error
         setManualAssignments(previousAssignments);
-        console.error('Failed to save bulk assignments');
         alert('Failed to save assignments. Please try again.');
         return false;
       }
       return true;
-    } catch (e) {
+    } catch {
       // Revert on error
       setManualAssignments(previousAssignments);
-      console.error('Failed to save bulk assignments', e);
       alert('Failed to save assignments. Please try again.');
       return false;
     }
@@ -150,11 +143,9 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
 
       if (!response.ok) {
         setManualAssignments(previousAssignments);
-        console.error('Failed to dismiss transactions');
       }
-    } catch (e) {
+    } catch {
       setManualAssignments(previousAssignments);
-      console.error('Failed to dismiss transactions', e);
     }
   };
 
