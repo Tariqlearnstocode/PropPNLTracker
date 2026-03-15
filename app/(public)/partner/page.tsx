@@ -5,14 +5,14 @@ import PitchDeck from './PitchDeck';
 const siteUrl = getURL();
 
 export const metadata: Metadata = {
-  title: 'Partner With Us | Bank-Verified Trading Data',
+  title: { absolute: 'Partner With Prop PNL | Trading Data API' },
   description:
-    'The only bank-verified prop trading P&L tracker. We\'re looking for our first integration partner. White-label, license, or acquire.',
+    'Bank-verified prop trading P&L data. Partner with Prop PNL to white-label, license, or integrate real payout data from Topstep, FTMO, Apex, Rise.',
   robots: 'noindex, nofollow',
   openGraph: {
-    title: 'Partner With Prop PNL | Bank-Verified Trading Data',
+    title: 'Partner With Prop PNL | Trading Data API',
     description:
-      'The only bank-verified prop trading P&L tracker. Partnership opportunities: white-label, license, or acquire.',
+      'Bank-verified prop trading P&L data. White-label, license, or integrate real payout data from Topstep, FTMO, Apex, Rise.',
     url: `${siteUrl}/partner`,
     siteName: 'Prop PNL',
     locale: 'en_US',
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Partner With Prop PNL | Bank-Verified Trading Data',
+    title: 'Partner With Prop PNL | Trading Data API',
     description:
-      'The only bank-verified prop trading P&L tracker. Partnership opportunities: white-label, license, or acquire.',
+      'Bank-verified prop trading P&L data. White-label, license, or integrate real payout data from Topstep, FTMO, Apex, Rise.',
     site: '@proppnl',
     creator: '@proppnl',
   },

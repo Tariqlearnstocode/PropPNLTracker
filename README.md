@@ -4,7 +4,7 @@ Bank-verified P&L tracking for prop traders.
 
 ## What It Does
 
-Prop PNL connects to users' bank accounts via the Teller API, automatically categorizes prop firm transactions (deposits, payouts, fees), and generates a verified P&L report. It recognizes 50+ prop firms including FTMO, Topstep, The5ers, and Apex, as well as common payment processors like Rise, Wise, and Skrill. The platform includes a public leaderboard and shareable report links.
+Prop PNL connects to users' bank accounts via the Teller API, automatically categorizes prop firm transactions (deposits, payouts, fees), and generates a verified P&L report. It recognizes 50+ prop firms including FTMO, Topstep, and Apex, as well as common payment processors like Rise, Wise, and Skrill. The platform includes a public leaderboard and shareable report links.
 
 ## Tech Stack
 

@@ -18,9 +18,9 @@ export const faqCategories: FAQCategory[] = [
           'Prop PNL is a P&L tracker built specifically for prop firm traders. Instead of manually logging payouts and fees in a spreadsheet, you connect your bank account and we automatically pull your transaction history. Our engine identifies deposits from prop firms and payout processors like Rise, Wise, and Stripe, categorizes them as payouts or fees, and calculates your true net profit and loss across all firms. The whole process takes about 60 seconds.',
       },
       {
-        question: 'Do I need a credit card to get started?',
+        question: 'How do I get started?',
         answer:
-          'No. The free trial requires no credit card at all. You sign up, connect your bank, and get a full P&L report immediately. If you later decide you want weekly updates or more bank accounts, you can upgrade to Pro\u2014but there is no obligation and no card required upfront.',
+          'Sign up, pick a plan, and connect your bank. Your full P&L report is generated in about 60 seconds. We offer a One-Time snapshot for $39.99, a Monthly plan at $14.95/mo with weekly syncs, and a Lifetime plan for $199 with permanent access.',
       },
       {
         question: 'How long does it take to set up?',
@@ -40,7 +40,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'What prop firms and payout processors do you support?',
         answer:
-          'We auto-detect transactions from 47+ prop firms including Topstep, FTMO, Apex Trader Funding, The5ers, Earn2Trade, Bulenox, TradeDay, TakeProfitTrader, Tradeify, FundedNext, Leeloo, Elite Trader Funding, MyFundedFutures, and many more. We also recognize all major payout processors: Rise (Riseworks), Wise (TransferWise), PayPal, Stripe, and direct bank transfers. If a transaction is not automatically detected, you can manually assign it to a firm in your dashboard.',
+          'We auto-detect transactions from 47+ prop firms including Topstep, FTMO, Apex Trader Funding, Apex, Earn2Trade, Bulenox, TradeDay, TakeProfitTrader, Tradeify, FundedNext, Leeloo, Elite Trader Funding, MyFundedFutures, and many more. We also recognize all major payout processors: Rise (Riseworks), Wise (TransferWise), PayPal, Stripe, and direct bank transfers. If a transaction is not automatically detected, you can manually assign it to a firm in your dashboard.',
       },
       {
         question:
@@ -61,12 +61,12 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'What are the pricing plans?',
         answer:
-          'We offer three options. Free Trial: $0, includes 1 bank account, 3 months of history, and a full dashboard with all core features\u2014but no ongoing transaction updates. Pro: $14.99/month (or $79/year, saving about $100), includes up to 5 bank accounts, 12 months of history, and weekly automatic transaction updates. One-Time Pull: $19.99 one-time payment, includes up to 5 bank accounts and 12 months of history as a single snapshot\u2014ideal for tax time. All plans include the full dashboard, charts, per-firm breakdowns, CSV/PDF export, and a shareable public P&L link.',
+          'We offer three options. One-Time: $39.99, a single snapshot report with up to 5 bank accounts and up to 12 months of history\u2014ideal for tax time. Monthly: $14.95/mo, includes up to 5 bank accounts, up to 12 months of history, weekly automatic transaction syncs, and leaderboard eligibility. Cancel anytime. Lifetime: $199 one-time payment, everything in Monthly forever with no recurring charges. All plans include the full dashboard, charts, per-firm breakdowns, CSV/PDF export, and a shareable public P&L link.',
       },
       {
         question: 'Can I cancel my Pro subscription?',
         answer:
-          'Yes. Cancel anytime\u2014no questions asked, no cancellation fees. Your free report data stays accessible even after canceling. Payments are processed through Stripe, and you can manage your subscription from your account settings.',
+          'Yes. Cancel anytime\u2014no questions asked, no cancellation fees. Payments are processed through Stripe, and you can manage your subscription from your account settings.',
       },
     ],
   },
@@ -96,12 +96,12 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'Can I export my data for taxes?',
         answer:
-          'Yes. Every plan\u2014including the free trial\u2014supports CSV and PDF export. You can download your full transaction history, monthly P&L breakdowns, and per-firm summaries in a format your accountant can use directly. The One-Time Pull plan at $19.99 is specifically designed for traders who just need a clean export for tax season without an ongoing subscription.',
+          'Yes. Every plan supports CSV and PDF export. You can download your full transaction history, monthly P&L breakdowns, and per-firm summaries in a format your accountant can use directly. The One-Time plan at $39.99 is specifically designed for traders who just need a clean export for tax season without an ongoing subscription.',
       },
       {
         question: 'Can I connect multiple bank accounts?',
         answer:
-          'On the Free Trial you can connect 1 bank account. On Pro and One-Time Pull, you can connect up to 5 bank accounts, and all transactions are aggregated into a single unified dashboard. This is useful if you receive payouts to different accounts or use separate accounts for different firms.',
+          'All plans support up to 5 bank accounts, and all transactions are aggregated into a single unified dashboard. This is useful if you receive payouts to different accounts or use separate accounts for different firms.',
       },
     ],
   },

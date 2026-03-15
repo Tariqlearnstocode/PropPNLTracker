@@ -171,7 +171,7 @@ function HeroDashboardPreview() {
                 </tr>
                 <tr className="border-b border-terminal-border/50">
                   <td className="py-1.5 px-2 text-terminal-muted">3</td>
-                  <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-loss mr-1.5" />The5ers</td>
+                  <td className="py-1.5 px-2"><span className="inline-block w-1.5 h-1.5 rounded-full bg-loss mr-1.5" />Apex</td>
                   <td className="py-1.5 px-2 text-right text-loss">-$1,992</td>
                   <td className="py-1.5 px-2 text-right text-loss">↘ -38%</td>
                 </tr>

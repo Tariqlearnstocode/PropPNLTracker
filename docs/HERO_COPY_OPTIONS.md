@@ -32,7 +32,7 @@ Leads with the question every trader asks privately. High emotional activation.
 | Element | Copy |
 |---------|------|
 | **Headline** | Are you actually profitable? **Your bank knows.** |
-| **Subline** | Connect your bank. We pull every payout and fee from Topstep, FTMO, The5ers, Rise and more — and show your real prop firm P&L. No spreadsheet. No guessing. |
+| **Subline** | Connect your bank. We pull every payout and fee from Topstep, FTMO, Apex, Rise and more — and show your real prop firm P&L. No spreadsheet. No guessing. |
 | **CTA** | Get Your Real P&L — Free → |
 | **Secondary CTA** | View Plans |
 | **Trust bar** | No card required · Cancel anytime |
@@ -49,7 +49,7 @@ Names specific costs. Creates urgency through specificity.
 | Element | Copy |
 |---------|------|
 | **Headline** | Resets, fees, and challenges **add up. Do you know to what?** |
-| **Subline** | Connect your bank once. We categorize every prop firm payout and fee automatically — Topstep, FTMO, Rise, The5ers and more. Your true P&L in ~60 seconds. |
+| **Subline** | Connect your bank once. We categorize every prop firm payout and fee automatically — Topstep, FTMO, Rise, Apex and more. Your true P&L in ~60 seconds. |
 | **CTA** | See Your Real Numbers — Free → |
 
 **Why**: Names the costs traders know are eroding profits. "Do you know to what?" is an open loop.
@@ -63,7 +63,7 @@ Vivid conflict between perceived and real P&L.
 | Element | Copy |
 |---------|------|
 | **Headline** | Your spreadsheet says you're profitable. **Your bank account disagrees.** |
-| **Subline** | We connect to your bank and track real payouts and fees from Topstep, FTMO, The5ers, Rise and more. No manual entry. No missing costs. Just your true prop firm P&L. |
+| **Subline** | We connect to your bank and track real payouts and fees from Topstep, FTMO, Apex, Rise and more. No manual entry. No missing costs. Just your true prop firm P&L. |
 | **CTA** | Connect Your Bank — Free → |
 
 **Why**: Creates conflict between belief (spreadsheet) and reality (bank). Echoes the "Spreadsheets lie" section lower on the page.
@@ -91,7 +91,7 @@ Leads with outcome + effort framing. Resolves "is this hard?" immediately.
 | Element | Copy |
 |---------|------|
 | **Headline** | Your real prop firm P&L. **60 seconds. One bank connection.** |
-| **Subline** | We pull payouts and fees from Topstep, FTMO, The5ers, Rise and more — straight from your bank. No spreadsheet. No manual entry. Just the number that actually matters. |
+| **Subline** | We pull payouts and fees from Topstep, FTMO, Apex, Rise and more — straight from your bank. No spreadsheet. No manual entry. Just the number that actually matters. |
 | **CTA** | Connect Your Bank — Free → |
 
 **Why**: Present bias — people want results now. "The number that actually matters" implies they've been looking at the wrong numbers.
@@ -109,7 +109,7 @@ Leads with outcome + effort framing. Resolves "is this hard?" immediately.
 
 ### Sublines (ranked by specificity)
 1. Traders spend $4,270 on average before their first real payout. Connect your bank — we track every payout and fee so you know exactly where you stand.
-2. Connect your bank. We pull every payout and fee from Topstep, FTMO, The5ers, Rise and more — and show your real prop firm P&L. No spreadsheet. No guessing.
+2. Connect your bank. We pull every payout and fee from Topstep, FTMO, Apex, Rise and more — and show your real prop firm P&L. No spreadsheet. No guessing.
 3. We connect to your bank and track real payouts and fees. No manual entry. No missing costs. Just your true prop firm P&L.
 4. Connect your bank once. We categorize every prop firm payout and fee automatically. Your true P&L in ~60 seconds.
 

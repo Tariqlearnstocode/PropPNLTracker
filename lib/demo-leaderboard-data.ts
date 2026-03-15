@@ -54,25 +54,25 @@ export const DEMO_TRADERS: DemoTrader[] = [
     displayName: 'SarahTrades',
     months: [
       { month: '2025-10', firms: [
-        { firmName: 'The5ers', deposits: 3500, fees: 800 },
+        { firmName: 'Apex', deposits: 3500, fees: 800 },
       ]},
       { month: '2025-11', firms: [
-        { firmName: 'The5ers', deposits: 4200, fees: 650 },
+        { firmName: 'Apex', deposits: 4200, fees: 650 },
         { firmName: 'FTMO', deposits: 1200, fees: 300 },
       ]},
       { month: '2025-12', firms: [
-        { firmName: 'The5ers', deposits: 2800, fees: 500 },
+        { firmName: 'Apex', deposits: 2800, fees: 500 },
         { firmName: 'FTMO', deposits: 900, fees: 250 },
       ]},
       { month: '2026-01', firms: [
-        { firmName: 'The5ers', deposits: 5100, fees: 700 },
+        { firmName: 'Apex', deposits: 5100, fees: 700 },
         { firmName: 'FTMO', deposits: 1800, fees: 350 },
       ]},
       { month: '2026-02', firms: [
-        { firmName: 'The5ers', deposits: 3900, fees: 600 },
+        { firmName: 'Apex', deposits: 3900, fees: 600 },
       ]},
       { month: '2026-03', firms: [
-        { firmName: 'The5ers', deposits: 2600, fees: 400 },
+        { firmName: 'Apex', deposits: 2600, fees: 400 },
         { firmName: 'FTMO', deposits: 1100, fees: 200 },
       ]},
     ],
@@ -167,27 +167,27 @@ export const DEMO_TRADERS: DemoTrader[] = [
     months: [
       { month: '2025-10', firms: [
         { firmName: 'FTMO', deposits: 1200, fees: 800 },
-        { firmName: 'The5ers', deposits: 900, fees: 500 },
+        { firmName: 'Apex', deposits: 900, fees: 500 },
       ]},
       { month: '2025-11', firms: [
         { firmName: 'FTMO', deposits: 1800, fees: 700 },
-        { firmName: 'The5ers', deposits: 1400, fees: 450 },
+        { firmName: 'Apex', deposits: 1400, fees: 450 },
       ]},
       { month: '2025-12', firms: [
         { firmName: 'FTMO', deposits: 1500, fees: 650 },
-        { firmName: 'The5ers', deposits: 1100, fees: 400 },
+        { firmName: 'Apex', deposits: 1100, fees: 400 },
       ]},
       { month: '2026-01', firms: [
         { firmName: 'FTMO', deposits: 2200, fees: 600 },
-        { firmName: 'The5ers', deposits: 1600, fees: 350 },
+        { firmName: 'Apex', deposits: 1600, fees: 350 },
       ]},
       { month: '2026-02', firms: [
         { firmName: 'FTMO', deposits: 1900, fees: 550 },
-        { firmName: 'The5ers', deposits: 1300, fees: 300 },
+        { firmName: 'Apex', deposits: 1300, fees: 300 },
       ]},
       { month: '2026-03', firms: [
         { firmName: 'FTMO', deposits: 1600, fees: 500 },
-        { firmName: 'The5ers', deposits: 1000, fees: 350 },
+        { firmName: 'Apex', deposits: 1000, fees: 350 },
       ]},
     ],
   },
@@ -238,22 +238,22 @@ export const DEMO_TRADERS: DemoTrader[] = [
     displayName: 'SwingKingdom',
     months: [
       { month: '2025-10', firms: [
-        { firmName: 'The5ers', deposits: 5200, fees: 2800 },
+        { firmName: 'Apex', deposits: 5200, fees: 2800 },
       ]},
       { month: '2025-11', firms: [
-        { firmName: 'The5ers', deposits: 6100, fees: 1500 },
+        { firmName: 'Apex', deposits: 6100, fees: 1500 },
       ]},
       { month: '2025-12', firms: [
-        { firmName: 'The5ers', deposits: 1200, fees: 3200 },
+        { firmName: 'Apex', deposits: 1200, fees: 3200 },
       ]},
       { month: '2026-01', firms: [
-        { firmName: 'The5ers', deposits: 7500, fees: 1800 },
+        { firmName: 'Apex', deposits: 7500, fees: 1800 },
       ]},
       { month: '2026-02', firms: [
-        { firmName: 'The5ers', deposits: 4800, fees: 2200 },
+        { firmName: 'Apex', deposits: 4800, fees: 2200 },
       ]},
       { month: '2026-03', firms: [
-        { firmName: 'The5ers', deposits: 3100, fees: 1600 },
+        { firmName: 'Apex', deposits: 3100, fees: 1600 },
       ]},
     ],
   },
@@ -371,27 +371,27 @@ export const DEMO_TRADERS: DemoTrader[] = [
     months: [
       { month: '2025-10', firms: [
         { firmName: 'Topstep', deposits: 3200, fees: 800 },
-        { firmName: 'The5ers', deposits: 2400, fees: 600 },
+        { firmName: 'Apex', deposits: 2400, fees: 600 },
       ]},
       { month: '2025-11', firms: [
         { firmName: 'Topstep', deposits: 3800, fees: 750 },
-        { firmName: 'The5ers', deposits: 2800, fees: 550 },
+        { firmName: 'Apex', deposits: 2800, fees: 550 },
       ]},
       { month: '2025-12', firms: [
         { firmName: 'Topstep', deposits: 2900, fees: 850 },
-        { firmName: 'The5ers', deposits: 2100, fees: 650 },
+        { firmName: 'Apex', deposits: 2100, fees: 650 },
       ]},
       { month: '2026-01', firms: [
         { firmName: 'Topstep', deposits: 4200, fees: 700 },
-        { firmName: 'The5ers', deposits: 3100, fees: 500 },
+        { firmName: 'Apex', deposits: 3100, fees: 500 },
       ]},
       { month: '2026-02', firms: [
         { firmName: 'Topstep', deposits: 3600, fees: 650 },
-        { firmName: 'The5ers', deposits: 2700, fees: 450 },
+        { firmName: 'Apex', deposits: 2700, fees: 450 },
       ]},
       { month: '2026-03', firms: [
         { firmName: 'Topstep', deposits: 3000, fees: 600 },
-        { firmName: 'The5ers', deposits: 2300, fees: 400 },
+        { firmName: 'Apex', deposits: 2300, fees: 400 },
       ]},
     ],
   },
@@ -444,7 +444,7 @@ export const DEMO_TRADERS: DemoTrader[] = [
       { month: '2025-10', firms: [
         { firmName: 'Topstep', deposits: 0, fees: 650 },
         { firmName: 'Apex Trader Funding', deposits: 0, fees: 400 },
-        { firmName: 'The5ers', deposits: 0, fees: 500 },
+        { firmName: 'Apex', deposits: 0, fees: 500 },
       ]},
       { month: '2025-11', firms: [
         { firmName: 'Topstep', deposits: 400, fees: 800 },
@@ -452,12 +452,12 @@ export const DEMO_TRADERS: DemoTrader[] = [
       ]},
       { month: '2025-12', firms: [
         { firmName: 'Topstep', deposits: 0, fees: 700 },
-        { firmName: 'The5ers', deposits: 0, fees: 500 },
+        { firmName: 'Apex', deposits: 0, fees: 500 },
       ]},
       { month: '2026-01', firms: [
         { firmName: 'Topstep', deposits: 600, fees: 850 },
         { firmName: 'Apex Trader Funding', deposits: 0, fees: 400 },
-        { firmName: 'The5ers', deposits: 0, fees: 500 },
+        { firmName: 'Apex', deposits: 0, fees: 500 },
       ]},
       { month: '2026-02', firms: [
         { firmName: 'Topstep', deposits: 0, fees: 650 },

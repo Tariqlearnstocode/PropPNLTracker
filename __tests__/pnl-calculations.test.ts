@@ -278,7 +278,7 @@ describe('calculatePNLReport', () => {
 
 describe('firm name matching', () => {
   it('matches known prop firm names case-insensitively', () => {
-    const firms = ['FTMO', 'topstep', 'The5ers', 'Apex Trader Funding'];
+    const firms = ['FTMO', 'topstep', 'Apex', 'Apex Trader Funding'];
 
     for (const firm of firms) {
       const raw = makeTellerData({

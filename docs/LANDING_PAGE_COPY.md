@@ -12,7 +12,7 @@ Connect your bank. Get your real profit & loss — across all prop firms.
 Stop guessing. Stop spreadsheets.
 
 **Description:**
-We automatically match payouts + fees from Topstep, FTMO, The5ers, Rise, Wise and more.
+We automatically match payouts + fees from Topstep, FTMO, Apex, Rise, Wise and more.
 
 **CTAs:**
 - [Get Free Report] (primary)

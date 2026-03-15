@@ -7,14 +7,14 @@ const siteUrl = getURL();
 export const metadata: Metadata = {
   title: 'Prop Trading Leaderboard | Bank-Verified Rankings',
   description:
-    'See who\'s actually profitable. Bank-verified prop trading leaderboard ranking traders by real P&L across FTMO, Topstep, The5ers, Rise and more.',
+    'Bank-verified prop trading leaderboard. See who\'s actually profitable with real P&L rankings across Topstep, FTMO, Apex, Rise. No self-reported data.',
   alternates: {
     canonical: `${siteUrl}/leaderboard`,
   },
   openGraph: {
     title: 'Prop Trading Leaderboard | Bank-Verified Rankings',
     description:
-      'Bank-verified prop trading rankings. See real P&L, ROI, and per-firm breakdowns across FTMO, Topstep, The5ers, Rise and more.',
+      'Bank-verified prop trading leaderboard. Real P&L, ROI, and per-firm breakdowns across Topstep, FTMO, Apex, Rise. No self-reported data.',
     url: `${siteUrl}/leaderboard`,
     siteName: 'Prop PNL',
     locale: 'en_US',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Prop Trading Leaderboard | Bank-Verified Rankings',
     description:
-      'Bank-verified prop trading rankings. See real P&L, ROI, and per-firm breakdowns.',
+      'Bank-verified prop trading leaderboard. Real P&L, ROI, and per-firm breakdowns across Topstep, FTMO, Apex, Rise. No self-reported data.',
     site: '@proppnl',
     creator: '@proppnl',
   },

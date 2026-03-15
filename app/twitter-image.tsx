@@ -85,31 +85,6 @@ export default function TwitterImage() {
           Bank-verified prop firm P&L tracking
         </div>
 
-        {/* Pill badges */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '12px',
-            marginTop: '40px',
-          }}
-        >
-          {['Topstep', 'FTMO', 'The5ers', 'Rise'].map((name) => (
-            <div
-              key={name}
-              style={{
-                padding: '8px 20px',
-                borderRadius: '999px',
-                border: '1px solid rgba(0,230,118,0.25)',
-                color: '#00e676',
-                fontSize: '18px',
-                fontWeight: 500,
-                display: 'flex',
-              }}
-            >
-              {name}
-            </div>
-          ))}
-        </div>
       </div>
     ),
     { ...size }

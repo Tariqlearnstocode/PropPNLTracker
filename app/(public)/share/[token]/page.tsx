@@ -16,21 +16,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const siteUrl = getURL();
 
   const defaultMetadata: Metadata = {
-    title: 'Prop Trading Report | Prop PNL',
-    description: 'View this prop trading performance report on Prop PNL.',
+    title: { absolute: 'Bank-Verified Trading Report | Prop PNL' },
+    description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
     openGraph: {
-      title: 'Prop Trading Report | Prop PNL',
-      description: 'View this prop trading performance report on Prop PNL.',
+      title: 'Bank-Verified Trading Report | Prop PNL',
+      description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
       url: `${siteUrl}/share/${token}`,
       siteName: 'Prop PNL',
-      images: [{ url: `${siteUrl}/api/og/report?token=${token}`, width: 1200, height: 630, alt: 'Prop Trading Report' }],
+      images: [{ url: `${siteUrl}/api/og/report?token=${token}`, width: 1200, height: 630, alt: 'Bank-Verified Prop Trading P&L Report' }],
       locale: 'en_US',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Prop Trading Report | Prop PNL',
-      description: 'View this prop trading performance report on Prop PNL.',
+      title: 'Bank-Verified Trading Report | Prop PNL',
+      description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
       images: [`${siteUrl}/api/og/report?token=${token}`],
       site: '@proppnl',
       creator: '@proppnl',
@@ -60,18 +60,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const roi = summary.totalFees > 0
       ? `${netPNL >= 0 ? '+' : ''}${((netPNL / summary.totalFees) * 100).toFixed(0)}%`
       : 'N/A';
-    const description = `Net P&L: ${formattedPNL} | ${firmCount} Firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI`;
+    const description = `Bank-verified P&L: ${formattedPNL} net | ${firmCount} firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI — tracked automatically via Prop PNL.`;
     const reportRow = report as { display_name?: string | null };
-    const title = reportRow.display_name
-      ? `${reportRow.display_name}'s Trading Report | Prop PNL`
-      : 'Prop Trading Report | Prop PNL';
+    const titleText = reportRow.display_name
+      ? `${reportRow.display_name}'s Bank-Verified Report | Prop PNL`
+      : 'Bank-Verified Trading Report | Prop PNL';
 
     return {
       ...defaultMetadata,
-      title,
+      title: { absolute: titleText },
       description,
-      openGraph: { ...defaultMetadata.openGraph as object, title, description },
-      twitter: { ...defaultMetadata.twitter as object, title, description },
+      openGraph: { ...defaultMetadata.openGraph as object, title: titleText, description },
+      twitter: { ...defaultMetadata.twitter as object, title: titleText, description },
     };
   } catch {
     return defaultMetadata;

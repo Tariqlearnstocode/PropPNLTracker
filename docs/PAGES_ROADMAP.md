@@ -48,7 +48,7 @@ Strategy for new pages on Prop PNL. Ordered by impact and ease of implementation
 **Example firms to include** (from the existing matching logic):
 - Topstep
 - FTMO
-- The5ers
+- Apex
 - Rise (payout processor)
 - Wise (payout processor)
 - Apex Trader Funding
@@ -130,7 +130,7 @@ Strategy for new pages on Prop PNL. Ordered by impact and ease of implementation
    - Target: "prop firm taxes," "do I pay taxes on prop firm profits"
    - Format: Tax guide, self-employment tax surprise, CSV export plug
 
-4. **"Topstep vs FTMO vs The5ers: Real P&L Comparison"**
+4. **"Topstep vs FTMO vs Apex: Real P&L Comparison"**
    - Target: firm comparison keywords
    - Format: Data-driven comparison using anonymized aggregate data
 
@@ -178,7 +178,7 @@ Strategy for new pages on Prop PNL. Ordered by impact and ease of implementation
 ```
 /firms/topstep
 /firms/ftmo
-/firms/the5ers
+/firms/apex
 /firms/apex-trader-funding
 ...
 ```

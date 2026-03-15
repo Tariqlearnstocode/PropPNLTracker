@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/Toasts/use-toast';
 import { AccountInfoSection } from './AccountInfoSection';
+import { SubscriptionSection } from './SubscriptionSection';
 import { SharingVisibilitySection } from './SharingVisibilitySection';
 import { ConnectedAccountsSection } from './ConnectedAccountsSection';
 import { DangerZoneSection } from './DangerZoneSection';
@@ -40,6 +41,14 @@ export default function SettingsPage() {
   const [savingDisplayName, setSavingDisplayName] = useState(false);
   const [copiedShareLink, setCopiedShareLink] = useState(false);
   const [reportId, setReportId] = useState<string | null>(null);
+  const [subscription, setSubscription] = useState<{
+    hasSubscription: boolean;
+    plan: string;
+    status: string | null;
+    currentPeriodEnd?: string;
+    cancelAtPeriodEnd?: boolean;
+    isLifetime?: boolean;
+  } | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -75,6 +84,13 @@ export default function SettingsPage() {
         if (leaderboardResponse.ok) {
           const lbData = await leaderboardResponse.json();
           setShowOnLeaderboard(lbData.showOnLeaderboard ?? false);
+        }
+
+        // Fetch subscription status
+        const subResponse = await fetch('/api/stripe/subscription-status');
+        if (subResponse.ok) {
+          const subData = await subResponse.json();
+          setSubscription(subData);
         }
 
         // Fetch public/sharing preferences
@@ -322,6 +338,12 @@ export default function SettingsPage() {
           email={user.email}
           name={user.user_metadata?.name}
           createdAt={user.created_at}
+          formatDate={formatDate}
+        />
+
+        <SubscriptionSection
+          subscription={subscription}
+          loading={loading}
           formatDate={formatDate}
         />
 

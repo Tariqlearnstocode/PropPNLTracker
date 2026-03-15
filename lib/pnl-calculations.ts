@@ -11,7 +11,7 @@ const PROP_FIRM_NAMES = [
   // Already in list (keeping for reference)
   'ftmo',
   'topstep',
-  'the5ers',
+  'the5ers', // legacy name kept for matching bank transactions
   'myforexfunds',
   'fundednext',
   'funded next',

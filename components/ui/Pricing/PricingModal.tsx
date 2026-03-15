@@ -148,7 +148,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>12 month history</span>
+                  <span>Up to 12 months history</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
@@ -190,7 +190,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>12 month history</span>
+                  <span>Up to 12 months history</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
@@ -358,9 +358,9 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                   </tr>
                   <tr className="bg-terminal-card">
                     <td className="px-6 py-3 text-sm text-terminal-text">Transaction history</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
                   </tr>
                   <tr className="bg-terminal-card">
                     <td className="px-6 py-3 text-sm text-terminal-text">Exportable report</td>

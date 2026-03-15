@@ -11,9 +11,9 @@ import { AuthModalWrapper } from '@/components/AuthModalWrapper';
 import { ReportNavProvider } from '@/contexts/ReportNavContext';
 import 'styles/main.css';
 
-const title = 'Prop Firm PNL Tracker';
+const title = 'Prop PNL | Bank-Verified Prop Firm P&L Tracker';
 const description =
-  'Track your prop trading profit & loss automatically. Connect your bank and get instant PNL insights from Topstep, FTMO, The5ers, Rise and more.';
+  'Bank-verified prop firm P&L tracker. Auto-track payouts and fees from Topstep, FTMO, Apex, Rise. Connect your bank, see results in ~60 seconds.';
 
 const siteUrl = getURL();
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     'profit and loss',
     'Topstep',
     'FTMO',
-    'The5ers',
+    'Apex',
     'Rise',
     'bank verified',
     'trading tracker',

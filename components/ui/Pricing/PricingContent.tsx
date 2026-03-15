@@ -60,7 +60,7 @@ export function PricingContent() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>12 months transaction history</span>
+              <span>Up to 12 months transaction history</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
@@ -105,7 +105,7 @@ export function PricingContent() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>12 months transaction history</span>
+              <span>Up to 12 months transaction history</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
@@ -273,10 +273,10 @@ export function PricingContent() {
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Transaction history</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Advanced prop firm matching</td>

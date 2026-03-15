@@ -14,16 +14,16 @@ import { CTASection } from '@/components/landing/CTASection';
 const siteUrl = getURL();
 
 export const metadata: Metadata = {
-  title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees | Topstep, FTMO, Rise',
+  title: { absolute: 'Prop PNL | Bank-Verified Prop Firm P&L Tracker' },
   description:
-    'Track your prop firm P&L automatically. Connect your bank and we track payouts and fees from Topstep, FTMO, The5ers, Rise and more. Your true profit and loss in ~60 seconds. No spreadsheets.',
+    'Bank-verified prop firm P&L tracker. Auto-tracks payouts and fees from Topstep, FTMO, Apex, Rise. Connect your bank, see your true P&L in ~60 seconds.',
   alternates: {
     canonical: siteUrl,
   },
   openGraph: {
     title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees',
     description:
-      'Track prop firm payouts and fees from Topstep, FTMO, Rise and more. Bank-verified P&L in ~60 seconds. No manual entry.',
+      'Bank-verified prop firm P&L tracker. Auto-tracks payouts and fees from Topstep, FTMO, Apex, Rise. Set up in ~60 seconds.',
     url: siteUrl,
     siteName: 'Prop PNL',
     locale: 'en_US',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Prop Firm P&L Tracker | Bank-Verified Payouts & Fees',
     description:
-      'Track prop firm payouts and fees from Topstep, FTMO, Rise and more. Bank-verified P&L in ~60 seconds. No manual entry.',
+      'Bank-verified prop firm P&L tracker. Auto-tracks payouts and fees from Topstep, FTMO, Apex, Rise. Set up in ~60 seconds.',
     site: '@proppnl',
     creator: '@proppnl',
   },

@@ -4,20 +4,28 @@ import { getURL } from '@/utils/helpers';
 const siteUrl = getURL();
 
 export const metadata: Metadata = {
-  title: 'Security & Privacy Policy',
+  title: { absolute: 'Security & Privacy | Prop PNL Data Protection' },
   description:
-    'How Prop PNL protects your data. Bank-level encryption, read-only access, GDPR compliance, and our security practices explained.',
+    'Prop PNL security practices: AES-256 encryption, read-only bank access, instant connection deletion, and GDPR compliance. Your trading data stays safe.',
   alternates: {
     canonical: `${siteUrl}/security`,
   },
   openGraph: {
-    title: 'Security & Privacy Policy | Prop PNL',
+    title: 'Security & Privacy | Prop PNL Data Protection',
     description:
-      'How Prop PNL protects your data. Bank-level encryption, read-only access, and GDPR compliance.',
+      'Prop PNL security: AES-256 encryption, read-only bank access, instant connection deletion, GDPR compliance. Your trading data stays safe.',
     url: `${siteUrl}/security`,
     siteName: 'Prop PNL',
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Security & Privacy | Prop PNL Data Protection',
+    description:
+      'Prop PNL security: AES-256 encryption, read-only bank access, instant connection deletion, GDPR compliance. Your trading data stays safe.',
+    site: '@proppnl',
+    creator: '@proppnl',
   },
 };
 

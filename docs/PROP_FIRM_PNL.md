@@ -39,7 +39,7 @@ Just connect your bank account(s) and get instant, accurate PNL reports.
 #### 2. Prop Firm Transaction Matching
 
 **Incoming Deposits (Profits/Payouts):**
-- Match deposits from **common prop firm names** (e.g., FTMO, TopStep, The5ers, MyForexFunds, etc.)
+- Match deposits from **common prop firm names** (e.g., FTMO, TopStep, Apex, MyForexFunds, etc.)
 - Match deposits via **Rise** - Popular payout processor used by prop firms
 - Match deposits via **Wise** (formerly TransferWise) - Common international payout method
 - Match deposits via **other payment processors** commonly used by prop firms
@@ -171,7 +171,7 @@ Just connect your bank account(s) and get instant, accurate PNL reports.
 Build database of known prop firms:
 - FTMO
 - TopStep
-- The5ers
+- Apex
 - MyForexFunds
 - FundedNext
 - Apex Trader Funding
