@@ -49,55 +49,55 @@ interface TellerWebhookEvent {
  */
 function verifyTellerSignature(
   body: string,
-  signature: string,
+  signatureHeader: string,
   secret: string
 ): boolean {
   try {
-    const parts = signature.split(',');
-    let signatureValue = '';
+    // Format: "t=timestamp,v1=signature1,v1=signature2,..."
+    const parts = signatureHeader.split(',');
     let timestamp = '';
+    const signatures: string[] = [];
 
     parts.forEach((part) => {
       const trimmed = part.trim();
-      if (trimmed.startsWith('signature=')) {
-        signatureValue = trimmed.substring('signature='.length);
-      } else if (trimmed.startsWith('timestamp=')) {
-        timestamp = trimmed.substring('timestamp='.length);
-      } else if (trimmed.startsWith('t=')) {
+      if (trimmed.startsWith('t=')) {
         timestamp = trimmed.substring('t='.length);
+      } else if (trimmed.startsWith('v1=')) {
+        signatures.push(trimmed.substring('v1='.length));
       }
     });
 
-    if (!timestamp) {
-      try {
-        const event = JSON.parse(body);
-        timestamp = event.timestamp || event.ts;
-      } catch {
-      }
-    }
-
-    if (!signatureValue) {
+    if (!timestamp || signatures.length === 0) {
       return false;
     }
 
-    const timestampMs = parseInt(timestamp, 10);
-    const now = Date.now();
-    const threeMinutes = 3 * 60 * 1000;
+    // Timestamp is Unix seconds - reject if older than 3 minutes
+    const timestampSec = parseInt(timestamp, 10);
+    const nowSec = Math.floor(Date.now() / 1000);
+    const threeMinutesSec = 3 * 60;
 
-    if (now - timestampMs > threeMinutes) {
+    if (nowSec - timestampSec > threeMinutesSec) {
       return false;
     }
 
+    // Compute expected signature: HMAC-SHA256(secret, "timestamp.body")
     const signedPayload = `${timestamp}.${body}`;
     const expectedSignature = crypto
       .createHmac('sha256', secret)
       .update(signedPayload)
       .digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(signatureValue),
-      Buffer.from(expectedSignature)
-    );
+    // Check if any of the provided signatures match (supports secret rotation)
+    return signatures.some((sig) => {
+      try {
+        return crypto.timingSafeEqual(
+          Buffer.from(sig),
+          Buffer.from(expectedSignature)
+        );
+      } catch {
+        return false;
+      }
+    });
   } catch {
     return false;
   }
