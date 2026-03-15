@@ -6,7 +6,7 @@ import { validatePriceIds } from '@/lib/stripe/prices';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
-  plan: z.enum(['starter', 'pro']),
+  plan: z.enum(['one_time', 'monthly', 'lifetime']),
 });
 
 export async function POST(request: NextRequest) {
@@ -54,38 +54,77 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Determine recurring price based on plan
-    const recurringPriceId =
-      plan === 'starter'
-        ? prices.starterRecurring!
-        : prices.proRecurring!;
+    // Map plan to price ID
+    const priceIdMap: Record<string, string | undefined> = {
+      one_time: prices.oneTime,
+      monthly: prices.monthly,
+      lifetime: prices.lifetime,
+    };
 
-    // Create checkout session (only recurring price, no usage price)
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: 'subscription',
-      line_items: [
-        {
-          price: recurringPriceId,
-          quantity: 1,
+    const priceId = priceIdMap[plan];
+    if (!priceId) {
+      return NextResponse.json(
+        { error: `Price not configured for plan: ${plan}` },
+        { status: 500 }
+      );
+    }
+
+    const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const successUrl = `${origin}/settings?tab=subscription&success=true`;
+    const cancelUrl = `${origin}/settings?tab=subscription&canceled=true`;
+
+    // Determine checkout mode based on plan
+    const isRecurring = plan === 'monthly';
+
+    if (isRecurring) {
+      // Subscription checkout for monthly plan
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'subscription',
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        subscription_data: {
+          metadata: {
+            user_id: user.id,
+            plan_tier: plan,
+          },
         },
-      ],
-      subscription_data: {
+        allow_promotion_codes: true,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
         metadata: {
           user_id: user.id,
           plan_tier: plan,
         },
-      },
-      allow_promotion_codes: true,
-      success_url: `${request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/settings?tab=subscription&success=true`,
-      cancel_url: `${request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/settings?tab=subscription&canceled=true`,
-      metadata: {
-        user_id: user.id,
-        plan_tier: plan,
-      },
-    });
+      });
 
-    return NextResponse.json({ url: session.url });
+      return NextResponse.json({ url: session.url });
+    } else {
+      // One-time payment checkout for one_time and lifetime plans
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'payment',
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        allow_promotion_codes: true,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          user_id: user.id,
+          plan_tier: plan,
+        },
+      });
+
+      return NextResponse.json({ url: session.url });
+    }
   } catch (error: unknown) {
     return NextResponse.json(
       { error: 'Failed to create checkout session', details: error instanceof Error ? error.message : 'Unknown error' },

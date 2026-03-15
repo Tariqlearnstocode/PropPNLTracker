@@ -198,7 +198,7 @@ export function ReportHeader({
                 onClick={onGetStarted}
                 className="px-4 py-1.5 text-xs font-mono font-medium rounded-lg bg-profit text-terminal-bg hover:bg-profit/90 transition-colors"
               >
-                Get my report free
+                Get my report
               </button>
             )}
             <button

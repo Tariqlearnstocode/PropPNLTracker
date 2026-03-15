@@ -24,7 +24,7 @@ export function HeroSection() {
                 href="/connect"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
               >
-                Get Your Real P&L - Free
+                Get Your Real P&L
                 <span>→</span>
               </Link>
               <Link
@@ -35,7 +35,7 @@ export function HeroSection() {
               </Link>
             </div>
             <p className="text-xs text-terminal-muted font-mono">
-              No card required · Cancel anytime
+              Plans from $14.95/mo · Cancel anytime
             </p>
             {/* Trust + SEO: security + supported firms */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 mt-8 text-xs text-terminal-muted font-mono">

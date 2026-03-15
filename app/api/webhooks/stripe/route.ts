@@ -96,10 +96,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   const recurringItem = subscription.items.data[0]; // Only recurring price now
 
   const planTier =
-    recurringItem?.price.metadata?.type === 'starter_recurring' ||
-    recurringItem?.price.metadata?.type === 'pro_recurring'
-      ? recurringItem.price.metadata.type.replace('_recurring', '')
-      : subscription.metadata?.plan_tier || 'starter';
+    recurringItem?.price.metadata?.type === 'monthly'
+      ? 'monthly'
+      : subscription.metadata?.plan_tier || 'monthly';
 
   // Save customer ID to users table (ensures we have it even if subscription is deleted)
   // TODO: Replace cast with generated Supabase types
@@ -198,25 +197,50 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       .eq('id', userId);
   }
 
-  // Only handle one-time payments (pay-as-you-go)
-  if (session.mode !== 'payment') {
-    return; // Subscription payments are handled by subscription webhooks
+  // Handle subscription checkouts (monthly) - handled by subscription webhooks
+  if (session.mode === 'subscription') {
+    return;
   }
 
-  // Get payment intent ID if available
-  const paymentIntentId =
-    typeof session.payment_intent === 'string'
-      ? session.payment_intent
-      : session.payment_intent?.id;
+  // Handle one-time payment checkouts (one_time and lifetime)
+  if (session.mode === 'payment') {
+    const planTier = session.metadata?.plan_tier;
 
-  // Update payment record to completed
-  // TODO: Replace casts with generated Supabase types for one_time_payments table
-  await supabaseAdmin
-    .from('one_time_payments' as unknown as 'one_time_payments')
-    .update({
-      status: 'completed',
-      stripe_payment_intent_id: paymentIntentId || null,
-      completed_at: new Date().toISOString(),
-    } as unknown as Record<string, unknown>)
-    .eq('stripe_checkout_session_id', session.id);
+    // Get payment intent ID if available
+    const paymentIntentId =
+      typeof session.payment_intent === 'string'
+        ? session.payment_intent
+        : session.payment_intent?.id;
+
+    if (planTier === 'lifetime') {
+      // Grant permanent lifetime access by inserting into stripe_subscriptions with status 'lifetime'
+      // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
+      await supabaseAdmin
+        .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+        .upsert({
+          user_id: userId,
+          stripe_subscription_id: `lifetime_${session.id}`,
+          stripe_customer_id: customerId || '',
+          stripe_price_id: '',
+          stripe_usage_price_id: null,
+          status: 'lifetime',
+          plan_tier: 'lifetime',
+          current_period_start: new Date().toISOString(),
+          current_period_end: null,
+          cancel_at_period_end: false,
+          updated_at: new Date().toISOString(),
+        } as unknown as Record<string, unknown>);
+    } else {
+      // One-time payment (one_time plan) - update existing payment record
+      // TODO: Replace casts with generated Supabase types for one_time_payments table
+      await supabaseAdmin
+        .from('one_time_payments' as unknown as 'one_time_payments')
+        .update({
+          status: 'completed',
+          stripe_payment_intent_id: paymentIntentId || null,
+          completed_at: new Date().toISOString(),
+        } as unknown as Record<string, unknown>)
+        .eq('stripe_checkout_session_id', session.id);
+    }
+  }
 }

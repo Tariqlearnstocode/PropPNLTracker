@@ -217,7 +217,7 @@ export default function SecurityPage() {
               If you discover a security vulnerability, please report it responsibly:
             </p>
             <ol className="list-decimal list-inside text-terminal-text space-y-1 ml-4">
-              <li>Email us at security@[yourdomain].com</li>
+              <li>Email us at support@proppnl.com</li>
               <li>Do not disclose publicly until we have had time to address the issue</li>
               <li>We aim to respond within 48 hours</li>
               <li>We do not pursue legal action against good-faith security researchers</li>
@@ -233,9 +233,9 @@ export default function SecurityPage() {
               For security concerns or questions, please contact:
             </p>
             <ul className="list-disc list-inside text-terminal-text space-y-1 ml-4">
-              <li><strong>Security Issues:</strong> security@[yourdomain].com</li>
-              <li><strong>Privacy Requests:</strong> privacy@[yourdomain].com</li>
-              <li><strong>General Support:</strong> support@[yourdomain].com</li>
+              <li><strong>Security Issues:</strong> support@proppnl.com</li>
+              <li><strong>Privacy Requests:</strong> support@proppnl.com</li>
+              <li><strong>General Support:</strong> support@proppnl.com</li>
             </ul>
           </section>
 

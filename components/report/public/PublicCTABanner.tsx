@@ -13,12 +13,12 @@ export function PublicCTABanner({ displayName, onGetStarted, onDismiss }: Public
         <div className="flex items-center gap-3 min-w-0">
           <p className="text-xs text-terminal-text font-mono font-medium">
             {displayName
-              ? `Get your own P&L report like ${displayName}. Free — no card.`
+              ? `Get your own P&L report like ${displayName}.`
               : 'See your own P&L breakdown — connect your bank in 60 seconds'
             }
           </p>
           <span className="text-[10px] text-terminal-muted font-mono hidden sm:inline flex-shrink-0">
-            Free · No credit card
+            Plans from $14.95/mo
           </span>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
@@ -26,7 +26,7 @@ export function PublicCTABanner({ displayName, onGetStarted, onDismiss }: Public
             onClick={onGetStarted}
             className="px-4 py-1.5 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-md transition-colors"
           >
-            Get Started Free
+            Get Started
           </button>
           <button
             onClick={onDismiss}

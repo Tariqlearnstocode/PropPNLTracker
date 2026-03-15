@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
-import { sendCompletionEmail } from '@/utils/email';
 import { checkRateLimit } from '@/utils/rate-limit';
 import https from 'https';
 import { z } from 'zod';
@@ -194,23 +193,6 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to save report data' },
         { status: 500 }
       );
-    }
-
-    // Send completion email to landlord
-    if (verificationBefore?.requested_by_email) {
-      try {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-        const reportLink = `${baseUrl}/report/${verification_token}`;
-        
-        await sendCompletionEmail({
-          to: verificationBefore.requested_by_email,
-          individualName: verificationBefore.individual_name,
-          requestedByName: verificationBefore.requested_by_name || 'Requesting Party',
-          verificationLink: reportLink,
-        });
-      } catch {
-        // Don't fail the request if email fails
-      }
     }
 
     // 5. Delete all account connections to stop recurring charges

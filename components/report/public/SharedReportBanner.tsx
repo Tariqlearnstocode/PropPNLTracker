@@ -32,7 +32,7 @@ export function SharedReportBanner({ displayName, onGetStarted }: SharedReportBa
           onClick={onGetStarted}
           className="px-3 py-1 text-[11px] font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-md transition-colors flex-shrink-0 whitespace-nowrap"
         >
-          Create yours free
+          Create yours
         </button>
       </div>
     </div>

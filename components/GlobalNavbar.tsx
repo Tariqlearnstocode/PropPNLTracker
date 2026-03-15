@@ -48,7 +48,7 @@ export default function GlobalNavbar() {
             onClick={onGetStarted}
             className="px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap"
           >
-            Create yours free
+            Create yours
           </button>
         </div>
       </header>
@@ -107,7 +107,7 @@ export default function GlobalNavbar() {
   };
 
   const isViewingSharedReport = pathname?.startsWith('/share/');
-  const primaryCtaLabel = isViewingSharedReport ? 'Get my report free' : 'Get Started';
+  const primaryCtaLabel = isViewingSharedReport ? 'Get my report' : 'Get Started';
   const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
   return (

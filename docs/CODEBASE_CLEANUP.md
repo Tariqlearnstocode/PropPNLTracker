@@ -73,6 +73,26 @@ Staying on **Vercel** — best-in-class for Next.js. White-label with a custom d
 
 ---
 
+## Pending
+
+### 11. Restructure pricing — TODO
+Remove free tier. New tiers: **One-Time**, **Monthly**, **Lifetime**.
+
+Files to update:
+- `components/landing/PricingSection.tsx` — rewrite tier cards (currently: Free $0, Pro $14.99/mo, One-Time $19.99)
+- `lib/stripe/prices.ts` — update `setupProductsAndPrices()` and `getPriceIds()` for new tiers
+- `app/api/stripe/create-checkout/route.ts` — update plan validation (currently accepts `starter` | `pro`)
+- `components/ui/Pricing/PricingModal.tsx` — if in-app pricing modal exists, update it too
+- `app/api/stripe/subscription-status/route.ts` — may need to handle lifetime (one-time with no expiry)
+- Landing page copy referencing "free" anywhere
+
+Pricing:
+- **One-Time**: $39.99 — single snapshot, no updates
+- **Monthly**: $14.95/mo — recurring sync, cancel anytime
+- **Lifetime**: $199 — one-time payment, permanent access to monthly syncs
+
+---
+
 ## Additional cleanup completed
 - Removed 9 unused public assets, orphaned directories, dead code, template scripts
 - Moved 10 markdown docs to `docs/`

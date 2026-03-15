@@ -16,7 +16,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (priceType: 'per_verification' | 'starter' | 'pro') => {
+  const handleCheckout = async (priceType: 'one_time' | 'monthly' | 'lifetime') => {
     if (!user) {
       // Store the selected plan for after sign-in
       sessionStorage.setItem('pendingCheckout', priceType);
@@ -32,11 +32,12 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
     setLoading(priceType);
     try {
       let response;
-      if (priceType === 'per_verification') {
+      if (priceType === 'one_time' || priceType === 'lifetime') {
         // One-time payment checkout
         response = await fetch('/api/stripe/create-one-time-checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan: priceType }),
         });
       } else {
         // Subscription checkout
@@ -125,9 +126,9 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
         {/* Header */}
         <div className="sticky top-0 bg-terminal-card border-b border-terminal-border px-6 py-4 flex items-center justify-between z-10">
           <div>
-            <h2 className="text-2xl font-bold text-terminal-text">Transparent Pricing</h2>
+            <h2 className="text-2xl font-bold text-terminal-text">Simple, Transparent Pricing</h2>
             <p className="text-sm text-terminal-muted mt-1">
-              No hidden fees. No surprises. Only pay for successful verifications.
+              One report. Real numbers. Pick your plan.
             </p>
           </div>
           <button
@@ -142,94 +143,122 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
         <div className="p-6">
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            {/* Per Verification */}
+            {/* One-Time */}
             <div className="border-2 border-terminal-border rounded-xl p-6 hover:border-terminal-muted transition-colors">
               <div className="mb-4">
-                <p className="text-sm font-medium text-terminal-muted mb-1">Pay as you go</p>
+                <p className="text-sm font-medium text-terminal-muted mb-1">One-Time</p>
                 <div className="mt-2">
-                  <span className="text-3xl font-bold text-terminal-text">$14.99</span>
-                  <span className="text-terminal-text text-sm ml-1">per verification</span>
+                  <span className="text-3xl font-bold text-terminal-text">$39.99</span>
                 </div>
-                <div className="text-xs text-terminal-muted mt-1">$14.99 per verification</div>
+                <div className="text-xs text-terminal-muted mt-1">Single snapshot report, no recurring updates</div>
               </div>
               <div className="space-y-2 text-sm text-terminal-text mb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>No monthly commitment</span>
+                  <span>Up to 5 bank accounts</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>Pay only for what you use</span>
+                  <span>12 month history</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Exportable report</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Shareable link</span>
                 </div>
               </div>
               <button
-                onClick={() => handleCheckout('per_verification')}
-                className="w-full py-2.5 bg-terminal-text hover:bg-terminal-text/90 text-terminal-bg font-medium rounded-lg transition-colors"
+                onClick={() => handleCheckout('one_time')}
+                disabled={loading === 'one_time'}
+                className="w-full py-2.5 bg-terminal-text hover:bg-terminal-text/90 disabled:bg-terminal-muted text-terminal-bg font-medium rounded-lg transition-colors"
               >
-                Get Started
+                {loading === 'one_time' ? 'Loading...' : 'Get Snapshot Report'}
               </button>
             </div>
 
-            {/* Starter */}
-            <div className="border-2 border-terminal-border rounded-xl p-6 hover:border-terminal-muted transition-colors">
-              <div className="mb-4">
-                <p className="text-sm font-medium text-terminal-muted mb-1">Small teams</p>
-                <div className="mt-2">
-                  <span className="text-3xl font-bold text-terminal-text">$59</span>
-                  <span className="text-terminal-text text-sm ml-1">/month</span>
-                </div>
-              </div>
-              <div className="space-y-2 text-sm text-terminal-text mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-profit">✓</span>
-                  <span>10 verifications included</span>
-                </div>
-                <div className="text-xs text-terminal-muted ml-5">$5.90 per verification</div>
-                <div className="flex items-center gap-2">
-                  <span className="text-profit">✓</span>
-                  <span>Overage: $8.99 per additional</span>
-                </div>
-              </div>
-              <button
-                onClick={() => handleCheckout('starter')}
-                disabled={loading === 'starter'}
-                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
-              >
-                {loading === 'starter' ? 'Loading...' : 'Get Started'}
-              </button>
-            </div>
-
-            {/* Pro - Most Popular */}
+            {/* Monthly - Most Popular */}
             <div className="border-2 border-profit rounded-xl p-6 relative bg-profit/10 hover:border-profit/80 transition-colors">
               <div className="absolute top-4 right-4">
                 <span className="px-2 py-1 bg-profit text-terminal-bg text-xs font-medium rounded">
-                  ★ Most Popular
+                  POPULAR
                 </span>
               </div>
               <div className="mb-4">
-                <p className="text-sm font-medium text-terminal-muted mb-1">Growing teams</p>
+                <p className="text-sm font-medium text-terminal-muted mb-1">Monthly</p>
                 <div className="mt-2">
-                  <span className="text-3xl font-bold text-terminal-text">$199</span>
-                  <span className="text-terminal-text text-sm ml-1">/month</span>
+                  <span className="text-3xl font-bold text-terminal-text">$14.95</span>
+                  <span className="text-terminal-text text-sm ml-1">/mo</span>
                 </div>
+                <div className="text-xs text-terminal-muted mt-1">Cancel anytime</div>
               </div>
               <div className="space-y-2 text-sm text-terminal-text mb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>50 verifications included</span>
+                  <span>Up to 5 bank accounts</span>
                 </div>
-                <div className="text-xs text-terminal-muted ml-5">$3.98 per verification</div>
                 <div className="flex items-center gap-2">
                   <span className="text-profit">✓</span>
-                  <span>Overage: $4.99 per additional</span>
+                  <span>12 month history</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Weekly transaction sync</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Always up to date</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Leaderboard eligible</span>
                 </div>
               </div>
               <button
-                onClick={() => handleCheckout('pro')}
-                disabled={loading === 'pro'}
-                className="w-full py-2.5 bg-terminal-text hover:bg-terminal-text/90 disabled:bg-terminal-muted text-terminal-bg font-medium rounded-lg transition-colors"
+                onClick={() => handleCheckout('monthly')}
+                disabled={loading === 'monthly'}
+                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
               >
-                {loading === 'pro' ? 'Loading...' : 'Get Started'}
+                {loading === 'monthly' ? 'Loading...' : 'Start Monthly Plan'}
+              </button>
+            </div>
+
+            {/* Lifetime - Best Value */}
+            <div className="border-2 border-terminal-border rounded-xl p-6 relative hover:border-terminal-muted transition-colors">
+              <div className="absolute top-4 right-4">
+                <span className="px-2 py-1 bg-terminal-text text-terminal-bg text-xs font-medium rounded">
+                  BEST VALUE
+                </span>
+              </div>
+              <div className="mb-4">
+                <p className="text-sm font-medium text-terminal-muted mb-1">Lifetime</p>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold text-terminal-text">$199</span>
+                </div>
+                <div className="text-xs text-terminal-muted mt-1">One-time payment, permanent access</div>
+              </div>
+              <div className="space-y-2 text-sm text-terminal-text mb-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Everything in Monthly, forever</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>Permanent weekly syncs</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-profit">✓</span>
+                  <span>No recurring charges — ever</span>
+                </div>
+              </div>
+              <button
+                onClick={() => handleCheckout('lifetime')}
+                disabled={loading === 'lifetime'}
+                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
+              >
+                {loading === 'lifetime' ? 'Loading...' : 'Get Lifetime Access'}
               </button>
             </div>
           </div>
@@ -319,208 +348,61 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
               <table className="w-full">
                 <thead>
                   <tr className="bg-terminal-bg border-b border-terminal-border">
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-terminal-text">Pricing</th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Per Verification</th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Starter</th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Pro</th>
-                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Enterprise</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-terminal-text">Features</th>
+                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">One-Time</th>
+                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Monthly</th>
+                    <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Lifetime</th>
                   </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Verifications included per month</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">Pay as you go</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">10</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">50</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">Custom</td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Cost per report</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$14.99</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$5.90</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$3.98</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">Custom</td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Cost per overage</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">—</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$8.99</td>
-                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$4.99</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">Custom</td>
-                  </tr>
-                  </thead>
+                </thead>
                 <tbody className="divide-y divide-terminal-border">
-                  {/* Core Features */}
                   <tr className="bg-terminal-card">
-                    <td colSpan={5} className="px-6 py-2 bg-terminal-bg">
-                      <span className="text-xs font-semibold text-terminal-muted uppercase tracking-wide">Core Features</span>
-                    </td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Price</td>
+                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$39.99</td>
+                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$14.95/mo</td>
+                    <td className="px-6 py-3 text-center text-sm font-medium text-terminal-text">$199</td>
+                  </tr>
+                  <tr className="bg-terminal-card">
+                    <td className="px-6 py-3 text-sm text-terminal-text">Bank accounts</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                   </tr>
                   <tr className="bg-terminal-card">
                     <td className="px-6 py-3 text-sm text-terminal-text">Transaction history</td>
-                    <td className="px-6 py-3 text-center text-sm text-terminal-text">3 months</td>
                     <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                     <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                     <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                   </tr>
                   <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Bank-connected income verification</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Applicant-authorized data access</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Exportable report</td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                   </tr>
                   <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Primary income source detection</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Payroll vs P2P classification</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Shareable link</td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                   </tr>
                   <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Confidence scoring</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Secure data handling (encrypted, auto-deleted)</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Weekly transaction sync</td>
+                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                   </tr>
                   <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">PDF export</td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-
-                  {/* Subscription Features */}
-                  <tr className="bg-terminal-card">
-                    <td colSpan={5} className="px-6 py-2 bg-terminal-bg">
-                      <span className="text-xs font-semibold text-terminal-muted uppercase tracking-wide">Subscription Features</span>
-                    </td>
-                  </tr>
-
-
-
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Email verification link to applicant</td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Leaderboard eligible</td>
                     <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                     <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                   </tr>
                   <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Send invitation reminders</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                    <td className="px-6 py-3 text-sm text-terminal-text">Recurring charges</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">None</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-text">Monthly</td>
+                    <td className="px-6 py-3 text-center text-sm text-terminal-muted">None</td>
                   </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Completion notifications (email)</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Multi-user team access</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Verification archive (1 year)</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card opacity-60">
-                    <td className="px-6 py-3 text-sm text-terminal-text flex items-center gap-2">
-                      Analytics dashboard
-                      <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-900/30 text-yellow-500 rounded">Coming soon</span>
-                    </td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card opacity-60">
-                    <td className="px-6 py-3 text-sm text-terminal-text flex items-center gap-2">
-                      Co-applicant verification
-                      <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-900/30 text-yellow-500 rounded">Coming soon</span>
-                    </td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                  </tr>
-
-                  {/* Enterprise Features */}
-                  <tr className="bg-terminal-card">
-                    <td colSpan={5} className="px-6 py-2 bg-terminal-bg">
-                      <span className="text-xs font-semibold text-terminal-muted uppercase tracking-wide">Enterprise Features</span>
-                    </td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Custom reports</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Dedicated account manager</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">Custom branding (logo on verifications)</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">API access</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-
-                  <tr className="bg-terminal-card">
-                    <td className="px-6 py-3 text-sm text-terminal-text">White-label solution</td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                    <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                  </tr>
-
                 </tbody>
               </table>
             </div>

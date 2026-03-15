@@ -36,7 +36,7 @@ export function ExportBlockedPopup({ open, onClose, onGetStarted }: ExportBlocke
             Create your own report to export
           </h3>
           <p className="text-sm text-terminal-muted leading-relaxed">
-            You can&apos;t export this person&apos;s data. Get your own free report to export transactions, payouts, and summaries.
+            You can&apos;t export this person&apos;s data. Get your own report to export transactions, payouts, and summaries.
           </p>
         </div>
 
@@ -44,10 +44,10 @@ export function ExportBlockedPopup({ open, onClose, onGetStarted }: ExportBlocke
           onClick={handleCTA}
           className="w-full py-3 px-4 bg-profit hover:bg-profit/90 text-terminal-bg font-semibold rounded-lg transition-colors text-sm"
         >
-          Get my report free
+          Get my report
         </button>
         <p className="text-center text-[11px] text-terminal-muted mt-2.5 font-mono">
-          No credit card required · Free forever
+          Plans from $14.95/mo · Cancel anytime
         </p>
       </div>
     </div>

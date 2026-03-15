@@ -47,7 +47,7 @@ export function HowItWorksSection() {
             href="/connect"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
           >
-            Connect Your Bank – Free
+            Connect Your Bank
             <span>→</span>
           </Link>
         </div>

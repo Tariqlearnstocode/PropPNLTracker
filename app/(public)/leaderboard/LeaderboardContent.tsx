@@ -322,7 +322,7 @@ export default function LeaderboardContent() {
               <span>&#8594;</span>
             </Link>
             <p className="text-xs text-terminal-muted font-mono mt-4">
-              Free report. Leaderboard opt-in optional.
+              Leaderboard opt-in optional.
             </p>
           </div>
         </div>

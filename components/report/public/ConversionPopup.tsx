@@ -76,7 +76,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-profit/10 border border-profit/20 rounded-full mb-4">
             <span className="text-profit">📈</span>
             <span className="text-[11px] font-mono font-medium text-profit uppercase tracking-wider">
-              Free to use
+              Prop PNL
             </span>
           </div>
           <h3 className="text-lg font-semibold text-terminal-text mb-2">
@@ -129,7 +129,7 @@ export function ConversionPopup({ displayName, onGetStarted }: ConversionPopupPr
           Start Tracking My P&L
         </button>
         <p className="text-center text-[11px] text-terminal-muted mt-2.5 font-mono">
-          No credit card required · Free forever
+          Plans from $14.95/mo · Cancel anytime
         </p>
       </div>
     </div>

@@ -13,11 +13,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get subscription from database
+    // Check for lifetime access first (stored in stripe_subscriptions with status 'lifetime')
+    const { data: lifetimeRecord } = await supabase
+      // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'lifetime')
+      .limit(1)
+      .single() as { data: Record<string, unknown> | null };
+
+    if (lifetimeRecord) {
+      return NextResponse.json({
+        hasSubscription: true,
+        plan: 'lifetime',
+        status: 'lifetime',
+        canCreateVerification: true,
+        limitReached: false,
+        requiresPayment: false,
+        limit: null,
+        currentUsage: 0,
+        isLifetime: true,
+      });
+    }
+
+    // Get active subscription from database (monthly plan)
     const subscription = await getActiveSubscription(user.id);
 
     if (!subscription) {
-      // Pay-as-you-go user - check if they have available payment
+      // Check for completed one-time payment
       const { data: availablePayment } = await supabase
         // TODO: Replace cast with generated Supabase types for one_time_payments table
         .from('one_time_payments' as unknown as 'one_time_payments')
@@ -36,17 +60,17 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({
         hasSubscription: false,
-        plan: 'pay_as_you_go',
+        plan: 'none',
         status: null,
         canCreateVerification: !!availablePayment,
         requiresPayment: !availablePayment,
-        paymentAmount: 1499, // $14.99
+        paymentAmount: 3999, // $39.99
         totalVerifications: totalVerifications || 0,
         hasAvailablePayment: !!availablePayment,
       });
     }
 
-    // Get detailed subscription info from Stripe
+    // Get detailed subscription info from Stripe (monthly plan)
     let stripeSubscription: Stripe.Subscription | null = null;
     let currentUsage = 0;
 
@@ -63,21 +87,16 @@ export async function GET(request: NextRequest) {
     } catch {
     }
 
-    const limit = subscription.plan_tier === 'starter' ? 10 : 50;
-    const canCreateVerification = currentUsage < limit;
-    const limitReached = currentUsage >= limit;
-
     return NextResponse.json({
       hasSubscription: true,
-      plan: subscription.plan_tier,
+      plan: subscription.plan_tier || 'monthly',
       status: subscription.status,
       currentPeriodStart: subscription.current_period_start,
       currentPeriodEnd: subscription.current_period_end,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canCreateVerification,
-      limitReached,
+      canCreateVerification: true,
+      limitReached: false,
       requiresPayment: false,
-      limit,
       currentUsage,
       usageInfo: {
         totalUsage: currentUsage,

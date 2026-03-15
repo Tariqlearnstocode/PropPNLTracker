@@ -7,7 +7,7 @@ interface PublicInlineCTAProps {
   onGetStarted: () => void;
 }
 
-export function PublicInlineCTA({ message, ctaText = 'Start tracking free', onGetStarted }: PublicInlineCTAProps) {
+export function PublicInlineCTA({ message, ctaText = 'Start tracking', onGetStarted }: PublicInlineCTAProps) {
   return (
     <div className="my-6 mx-auto max-w-2xl">
       <div className="relative overflow-hidden rounded-xl border border-profit/20 bg-gradient-to-r from-profit/5 via-transparent to-profit/5 p-4">

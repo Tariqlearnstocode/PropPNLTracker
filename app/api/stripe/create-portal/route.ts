@@ -18,6 +18,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Check if user has lifetime access - they don't need a billing portal
+    const { data: lifetimeRecord } = await supabase
+      // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .eq('status', 'lifetime')
+      .limit(1)
+      .single() as { data: { status: string } | null };
+
+    if (lifetimeRecord) {
+      return NextResponse.json(
+        { error: 'Lifetime members do not have a billing portal. Your access never expires.' },
+        { status: 400 }
+      );
+    }
+
     // Get Stripe customer ID from subscription (if exists) or create one
     let customerId: string | null = null;
 

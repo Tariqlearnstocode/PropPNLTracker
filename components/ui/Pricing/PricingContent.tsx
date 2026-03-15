@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export function PricingContent() {
   const [email, setEmail] = useState('');
@@ -35,66 +36,67 @@ export function PricingContent() {
     <div className="max-w-5xl mx-auto px-4 py-12">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-terminal-text mb-3">Transparent Pricing</h1>
+        <h1 className="text-4xl font-bold text-terminal-text mb-3">Simple, Transparent Pricing</h1>
         <p className="text-lg text-terminal-text">
-          Track your prop trading PNL automatically. Connect your bank and get instant insights.
+          One report. Real numbers. Pick your plan.
         </p>
       </div>
 
       {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {/* Free Trial */}
+        {/* One-Time */}
         <div className="border-2 border-terminal-border rounded-xl p-6 hover:border-terminal-muted transition-colors">
           <div className="mb-4">
-            <p className="text-sm font-medium text-terminal-muted mb-1">Free Trial</p>
+            <p className="text-sm font-medium text-terminal-muted mb-1">One-Time</p>
             <div className="mt-2">
-              <span className="text-3xl font-bold text-terminal-text">$0</span>
-              <span className="text-terminal-text text-sm ml-1">forever</span>
+              <span className="text-3xl font-bold text-terminal-text">$39.99</span>
             </div>
-            <div className="text-xs text-terminal-muted mt-1">Try it free, no credit card required</div>
+            <div className="text-xs text-terminal-muted mt-1">Single snapshot report, no recurring updates</div>
           </div>
           <div className="space-y-2 text-sm text-terminal-text mb-6">
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>1 bank account connection</span>
+              <span>Up to 5 bank accounts</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>3 months transaction history</span>
+              <span>12 months transaction history</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>All core features</span>
+              <span>Exportable report</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-profit">✓</span>
+              <span>Shareable link</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-loss">✗</span>
-              <span className="text-terminal-muted">Transaction updates</span>
+              <span className="text-terminal-muted">No recurring updates</span>
             </div>
           </div>
-          <button
-            onClick={() => {
-              window.location.href = '/';
-            }}
-            className="w-full py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+          <Link
+            href="/connect"
+            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
           >
-            Get Started Free
-          </button>
+            Get Snapshot Report
+          </Link>
         </div>
 
-        {/* Pro - Most Popular */}
+        {/* Monthly - Most Popular */}
         <div className="border-2 border-profit rounded-xl p-6 relative bg-profit/10 hover:border-profit/80 transition-colors">
           <div className="absolute top-4 right-4">
             <span className="px-2 py-1 bg-profit text-terminal-bg text-xs font-medium rounded">
-              ★ Most Popular
+              POPULAR
             </span>
           </div>
           <div className="mb-4">
-            <p className="text-sm font-medium text-terminal-muted mb-1">Pro</p>
+            <p className="text-sm font-medium text-terminal-muted mb-1">Monthly</p>
             <div className="mt-2">
-              <span className="text-3xl font-bold text-terminal-text">$14.99</span>
-              <span className="text-terminal-text text-sm ml-1">/month</span>
+              <span className="text-3xl font-bold text-terminal-text">$14.95</span>
+              <span className="text-terminal-text text-sm ml-1">/mo</span>
             </div>
-            <div className="text-xs text-terminal-muted mt-1">$79/year (save 56%)</div>
+            <div className="text-xs text-terminal-muted mt-1">Cancel anytime</div>
           </div>
           <div className="space-y-2 text-sm text-terminal-text mb-6">
             <div className="flex items-center gap-2">
@@ -107,74 +109,59 @@ export function PricingContent() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>Weekly transaction updates</span>
+              <span>Weekly transaction sync</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>All core features</span>
+              <span>Always up to date</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-profit">✓</span>
+              <span>Leaderboard eligible</span>
             </div>
           </div>
-          <button
-            onClick={async () => {
-              const response = await fetch('/api/stripe/create-checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ priceType: 'pro' }),
-              });
-              const result = await response.json();
-              if (result.url) {
-                window.location.href = result.url;
-              }
-            }}
-            className="w-full py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+          <Link
+            href="/connect"
+            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
           >
-            Get Started
-          </button>
+            Start Monthly Plan
+          </Link>
         </div>
 
-        {/* One-Time Pull */}
-        <div className="border-2 border-terminal-border rounded-xl p-6 hover:border-terminal-muted transition-colors">
+        {/* Lifetime - Best Value */}
+        <div className="border-2 border-terminal-border rounded-xl p-6 relative hover:border-terminal-muted transition-colors">
+          <div className="absolute top-4 right-4">
+            <span className="px-2 py-1 bg-terminal-text text-terminal-bg text-xs font-medium rounded">
+              BEST VALUE
+            </span>
+          </div>
           <div className="mb-4">
-            <p className="text-sm font-medium text-terminal-muted mb-1">One-Time Pull</p>
+            <p className="text-sm font-medium text-terminal-muted mb-1">Lifetime</p>
             <div className="mt-2">
-              <span className="text-3xl font-bold text-terminal-text">$19.99</span>
-              <span className="text-terminal-text text-sm ml-1">one-time</span>
+              <span className="text-3xl font-bold text-terminal-text">$199</span>
             </div>
-            <div className="text-xs text-terminal-muted mt-1">No subscription, pay once</div>
+            <div className="text-xs text-terminal-muted mt-1">One-time payment, permanent access</div>
           </div>
           <div className="space-y-2 text-sm text-terminal-text mb-6">
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>Up to 5 bank accounts</span>
+              <span>Everything in Monthly, forever</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>12 months transaction history</span>
+              <span>Permanent weekly syncs</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>All core features</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-loss">✗</span>
-              <span className="text-terminal-muted">Transaction updates</span>
+              <span>No recurring charges — ever</span>
             </div>
           </div>
-          <button
-            onClick={async () => {
-              const response = await fetch('/api/stripe/create-one-time-checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-              });
-              const result = await response.json();
-              if (result.url) {
-                window.location.href = result.url;
-              }
-            }}
-            className="w-full py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+          <Link
+            href="/connect"
+            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
           >
-            Get Started
-          </button>
+            Get Lifetime Access
+          </Link>
         </div>
       </div>
 
@@ -264,9 +251,9 @@ export function PricingContent() {
             <thead>
               <tr className="bg-terminal-card-hover border-b border-terminal-border">
                 <th className="px-6 py-3 text-left text-sm font-semibold text-terminal-text">Features</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Free Trial</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Pro</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">One-Time</th>
+                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Monthly</th>
+                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Lifetime</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Enterprise</th>
               </tr>
             </thead>
@@ -279,14 +266,14 @@ export function PricingContent() {
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Bank account connections</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">1</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Custom</td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Transaction history</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">3 months</td>
+                <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">12 months</td>
@@ -341,11 +328,18 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
-                <td className="px-6 py-3 text-sm text-terminal-text">Transaction updates</td>
+                <td className="px-6 py-3 text-sm text-terminal-text">Weekly transaction sync</td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓ Weekly</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓ Custom</span></td>
+              </tr>
+              <tr className="bg-terminal-card">
+                <td className="px-6 py-3 text-sm text-terminal-text">Leaderboard eligible</td>
+                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
 
               {/* Enterprise Features */}

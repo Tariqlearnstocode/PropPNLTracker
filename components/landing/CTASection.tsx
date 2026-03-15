@@ -11,7 +11,7 @@ export function CTASection() {
           <span className="block mt-2 text-profit">Connect your bank → see your P&L.</span>
         </h2>
         <p className="text-xl text-terminal-text mb-6 max-w-2xl mx-auto">
-          Real P&L in ~60 seconds. No credit card. Cancel anytime.
+          Real P&L in ~60 seconds. Plans from $14.95/mo. Cancel anytime.
         </p>
         <p className="text-sm text-terminal-muted mb-8 max-w-xl mx-auto font-mono">
           Sign up → connect bank → get your report. That&apos;s it.
@@ -20,7 +20,7 @@ export function CTASection() {
           href="/connect"
           className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
         >
-          Connect Your Bank – Free
+          Connect Your Bank
           <span>→</span>
         </Link>
       </div>

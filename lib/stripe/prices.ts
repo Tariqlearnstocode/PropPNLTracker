@@ -24,57 +24,53 @@ export async function setupProductsAndPrices() {
     } else {
       productId = productSearch.data[0].id;
     }
+
     // Create prices
     const prices: {
-      payAsYouGo: Stripe.Price | null;
-      starterRecurring: Stripe.Price | null;
-      proRecurring: Stripe.Price | null;
+      oneTime: Stripe.Price | null;
+      monthly: Stripe.Price | null;
+      lifetime: Stripe.Price | null;
     } = {
-      payAsYouGo: null,
-      starterRecurring: null,
-      proRecurring: null,
+      oneTime: null,
+      monthly: null,
+      lifetime: null,
     };
 
-    // Pay-as-you-go (one-time)
-    const payAsYouGoPrice = await stripe.prices.create({
+    // One-Time ($39.99, one-time payment)
+    const oneTimePrice = await stripe.prices.create({
       product: productId,
-      unit_amount: 1499, // $14.99
+      unit_amount: 3999, // $39.99
       currency: 'usd',
       metadata: {
-        type: 'pay_as_you_go',
+        type: 'one_time',
       },
     });
-    prices.payAsYouGo = payAsYouGoPrice;
+    prices.oneTime = oneTimePrice;
 
-    // Starter recurring ($59/mo)
-    const starterRecurring = await stripe.prices.create({
+    // Monthly ($14.95/mo, recurring)
+    const monthlyPrice = await stripe.prices.create({
       product: productId,
-      unit_amount: 5900, // $59.00
+      unit_amount: 1495, // $14.95
       currency: 'usd',
       recurring: {
         interval: 'month',
       },
       metadata: {
-        type: 'starter_recurring',
-        included_quantity: '10',
+        type: 'monthly',
       },
     });
-    prices.starterRecurring = starterRecurring;
+    prices.monthly = monthlyPrice;
 
-    // Pro recurring ($199/mo)
-    const proRecurring = await stripe.prices.create({
+    // Lifetime ($199.00, one-time payment)
+    const lifetimePrice = await stripe.prices.create({
       product: productId,
       unit_amount: 19900, // $199.00
       currency: 'usd',
-      recurring: {
-        interval: 'month',
-      },
       metadata: {
-        type: 'pro_recurring',
-        included_quantity: '50',
+        type: 'lifetime',
       },
     });
-    prices.proRecurring = proRecurring;
+    prices.lifetime = lifetimePrice;
 
     return {
       productId,
@@ -90,9 +86,9 @@ export async function setupProductsAndPrices() {
  */
 export function getPriceIds() {
   return {
-    payAsYouGo: process.env.STRIPE_PRICE_PAY_AS_YOU_GO,
-    starterRecurring: process.env.STRIPE_PRICE_STARTER_RECURRING,
-    proRecurring: process.env.STRIPE_PRICE_PRO_RECURRING,
+    oneTime: process.env.STRIPE_PRICE_ONE_TIME,
+    monthly: process.env.STRIPE_PRICE_MONTHLY,
+    lifetime: process.env.STRIPE_PRICE_LIFETIME,
   };
 }
 
@@ -103,9 +99,9 @@ export function validatePriceIds() {
   const prices = getPriceIds();
   const missing: string[] = [];
 
-  if (!prices.payAsYouGo) missing.push('STRIPE_PRICE_PAY_AS_YOU_GO');
-  if (!prices.starterRecurring) missing.push('STRIPE_PRICE_STARTER_RECURRING');
-  if (!prices.proRecurring) missing.push('STRIPE_PRICE_PRO_RECURRING');
+  if (!prices.oneTime) missing.push('STRIPE_PRICE_ONE_TIME');
+  if (!prices.monthly) missing.push('STRIPE_PRICE_MONTHLY');
+  if (!prices.lifetime) missing.push('STRIPE_PRICE_LIFETIME');
 
   if (missing.length > 0) {
     throw new Error(
