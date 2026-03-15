@@ -31,22 +31,11 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
 
     setLoading(priceType);
     try {
-      let response;
-      if (priceType === 'one_time' || priceType === 'lifetime') {
-        // One-time payment checkout
-        response = await fetch('/api/stripe/create-one-time-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ plan: priceType }),
-        });
-      } else {
-        // Subscription checkout
-        response = await fetch('/api/stripe/create-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ plan: priceType }),
-        });
-      }
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: priceType }),
+      });
 
       const data = await response.json();
 

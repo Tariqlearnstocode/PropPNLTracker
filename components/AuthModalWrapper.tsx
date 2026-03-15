@@ -21,14 +21,35 @@ export function AuthModalWrapper() {
     };
   }, []);
 
+  const handleAuthSuccess = async () => {
+    // Check if there's a pending checkout from pricing
+    const pendingPlan = sessionStorage.getItem('pendingCheckout');
+    if (pendingPlan && ['one_time', 'monthly', 'lifetime'].includes(pendingPlan)) {
+      sessionStorage.removeItem('pendingCheckout');
+      try {
+        const response = await fetch('/api/stripe/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan: pendingPlan }),
+        });
+        const data = await response.json();
+        if (response.ok && data.url) {
+          window.location.href = data.url;
+          return;
+        }
+      } catch {
+        // Fall through to reload if checkout fails
+      }
+    }
+    window.location.reload();
+  };
+
   return (
     <AuthModal
       isOpen={showAuthModal}
       onClose={() => setShowAuthModal(false)}
       initialMode={authMode}
-      onAuthSuccess={async () => {
-        window.location.reload();
-      }}
+      onAuthSuccess={handleAuthSuccess}
     />
   );
 }

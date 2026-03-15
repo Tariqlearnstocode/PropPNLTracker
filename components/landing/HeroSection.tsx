@@ -17,7 +17,7 @@ export function HeroSection() {
               We connect to your bank and track real payouts and fees. No manual entry. No missing costs. Just your true prop firm P&L.
             </p>
             <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
-              Topstep, FTMO, The5ers, Rise and more. ~60 seconds to set up.
+              Topstep, Apex, Tradeify, Rise and more. ~60 seconds to set up.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
               <Link

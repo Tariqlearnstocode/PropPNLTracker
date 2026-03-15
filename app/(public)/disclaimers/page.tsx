@@ -1,3 +1,26 @@
+import type { Metadata } from 'next';
+import { getURL } from '@/utils/helpers';
+
+const siteUrl = getURL();
+
+export const metadata: Metadata = {
+  title: 'Disclaimers & Limitations',
+  description:
+    'Disclaimers and limitations for the Prop PNL prop firm P&L tracker. Data accuracy, liability limits, and user responsibilities.',
+  alternates: {
+    canonical: `${siteUrl}/disclaimers`,
+  },
+  openGraph: {
+    title: 'Disclaimers & Limitations | Prop PNL',
+    description:
+      'Disclaimers and limitations for the Prop PNL prop firm P&L tracker.',
+    url: `${siteUrl}/disclaimers`,
+    siteName: 'Prop PNL',
+    locale: 'en_US',
+    type: 'website',
+  },
+};
+
 export default function DisclaimersPage() {
   return (
     <div className="min-h-screen bg-terminal-bg">

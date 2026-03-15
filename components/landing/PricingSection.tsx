@@ -1,6 +1,56 @@
-import Link from 'next/link';
+'use client';
+
+import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui/Toasts/use-toast';
+
+type Plan = 'one_time' | 'monthly' | 'lifetime';
 
 export function PricingSection() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState<Plan | null>(null);
+
+  const handlePlanClick = async (plan: Plan) => {
+    if (!user) {
+      sessionStorage.setItem('pendingCheckout', plan);
+      window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } }));
+      return;
+    }
+
+    setLoading(plan);
+    try {
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast({
+          title: 'Error',
+          description: data.error || 'Failed to create checkout session',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to start checkout. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <section id="pricing" className="py-24 bg-terminal-bg border-t border-profit/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,12 +93,13 @@ export function PricingSection() {
                 <span className="text-sm text-terminal-muted">No recurring updates</span>
               </li>
             </ul>
-            <Link
-              href="/connect"
-              className="block w-full text-center px-4 py-2 bg-terminal-bg hover:bg-terminal-card-hover text-terminal-muted hover:text-terminal-text border-2 border-terminal-border rounded-md text-sm font-medium transition-colors"
+            <button
+              onClick={() => handlePlanClick('one_time')}
+              disabled={loading === 'one_time'}
+              className="block w-full text-center px-4 py-2 bg-terminal-bg hover:bg-terminal-card-hover text-terminal-muted hover:text-terminal-text border-2 border-terminal-border rounded-md text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Get Snapshot Report
-            </Link>
+              {loading === 'one_time' ? 'Loading...' : 'Get Snapshot Report'}
+            </button>
           </div>
 
           {/* Monthly */}
@@ -87,12 +138,13 @@ export function PricingSection() {
                 <span className="text-sm text-terminal-text">Leaderboard eligible</span>
               </li>
             </ul>
-            <Link
-              href="/connect"
-              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
+            <button
+              onClick={() => handlePlanClick('monthly')}
+              disabled={loading === 'monthly'}
+              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Start Monthly Plan
-            </Link>
+              {loading === 'monthly' ? 'Loading...' : 'Start Monthly Plan'}
+            </button>
           </div>
 
           {/* Lifetime */}
@@ -129,15 +181,16 @@ export function PricingSection() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
-                <span className="text-sm text-terminal-text">No recurring charges — ever</span>
+                <span className="text-sm text-terminal-text">No recurring charges, ever</span>
               </li>
             </ul>
-            <Link
-              href="/connect"
-              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
+            <button
+              onClick={() => handlePlanClick('lifetime')}
+              disabled={loading === 'lifetime'}
+              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Get Lifetime Access
-            </Link>
+              {loading === 'lifetime' ? 'Loading...' : 'Get Lifetime Access'}
+            </button>
           </div>
         </div>
       </div>

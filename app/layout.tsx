@@ -12,28 +12,52 @@ import { ReportNavProvider } from '@/contexts/ReportNavContext';
 import 'styles/main.css';
 
 const title = 'Prop Firm PNL Tracker';
-const description = 'Track your prop trading profit & loss automatically. Connect your bank and get instant PNL insights.';
+const description =
+  'Track your prop trading profit & loss automatically. Connect your bank and get instant PNL insights from Topstep, FTMO, The5ers, Rise and more.';
 
 const siteUrl = getURL();
-const ogImage = `${siteUrl}/opengraph-image.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: title,
+  title: {
+    default: title,
+    template: `%s | Prop PNL`,
+  },
   description: description,
+  keywords: [
+    'prop firm',
+    'pnl tracker',
+    'prop trading',
+    'profit and loss',
+    'Topstep',
+    'FTMO',
+    'The5ers',
+    'Rise',
+    'bank verified',
+    'trading tracker',
+  ],
+  authors: [{ name: 'Prop PNL' }],
+  creator: 'Prop PNL',
+  publisher: 'Prop PNL',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
   openGraph: {
     title: title,
     description: description,
     url: siteUrl,
-    siteName: 'Prop Firm PNL Tracker',
-    images: [
-      {
-        url: ogImage,
-        width: 1200,
-        height: 630,
-        alt: 'Prop Firm PNL Tracker',
-      },
-    ],
+    siteName: 'Prop PNL',
     locale: 'en_US',
     type: 'website',
   },
@@ -41,7 +65,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: title,
     description: description,
-    images: [ogImage],
+    site: '@proppnl',
+    creator: '@proppnl',
+  },
+  other: {
+    'msapplication-TileColor': '#0a0a0f',
   },
 };
 
@@ -56,6 +84,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
+        <meta name="theme-color" content="#0a0a0f" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />

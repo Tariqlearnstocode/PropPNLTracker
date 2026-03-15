@@ -70,8 +70,8 @@ export async function POST(request: NextRequest) {
     }
 
     const origin = request.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const successUrl = `${origin}/settings?tab=subscription&success=true`;
-    const cancelUrl = `${origin}/settings?tab=subscription&canceled=true`;
+    const successUrl = `${origin}/connect?payment=success`;
+    const cancelUrl = `${origin}/#pricing`;
 
     // Determine checkout mode based on plan
     const isRecurring = plan === 'monthly';

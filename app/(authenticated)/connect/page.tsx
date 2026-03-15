@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useTellerConnect } from 'teller-connect-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PricingModal } from '@/components/ui/Pricing';
 
 function openSignupModal() {
   window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } }));
@@ -19,6 +20,8 @@ export default function ConnectPage() {
   const [connecting, setConnecting] = useState(false);
   const [tellerConfig, setTellerConfig] = useState<{ applicationId: string; environment: string } | null>(null);
   const hasOpenedModal = useRef(false);
+  const [hasPaid, setHasPaid] = useState<boolean | null>(null);
+  const [showPricing, setShowPricing] = useState(false);
 
   // Open signup modal once when unauthenticated (no redirect)
   useEffect(() => {
@@ -26,6 +29,34 @@ export default function ConnectPage() {
       hasOpenedModal.current = true;
       openSignupModal();
     }
+  }, [user]);
+
+  // Check if user has an active plan before allowing bank connection
+  useEffect(() => {
+    if (!user) return;
+
+    async function checkSubscription() {
+      try {
+        const response = await fetch('/api/stripe/subscription-status');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.hasSubscription) {
+            setHasPaid(true);
+          } else {
+            setHasPaid(false);
+            setShowPricing(true);
+          }
+        } else {
+          setHasPaid(false);
+          setShowPricing(true);
+        }
+      } catch {
+        setHasPaid(false);
+        setShowPricing(true);
+      }
+    }
+
+    checkSubscription();
   }, [user]);
 
   // Load Teller config on mount
@@ -158,6 +189,34 @@ export default function ConnectPage() {
           </p>
         </div>
       </section>
+    );
+  }
+
+  // Show loading while checking subscription
+  if (hasPaid === null) {
+    return (
+      <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
+        <span className="text-4xl block text-profit">⏳</span>
+      </div>
+    );
+  }
+
+  // Show pricing modal if user hasn't paid
+  if (!hasPaid) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gradient-hero">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-terminal-text mb-4">Choose a plan to continue</h1>
+          <p className="text-terminal-muted mb-6">Select a plan to connect your bank and generate your P&L report.</p>
+          <button
+            onClick={() => setShowPricing(true)}
+            className="px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+          >
+            View Plans
+          </button>
+        </div>
+        <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
+      </div>
     );
   }
 

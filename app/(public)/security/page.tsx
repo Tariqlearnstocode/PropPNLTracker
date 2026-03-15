@@ -1,3 +1,26 @@
+import type { Metadata } from 'next';
+import { getURL } from '@/utils/helpers';
+
+const siteUrl = getURL();
+
+export const metadata: Metadata = {
+  title: 'Security & Privacy Policy',
+  description:
+    'How Prop PNL protects your data. Bank-level encryption, read-only access, GDPR compliance, and our security practices explained.',
+  alternates: {
+    canonical: `${siteUrl}/security`,
+  },
+  openGraph: {
+    title: 'Security & Privacy Policy | Prop PNL',
+    description:
+      'How Prop PNL protects your data. Bank-level encryption, read-only access, and GDPR compliance.',
+    url: `${siteUrl}/security`,
+    siteName: 'Prop PNL',
+    locale: 'en_US',
+    type: 'website',
+  },
+};
+
 export default function SecurityPage() {
   return (
     <div className="min-h-screen bg-terminal-bg">

@@ -40,6 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           alt: 'Prop Trading Report',
         },
       ],
+      locale: 'en_US',
       type: 'website',
     },
     twitter: {
@@ -47,6 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: 'Prop Trading Report | Prop PNL',
       description: 'View this prop trading performance report on Prop PNL.',
       images: [`${siteUrl}/api/og/report?token=${token}`],
+      site: '@proppnl',
+      creator: '@proppnl',
     },
   };
 
@@ -106,6 +109,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             alt: 'Prop Trading Report',
           },
         ],
+        locale: 'en_US',
         type: 'website',
       },
       twitter: {
@@ -113,6 +117,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: 'Prop Trading Report | Prop PNL',
         description,
         images: [ogImageUrl],
+        site: '@proppnl',
+        creator: '@proppnl',
       },
     };
   } catch {

@@ -37,36 +37,36 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // Check for one-time payment access (stored in stripe_subscriptions with status 'one_time')
+    const { data: oneTimeRecord } = await supabase
+      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('status', 'one_time')
+      .limit(1)
+      .single() as { data: Record<string, unknown> | null };
+
+    if (oneTimeRecord) {
+      return NextResponse.json({
+        hasSubscription: true,
+        plan: 'one_time',
+        status: 'one_time',
+        canCreateVerification: true,
+        limitReached: false,
+        requiresPayment: false,
+      });
+    }
+
     // Get active subscription from database (monthly plan)
     const subscription = await getActiveSubscription(user.id);
 
     if (!subscription) {
-      // Check for completed one-time payment
-      const { data: availablePayment } = await supabase
-        // TODO: Replace cast with generated Supabase types for one_time_payments table
-        .from('one_time_payments' as unknown as 'one_time_payments')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('status', 'completed')
-        .is('verification_id', null)
-        .limit(1)
-        .single() as { data: { id: string } | null };
-
-      // Get total verifications created (for display)
-      const { count: totalVerifications } = await supabase
-        .from('income_verifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-
       return NextResponse.json({
         hasSubscription: false,
         plan: 'none',
         status: null,
-        canCreateVerification: !!availablePayment,
-        requiresPayment: !availablePayment,
-        paymentAmount: 3999, // $39.99
-        totalVerifications: totalVerifications || 0,
-        hasAvailablePayment: !!availablePayment,
+        canCreateVerification: false,
+        requiresPayment: true,
       });
     }
 

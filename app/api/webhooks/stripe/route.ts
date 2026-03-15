@@ -230,17 +230,24 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           cancel_at_period_end: false,
           updated_at: new Date().toISOString(),
         } as unknown as Record<string, unknown>);
-    } else {
-      // One-time payment (one_time plan) - update existing payment record
-      // TODO: Replace casts with generated Supabase types for one_time_payments table
+    } else if (planTier === 'one_time') {
+      // One-time payment - grant single-use access
+      // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
       await supabaseAdmin
-        .from('one_time_payments' as unknown as 'one_time_payments')
-        .update({
-          status: 'completed',
-          stripe_payment_intent_id: paymentIntentId || null,
-          completed_at: new Date().toISOString(),
-        } as unknown as Record<string, unknown>)
-        .eq('stripe_checkout_session_id', session.id);
+        .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+        .insert({
+          user_id: userId,
+          stripe_subscription_id: `one_time_${session.id}`,
+          stripe_customer_id: customerId || '',
+          stripe_price_id: '',
+          stripe_usage_price_id: null,
+          status: 'one_time',
+          plan_tier: 'one_time',
+          current_period_start: new Date().toISOString(),
+          current_period_end: null,
+          cancel_at_period_end: false,
+          updated_at: new Date().toISOString(),
+        } as unknown as Record<string, unknown>);
     }
   }
 }
