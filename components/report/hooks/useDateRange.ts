@@ -44,18 +44,39 @@ export function useDateRange(monthlyBreakdown: PNLReport['monthlyBreakdown']) {
   };
   
   // Filter monthly breakdown by date range (include month if ANY part overlaps)
+  // Also fill in missing months within the range so the current month always appears
   const filteredMonthlyBreakdown = useMemo(() => {
-    return monthlyBreakdown.filter(monthData => {
-      const [year, monthNum] = monthData.month.split('-');
-      const y = parseInt(year);
-      const m = parseInt(monthNum) - 1;
-      const monthStart = new Date(y, m, 1);
-      const monthEnd = new Date(y, m + 1, 0); // last day of month
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      // Overlap: month starts before range ends AND month ends after range starts
-      return monthStart <= end && monthEnd >= start;
-    });
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Build a map of existing monthly data
+    const monthMap = new Map(monthlyBreakdown.map(m => [m.month, m]));
+
+    // Generate all months in the date range
+    const months: PNLReport['monthlyBreakdown'] = [];
+    const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+    const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
+
+    while (cursor <= endMonth) {
+      const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`;
+      const existing = monthMap.get(key);
+      if (existing) {
+        months.push(existing);
+      } else {
+        // Insert an empty placeholder for months with no transactions
+        months.push({
+          month: key,
+          deposits: 0,
+          fees: 0,
+          netPNL: 0,
+          runningTotal: months.length > 0 ? months[months.length - 1].runningTotal : 0,
+          transactionCount: 0,
+        });
+      }
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    return months;
   }, [monthlyBreakdown, startDate, endDate]);
   
   return {

@@ -171,7 +171,7 @@ export function OverviewTab({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xs font-mono uppercase tracking-widest text-terminal-muted">Monthly PNL</h3>
           <span className="text-[11px] font-mono text-terminal-muted">
-            {filteredMonthlyBreakdown.length} months
+            {filteredMonthlyBreakdown.length} {filteredMonthlyBreakdown.length === 1 ? 'month' : 'months'}
           </span>
         </div>
         <MonthlyPNLHeatmap monthlyBreakdown={filteredMonthlyBreakdown} />
