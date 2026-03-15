@@ -100,13 +100,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       ? 'monthly'
       : subscription.metadata?.plan_tier || 'monthly';
 
-  // Save customer ID to users table (ensures we have it even if subscription is deleted)
-  // TODO: Replace cast with generated Supabase types
-  await supabaseAdmin
-    .from('users')
-    .update({ stripe_customer_id: customerId } as unknown as Record<string, unknown>)
-    .eq('id', userId);
-
   // TODO: current_period_start/end exist at runtime but not in this Stripe types version
   const subRecord = subscription as unknown as Record<string, number>;
 
@@ -188,13 +181,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       ? session.customer
       : session.customer?.id;
 
-  // Save customer ID to users table (if not already saved)
+  // Save customer mapping (if not already saved)
   if (customerId) {
-    // TODO: Replace cast with generated Supabase types
     await supabaseAdmin
-      .from('users')
-      .update({ stripe_customer_id: customerId } as unknown as Record<string, unknown>)
-      .eq('id', userId);
+      .from('stripe_customers')
+      .upsert({
+        user_id: userId,
+        stripe_customer_id: customerId,
+      } as unknown as Record<string, unknown>);
   }
 
   // Handle subscription checkouts (monthly) - handled by subscription webhooks
