@@ -53,10 +53,11 @@ interface Props {
   canRefreshDaily?: boolean;
   lastRefreshAttempt?: string | null;
   isPublicView?: boolean;
+  enrollmentDisconnected?: boolean;
 }
 
 
-export default function ReportContent({ report, pnlData, canRefreshDaily = false, lastRefreshAttempt = null, isPublicView = false }: Props) {
+export default function ReportContent({ report, pnlData, canRefreshDaily = false, lastRefreshAttempt = null, isPublicView = false, enrollmentDisconnected = false }: Props) {
   const { summary, monthlyBreakdown, perFirmBreakdown, transactions, accounts } = pnlData;
   const { setReportNav } = useReportNav();
   const [activeTab, setActiveTab] = useState<'overview' | 'firms' | 'transactions' | 'analytics'>('overview');
@@ -317,6 +318,7 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
           canRefreshDaily={!isPublicView}
           lastRefreshAttempt={isPublicView ? null : lastRefreshAttempt}
           onRefreshData={isPublicView ? undefined : handleRefreshData}
+          enrollmentDisconnected={isPublicView ? false : enrollmentDisconnected}
           displayName={displayName}
           onGetStarted={isPublicView ? handleGetStarted : undefined}
           shareUrl={typeof window !== 'undefined' ? (isPublicView ? window.location.href : `${window.location.origin}/share/${shareSlug || report.report_token}`) : ''}

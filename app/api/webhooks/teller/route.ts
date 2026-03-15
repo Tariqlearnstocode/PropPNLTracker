@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { getActiveSubscription } from '@/lib/stripe/helpers';
+import { refreshAccountData } from '@/lib/teller-refresh';
 import crypto from 'crypto';
 
 /**
@@ -105,7 +106,8 @@ function verifyTellerSignature(
 
 /**
  * Handle transactions.processed webhook
- * Triggers auto-refresh for subscription users
+ * Auto-refreshes data for subscription users with stored tokens.
+ * Falls back to marking needs_refresh if auto-refresh fails.
  */
 async function handleTransactionsProcessed(payload: TellerWebhookPayload) {
   const account_id = payload.account_id || payload.account?.id;
@@ -116,7 +118,7 @@ async function handleTransactionsProcessed(payload: TellerWebhookPayload) {
 
   const { data: connectedAccount } = await supabaseAdmin
     .from('connected_accounts')
-    .select('user_id, encrypted_access_token, can_refresh_daily')
+    .select('user_id, encrypted_access_token, can_refresh_daily, last_synced_at')
     .eq('account_id', account_id)
     .single();
 
@@ -130,16 +132,40 @@ async function handleTransactionsProcessed(payload: TellerWebhookPayload) {
     return;
   }
 
-  await supabaseAdmin
-    .from('connected_accounts')
-    .update({
-      needs_refresh: true,
-      last_webhook_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
-    .eq('account_id', account_id);
+  let refreshed = false;
 
+  // Auto-refresh if we have a stored token
+  if (connectedAccount.encrypted_access_token && connectedAccount.can_refresh_daily) {
+    try {
+      const result = await refreshAccountData({
+        userId,
+        accountId: account_id,
+        encryptedAccessToken: connectedAccount.encrypted_access_token,
+        lastSyncedAt: connectedAccount.last_synced_at,
+      });
+      refreshed = result.success;
+      if (!result.success) {
+        console.error(`Webhook auto-refresh failed for account ${account_id}: ${result.error}`);
+      }
+    } catch (err: unknown) {
+      console.error(`Webhook auto-refresh error for account ${account_id}:`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  // If auto-refresh didn't happen or failed, mark for manual refresh
+  if (!refreshed) {
+    await supabaseAdmin
+      .from('connected_accounts')
+      .update({
+        needs_refresh: true,
+        last_webhook_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .eq('account_id', account_id);
+  }
+
+  // Store webhook event
   try {
     await supabaseAdmin
       .from('teller_webhook_events')
@@ -149,7 +175,7 @@ async function handleTransactionsProcessed(payload: TellerWebhookPayload) {
         account_id,
         user_id: userId,
         payload: payload,
-        processed: false,
+        processed: refreshed,
         created_at: new Date().toISOString(),
       } as unknown as Record<string, unknown>);
   } catch {

@@ -1,76 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
-import { calculatePNLReport, type RawFinancialData } from '@/lib/pnl-calculations';
-import { decryptToken } from '@/utils/teller-token-encryption';
-import https from 'https';
+import { refreshAccountData } from '@/lib/teller-refresh';
 import { z } from 'zod';
-
-const TELLER_API_URL = 'https://api.teller.io';
-const SYNC_OVERLAP_DAYS = 7; // Same as fetch-data endpoint
-
-/**
- * Teller API requires Basic Auth with access_token as username and empty password
- */
-function createAuthHeader(accessToken: string): string {
-  const credentials = Buffer.from(`${accessToken}:`).toString('base64');
-  return `Basic ${credentials}`;
-}
-
-/**
- * Make a request to Teller API with mTLS support for development/production
- */
-async function tellerFetch(url: string, options: { method?: string; headers: Record<string, string> }): Promise<Response> {
-  const cert = process.env.TELLER_CERTIFICATE;
-  const key = process.env.TELLER_PRIVATE_KEY;
-
-  // If no certificates, use regular fetch (sandbox mode)
-  if (!cert || !key) {
-    return fetch(url, options);
-  }
-
-  // Use https.request for mTLS support
-  return new Promise((resolve, reject) => {
-    const urlObj = new URL(url);
-    
-    const reqOptions: https.RequestOptions = {
-      hostname: urlObj.hostname,
-      port: 443,
-      path: urlObj.pathname + urlObj.search,
-      method: options.method || 'GET',
-      headers: options.headers,
-      cert: cert.replace(/\\n/g, '\n'),
-      key: key.replace(/\\n/g, '\n'),
-    };
-
-    const req = https.request(reqOptions, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        resolve({
-          ok: res.statusCode ? res.statusCode >= 200 && res.statusCode < 300 : false,
-          status: res.statusCode || 500,
-          json: async () => JSON.parse(data),
-          text: async () => data,
-        } as Response);
-      });
-    });
-
-    req.on('error', reject);
-    req.end();
-  });
-}
 
 /**
  * Check if user already refreshed today
  */
 function hasRefreshedToday(lastRefreshAttempt: string | null): boolean {
   if (!lastRefreshAttempt) return false;
-  
+
   const lastRefresh = new Date(lastRefreshAttempt);
   const now = new Date();
-  
-  // Check if last refresh was today (same day)
+
   return (
     lastRefresh.getUTCFullYear() === now.getUTCFullYear() &&
     lastRefresh.getUTCMonth() === now.getUTCMonth() &&
@@ -80,10 +22,9 @@ function hasRefreshedToday(lastRefreshAttempt: string | null): boolean {
 
 /**
  * POST /api/pnl/refresh-data
- * 
- * Daily refresh endpoint for subscription users
- * Validates daily rate limit (once per day per account)
- * Fetches new transactions and merges with existing data
+ *
+ * Manual daily refresh endpoint for subscription users.
+ * Rate limited to once per day per account.
  */
 const refreshBodySchema = z.object({
   account_id: z.string().optional(),
@@ -92,7 +33,7 @@ const refreshBodySchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -168,178 +109,12 @@ export async function POST(request: NextRequest) {
     const refreshResults = await Promise.all(
       accountsToRefresh.map(async (connectedAccount) => {
         try {
-          // Decrypt access token
-          let accessToken: string;
-          try {
-            accessToken = decryptToken(connectedAccount.encrypted_access_token!);
-          } catch {
-            return {
-              account_id: connectedAccount.account_id,
-              success: false,
-              error: 'Failed to decrypt access token',
-            };
-          }
-
-          const authHeader = createAuthHeader(accessToken);
-          const headers = { Authorization: authHeader };
-
-          // Fetch account details
-          const accountsRes = await tellerFetch(`${TELLER_API_URL}/accounts`, { headers });
-          if (!accountsRes.ok) {
-            return {
-              account_id: connectedAccount.account_id,
-              success: false,
-              error: 'Failed to fetch account from Teller',
-            };
-          }
-
-          const accounts = await accountsRes.json();
-          const account = accounts.find((acc: Record<string, unknown>) => acc.id === connectedAccount.account_id);
-          if (!account) {
-            return {
-              account_id: connectedAccount.account_id,
-              success: false,
-              error: 'Account not found in Teller',
-            };
-          }
-
-          // Fetch balances
-          let balances = null;
-          try {
-            const balanceRes = await tellerFetch(
-              `${TELLER_API_URL}/accounts/${account.id}/balances`,
-              { headers }
-            );
-            if (balanceRes.ok) {
-              balances = await balanceRes.json();
-            }
-          } catch {
-            // Balances optional, continue
-          }
-
-          const accountWithBalances = { ...account, balances };
-
-          // Determine start date (merge mode: last_synced_at - SYNC_OVERLAP_DAYS)
-          const endDate = new Date().toISOString().split('T')[0];
-          let startDate: string;
-          if (connectedAccount.last_synced_at) {
-            const lastSynced = new Date(connectedAccount.last_synced_at);
-            lastSynced.setDate(lastSynced.getDate() - SYNC_OVERLAP_DAYS);
-            startDate = lastSynced.toISOString().split('T')[0];
-          } else {
-            // Fallback: last 12 months
-            const twelveMonthsAgo = new Date();
-            twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-            startDate = twelveMonthsAgo.toISOString().split('T')[0];
-          }
-
-          // Fetch new transactions
-          const txnRes = await tellerFetch(
-            `${TELLER_API_URL}/accounts/${account.id}/transactions?start_date=${startDate}&end_date=${endDate}`,
-            { headers }
-          );
-
-          if (!txnRes.ok) {
-            return {
-              account_id: connectedAccount.account_id,
-              success: false,
-              error: 'Failed to fetch transactions',
-            };
-          }
-
-          const newTransactions = await txnRes.json();
-
-          // Get user's single report (one report per user)
-          const { data: existingReport } = await supabaseAdmin
-            .from('pnl_reports')
-            .select('id, report_token, raw_teller_data, manual_assignments')
-            .eq('user_id', user.id)
-            .single();
-
-          if (!existingReport) {
-            return {
-              account_id: connectedAccount.account_id,
-              success: false,
-              error: 'Report not found',
-            };
-          }
-
-          const existingData = existingReport.raw_teller_data as RawFinancialData;
-          const existingTransactions = existingData.transactions || [];
-
-          const transactionMap = new Map<string, Record<string, unknown>>();
-          existingTransactions.forEach((txn) => transactionMap.set(txn.id as string, txn));
-          newTransactions.forEach((txn: Record<string, unknown>) => transactionMap.set(txn.id as string, txn));
-          const mergedTransactions = Array.from(transactionMap.values());
-          mergedTransactions.sort((a, b) => {
-            const dateA = new Date(String(a.date || a.created_at || 0)).getTime();
-            const dateB = new Date(String(b.date || b.created_at || 0)).getTime();
-            return dateB - dateA;
+          return await refreshAccountData({
+            userId: user.id,
+            accountId: connectedAccount.account_id,
+            encryptedAccessToken: connectedAccount.encrypted_access_token!,
+            lastSyncedAt: connectedAccount.last_synced_at,
           });
-
-          const existingAccounts = existingData.accounts || [];
-          const accountMap = new Map<string, Record<string, unknown>>();
-          existingAccounts.forEach((acc) => accountMap.set(acc.id as string, acc));
-          accountMap.set(accountWithBalances.id, accountWithBalances);
-          const mergedAccounts = Array.from(accountMap.values());
-
-          const mergedRawData = {
-            ...existingData,
-            accounts: mergedAccounts,
-            transactions: mergedTransactions,
-            fetched_at: new Date().toISOString(),
-            date_range: {
-              start: existingData.date_range?.start || startDate,
-              end: endDate,
-            },
-            provider: 'teller' as const,
-          };
-
-          // Preserve manual assignments
-          const finalManualAssignments = existingReport.manual_assignments || {};
-
-          // Calculate PNL report with merged data
-          const pnlReport = calculatePNLReport(mergedRawData, finalManualAssignments);
-
-          // Update report
-          const reportData = {
-            raw_teller_data: mergedRawData,
-            pnl_data: pnlReport,
-            manual_assignments: finalManualAssignments,
-            status: 'completed',
-            updated_at: new Date().toISOString(),
-          };
-
-          const { data: updatedReport, error: updateError } = await supabaseAdmin
-            .from('pnl_reports')
-            .update(reportData)
-            .eq('id', existingReport.id)
-            .select('report_token')
-            .single();
-
-          if (updateError) {
-            throw updateError;
-          }
-
-          // Update connected_accounts: set last_refresh_attempt and last_synced_at
-          const { error: accountUpdateError } = await supabaseAdmin
-            .from('connected_accounts')
-            .update({
-              last_refresh_attempt: new Date().toISOString(),
-              last_synced_at: new Date().toISOString(),
-              needs_refresh: false, // Clear refresh flag
-              updated_at: new Date().toISOString(),
-            })
-            .eq('user_id', user.id)
-            .eq('account_id', account.id);
-
-          return {
-            account_id: connectedAccount.account_id,
-            report_token: updatedReport.report_token,
-            success: true,
-            transactions_merged: mergedTransactions.length,
-            new_transactions: newTransactions.length,
-          };
         } catch (error: unknown) {
           return {
             account_id: connectedAccount.account_id,

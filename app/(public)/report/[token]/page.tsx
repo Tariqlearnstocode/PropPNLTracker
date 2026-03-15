@@ -257,12 +257,13 @@ export default async function ReportPage({ params }: PageProps) {
     );
   }
 
-  // Get connected account info for refresh capability (Sync button)
+  // Get connected account info for refresh capability and connection status
   let canRefreshDaily = false;
   let lastRefreshAttempt: string | null = null;
+  let enrollmentDisconnected = false;
   const { data: connectedAccount } = await supabaseAdmin
     .from('connected_accounts')
-    .select('can_refresh_daily, last_refresh_attempt')
+    .select('can_refresh_daily, last_refresh_attempt, enrollment_status')
     .eq('user_id', user.id)
     .eq('account_id', reportData.account_id)
     .single();
@@ -270,6 +271,7 @@ export default async function ReportPage({ params }: PageProps) {
   if (connectedAccount) {
     canRefreshDaily = connectedAccount.can_refresh_daily || false;
     lastRefreshAttempt = connectedAccount.last_refresh_attempt || null;
+    enrollmentDisconnected = connectedAccount.enrollment_status === 'disconnected';
   }
 
   return (
@@ -287,6 +289,7 @@ export default async function ReportPage({ params }: PageProps) {
       pnlData={pnlData}
       canRefreshDaily={canRefreshDaily}
       lastRefreshAttempt={lastRefreshAttempt}
+      enrollmentDisconnected={enrollmentDisconnected}
     />
   );
 }

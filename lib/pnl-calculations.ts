@@ -60,6 +60,7 @@ const PROP_FIRM_NAMES = [
   'trueforexfunds',
   'my funded futures',
   'myfundedfutures',
+  'myfunded futures',
   'myfundedfutures.com',
   'myfundedfutures.com',
 

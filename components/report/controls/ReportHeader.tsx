@@ -45,6 +45,7 @@ interface ReportHeaderProps {
   reportId?: string;
   shareSlug?: string | null;
   onShareSlugSave?: (slug: string | null) => Promise<void>;
+  enrollmentDisconnected?: boolean;
 }
 
 export function ReportHeader({
@@ -79,6 +80,7 @@ export function ReportHeader({
   reportId,
   shareSlug = null,
   onShareSlugSave,
+  enrollmentDisconnected = false,
 }: ReportHeaderProps) {
   const { toast } = useToast();
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -169,15 +171,42 @@ export function ReportHeader({
             )}
           </h1>
         </div>
+        {!isPublicView && enrollmentDisconnected && (
+          <div className="mb-3 px-3 py-2 rounded-lg border border-yellow-500/30 bg-yellow-500/10 flex items-center justify-between gap-3 opacity-0 animate-fade-in stagger-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-yellow-400 text-sm shrink-0">&#x26A0;</span>
+              <span className="text-[12px] font-mono text-yellow-300/90 truncate">
+                Bank connection lost. Auto-sync is paused.
+              </span>
+            </div>
+            <a
+              href="/connect"
+              className="shrink-0 px-3 py-1 text-[11px] font-mono font-medium rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
+            >
+              Reconnect
+            </a>
+          </div>
+        )}
         <div className="flex items-center justify-between flex-wrap gap-3 opacity-0 animate-fade-in stagger-2">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2 animate-pulse">
-                <span className="inline-block w-2 h-2 rounded-full bg-profit drop-shadow-[0_0_6px_rgba(0,230,118,0.4)]" />
-              </span>
-              <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">
-                Live
-              </span>
+              {!isPublicView && enrollmentDisconnected ? (
+                <>
+                  <span className="inline-block w-2 h-2 rounded-full bg-yellow-500" />
+                  <span className="text-[11px] font-mono text-yellow-400 uppercase tracking-wider">
+                    Disconnected
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="relative flex h-2 w-2 animate-pulse">
+                    <span className="inline-block w-2 h-2 rounded-full bg-profit drop-shadow-[0_0_6px_rgba(0,230,118,0.4)]" />
+                  </span>
+                  <span className="text-[11px] font-mono text-terminal-muted uppercase tracking-wider">
+                    Live
+                  </span>
+                </>
+              )}
             </div>
             <span className="text-[11px] font-mono text-terminal-muted">
               Updated {formatDate(report.updated_at)}
