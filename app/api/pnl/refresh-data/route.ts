@@ -97,17 +97,19 @@ export async function POST(request: NextRequest) {
           { status: 429 }
         );
       }
+    }
 
-      if (!account.encrypted_access_token) {
-        return NextResponse.json(
-          { error: 'Access token not found for account', account_id: account.account_id },
-          { status: 400 }
-        );
-      }
+    // Filter out accounts without stored tokens (connected before token storage was added)
+    const accountsWithTokens = accountsToRefresh.filter(a => a.encrypted_access_token);
+    if (accountsWithTokens.length === 0) {
+      return NextResponse.json(
+        { error: 'No stored access tokens. Please reconnect your bank account to enable refresh.' },
+        { status: 400 }
+      );
     }
 
     const refreshResults = await Promise.all(
-      accountsToRefresh.map(async (connectedAccount) => {
+      accountsWithTokens.map(async (connectedAccount) => {
         try {
           return await refreshAccountData({
             userId: user.id,
@@ -130,7 +132,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: successCount > 0,
       refreshed: successCount,
-      total: accountsToRefresh.length,
+      total: accountsWithTokens.length,
       results: refreshResults,
     });
   } catch (error: unknown) {
