@@ -16,6 +16,10 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
 
   // Request access state
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestName, setRequestName] = useState('');
+  const [requestEmail, setRequestEmail] = useState('');
+  const [requestHandle, setRequestHandle] = useState('');
+  const [requestMessage, setRequestMessage] = useState('');
   const [requestStatus, setRequestStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,16 +50,20 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
     }
   };
 
-  const handleRequestAccess = async () => {
+  const handleRequestAccess = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requestName.trim() || !requestEmail.trim()) return;
     setRequestStatus('loading');
     try {
+      const handle = requestHandle.trim() ? `X: ${requestHandle.trim()}` : 'No X handle provided';
+      const msg = requestMessage.trim() || 'No message';
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Beta request',
-          email: user?.email || '',
-          message: 'Requesting beta access code for Prop PNL.',
+          name: requestName.trim(),
+          email: requestEmail.trim(),
+          message: `Beta access request. ${handle}. ${msg}`,
         }),
       });
 
@@ -114,32 +122,65 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6">
           {!showRequestForm ? (
             <button
-              onClick={() => setShowRequestForm(true)}
-              className="text-xs text-terminal-muted hover:text-profit transition-colors"
+              onClick={() => {
+                setShowRequestForm(true);
+                setRequestEmail(user?.email || '');
+                setRequestName(user?.user_metadata?.full_name || '');
+              }}
+              className="w-full flex items-center justify-center gap-2 text-xs text-terminal-muted hover:text-profit transition-colors"
             >
-              No code? <span className="text-profit">Request access</span>
+              Need access? <span className="text-profit">Request a code</span> <span className="text-profit">↓</span>
             </button>
           ) : requestStatus === 'success' ? (
-            <p className="text-xs text-profit">Request sent! We&apos;ll be in touch.</p>
+            <div className="text-center pt-4 border-t border-terminal-border">
+              <p className="text-sm text-profit">Request sent! We&apos;ll be in touch.</p>
+            </div>
           ) : (
-            <div className="space-y-2">
-              <p className="text-xs text-terminal-muted">
-                We&apos;ll send a code to <span className="text-terminal-text">{user?.email}</span>
-              </p>
+            <form onSubmit={handleRequestAccess} className="pt-4 border-t border-terminal-border space-y-3">
+              <input
+                type="text"
+                value={requestName}
+                onChange={(e) => setRequestName(e.target.value)}
+                placeholder="Name"
+                required
+                className="w-full px-3 py-2 bg-terminal-bg border border-terminal-border rounded-lg text-sm text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit/50"
+              />
+              <input
+                type="email"
+                value={requestEmail}
+                onChange={(e) => setRequestEmail(e.target.value)}
+                placeholder="Email"
+                required
+                className="w-full px-3 py-2 bg-terminal-bg border border-terminal-border rounded-lg text-sm text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit/50"
+              />
+              <input
+                type="text"
+                value={requestHandle}
+                onChange={(e) => setRequestHandle(e.target.value)}
+                placeholder="X handle (optional)"
+                className="w-full px-3 py-2 bg-terminal-bg border border-terminal-border rounded-lg text-sm text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit/50"
+              />
+              <textarea
+                value={requestMessage}
+                onChange={(e) => setRequestMessage(e.target.value)}
+                placeholder="Message (optional)"
+                rows={2}
+                className="w-full px-3 py-2 bg-terminal-bg border border-terminal-border rounded-lg text-sm text-terminal-text placeholder:text-terminal-muted/50 focus:outline-none focus:border-profit/50 resize-none"
+              />
               <button
-                onClick={handleRequestAccess}
-                disabled={requestStatus === 'loading'}
-                className="px-4 py-2 text-xs font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors disabled:opacity-50"
+                type="submit"
+                disabled={requestStatus === 'loading' || !requestName.trim() || !requestEmail.trim()}
+                className="w-full py-2 text-sm font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors disabled:opacity-50"
               >
                 {requestStatus === 'loading' ? 'Sending...' : 'Request Beta Access'}
               </button>
               {requestStatus === 'error' && (
-                <p className="text-xs text-loss">Something went wrong. Try again.</p>
+                <p className="text-xs text-loss text-center">Something went wrong. Try again.</p>
               )}
-            </div>
+            </form>
           )}
         </div>
       </div>
