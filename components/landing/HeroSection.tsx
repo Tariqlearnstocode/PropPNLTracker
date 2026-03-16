@@ -9,29 +9,31 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: headline + CTA only */}
           <div className="text-center lg:text-left">
+            <span className="inline-block mb-4 px-3 py-1 text-xs font-mono font-medium text-profit border border-profit/30 rounded-full bg-profit/10">
+              Closed Beta
+            </span>
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
               Are you actually profitable?
               <span className="block mt-2 text-profit whitespace-nowrap">Your bank knows.</span>
             </h1>
             <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
-              We connect to your bank and show you the real number. Then we give you a link to prove it. Share it in your Discord, post it on Twitter, send it to anyone who asks.
+              We connect to your bank and show you the real number. Then we give you a link to prove it.
             </p>
             <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
-              No screenshots. No manual entry. Just bank-verified proof.
+              Share it in your Discord. Post it on Twitter. Send it to anyone who asks.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
               <Link
                 href="/connect"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
               >
-                Get Your Real P&L
-                <span>→</span>
+                Join the Waitlist
               </Link>
               <Link
                 href="#pricing"
                 className="inline-flex items-center px-5 py-2.5 font-mono text-xs font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors"
               >
-                View Plans
+                Have a code? Sign in →
               </Link>
             </div>
             <p className="text-xs text-terminal-muted font-mono">
