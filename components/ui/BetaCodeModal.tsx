@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface BetaCodeModalProps {
   isOpen: boolean;
@@ -8,9 +9,14 @@ interface BetaCodeModalProps {
 }
 
 export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
+  const { user } = useAuth();
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Request access state
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestStatus, setRequestStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +43,29 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
     } catch {
       setStatus('error');
       setErrorMessage('Something went wrong. Try again.');
+    }
+  };
+
+  const handleRequestAccess = async () => {
+    setRequestStatus('loading');
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Beta request',
+          email: user?.email || '',
+          message: 'Requesting beta access code for Prop PNL.',
+        }),
+      });
+
+      if (response.ok) {
+        setRequestStatus('success');
+      } else {
+        setRequestStatus('error');
+      }
+    } catch {
+      setRequestStatus('error');
     }
   };
 
@@ -85,17 +114,34 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
           </button>
         </form>
 
-        <p className="text-center text-xs text-terminal-muted mt-6">
-          No code?{' '}
-          <a
-            href="https://x.com/praborntrade"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-profit hover:text-profit/80"
-          >
-            Request access on X
-          </a>
-        </p>
+        <div className="mt-6 text-center">
+          {!showRequestForm ? (
+            <button
+              onClick={() => setShowRequestForm(true)}
+              className="text-xs text-terminal-muted hover:text-profit transition-colors"
+            >
+              No code? <span className="text-profit">Request access</span>
+            </button>
+          ) : requestStatus === 'success' ? (
+            <p className="text-xs text-profit">Request sent! We&apos;ll be in touch.</p>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-xs text-terminal-muted">
+                We&apos;ll send a code to <span className="text-terminal-text">{user?.email}</span>
+              </p>
+              <button
+                onClick={handleRequestAccess}
+                disabled={requestStatus === 'loading'}
+                className="px-4 py-2 text-xs font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {requestStatus === 'loading' ? 'Sending...' : 'Request Beta Access'}
+              </button>
+              {requestStatus === 'error' && (
+                <p className="text-xs text-loss">Something went wrong. Try again.</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
