@@ -14,10 +14,10 @@ export function HeroSection() {
               <span className="block mt-2 text-profit whitespace-nowrap">Your bank knows.</span>
             </h1>
             <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
-              We connect to your bank and track real payouts and fees. No manual entry. No missing costs. Just your true prop firm P&L.
+              We connect to your bank and show you the real number. Then we give you a link to prove it. Share it in your Discord, post it on Twitter, send it to anyone who asks.
             </p>
             <p className="text-sm text-terminal-muted/90 max-w-lg mx-auto lg:mx-0 mb-8">
-              Topstep, Apex, Tradeify, Rise and more. ~60 seconds to set up.
+              No screenshots. No manual entry. Just bank-verified proof.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
               <Link
@@ -35,13 +35,12 @@ export function HeroSection() {
               </Link>
             </div>
             <p className="text-xs text-terminal-muted font-mono">
-              Plans from $14.95/mo · Cancel anytime
+              Snapshot $39.99 · Lifetime $97
             </p>
-            {/* Trust + SEO: security + supported firms */}
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-2 mt-8 text-xs text-terminal-muted font-mono">
-              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Read-only</span>
-              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Encrypted</span>
-              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> 50 Firms Supported</span>
+              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Every payout</span>
+              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Every fee</span>
+              <span className="flex items-center gap-1.5"><span className="text-profit">✓</span> Every firm</span>
             </div>
           </div>
 
