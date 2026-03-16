@@ -49,12 +49,6 @@ export async function POST(request: NextRequest) {
         break;
       }
 
-      case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice;
-        await handlePaymentSucceeded(invoice);
-        break;
-      }
-
       case 'invoice.payment_failed': {
         const invoice = event.data.object as Stripe.Invoice;
         await handlePaymentFailed(invoice);
@@ -93,7 +87,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       : subscription.customer.id;
 
   // Determine plan tier from price metadata
-  const recurringItem = subscription.items.data[0]; // Only recurring price now
+  const recurringItem = subscription.items.data[0];
 
   const planTier =
     recurringItem?.price.metadata?.type === 'monthly'
@@ -110,7 +104,6 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     stripe_subscription_id: subscription.id,
     stripe_customer_id: customerId,
     stripe_price_id: recurringItem?.price.id || '',
-    stripe_usage_price_id: null, // No usage price anymore
     status: subscription.status,
     plan_tier: planTier,
     current_period_start: new Date(
@@ -141,11 +134,6 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     .eq('stripe_subscription_id', subscription.id);
 }
 
-
-async function handlePaymentSucceeded(_invoice: Stripe.Invoice) {
-  // Payment succeeded - subscription is active
-  // This is handled by subscription.updated event
-}
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   // TODO: invoice.subscription exists at runtime but types differ across Stripe versions
@@ -200,12 +188,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   if (session.mode === 'payment') {
     const planTier = session.metadata?.plan_tier;
 
-    // Get payment intent ID if available
-    const paymentIntentId =
-      typeof session.payment_intent === 'string'
-        ? session.payment_intent
-        : session.payment_intent?.id;
-
     if (planTier === 'lifetime') {
       // Grant permanent lifetime access by inserting into stripe_subscriptions with status 'lifetime'
       // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
@@ -216,7 +198,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           stripe_subscription_id: `lifetime_${session.id}`,
           stripe_customer_id: customerId || '',
           stripe_price_id: '',
-          stripe_usage_price_id: null,
           status: 'lifetime',
           plan_tier: 'lifetime',
           current_period_start: new Date().toISOString(),
@@ -234,7 +215,6 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           stripe_subscription_id: `one_time_${session.id}`,
           stripe_customer_id: customerId || '',
           stripe_price_id: '',
-          stripe_usage_price_id: null,
           status: 'one_time',
           plan_tier: 'one_time',
           current_period_start: new Date().toISOString(),

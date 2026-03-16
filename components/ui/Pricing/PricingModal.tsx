@@ -12,8 +12,6 @@ interface PricingModalProps {
 export function PricingModal({ isOpen, onClose }: PricingModalProps) {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (priceType: 'one_time' | 'monthly' | 'lifetime') => {
@@ -64,43 +62,6 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
   };
 
   if (!isOpen) return null;
-
-  const handleEnterpriseSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const response = await fetch('/api/enterprise/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        toast({
-          title: 'Error',
-          description: result.error || 'Failed to submit inquiry',
-          variant: 'destructive',
-        });
-      } else {
-        toast({
-          title: 'Submitted!',
-          description: 'Thank you! We\'ve received your inquiry and will contact you shortly. Check your email for a confirmation and demo scheduling link.',
-        });
-        setEmail('');
-        onClose();
-      }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to submit inquiry. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -249,82 +210,6 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
               >
                 {loading === 'lifetime' ? 'Loading...' : 'Get Lifetime Access'}
               </button>
-            </div>
-          </div>
-
-          {/* Enterprise Section */}
-          <div className="border-2 border-terminal-border rounded-xl p-6 bg-terminal-bg mb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left: Features */}
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2 py-1 bg-profit text-terminal-bg text-xs font-medium rounded">
-                    ✔ Best for teams
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold text-terminal-text mb-2">
-                  Enterprise
-                </h3>
-                <p className="text-sm text-terminal-text mb-1 font-medium">
-                  Custom plans for large organizations
-                </p>
-                <p className="text-sm text-terminal-muted mb-4">
-                  Volume pricing, team access, and compliance controls for high-throughput verification workflows.
-                </p>
-                <div className="grid grid-cols-2 gap-3 text-sm text-terminal-text">
-                  <div className="flex items-center gap-2">
-                    <span className="text-profit">✔</span>
-                    <span>Custom monthly limits</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-profit">✔</span>
-                    <span>Priority support</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-profit">✔</span>
-                    <span>Team access (multi-user)</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-profit">✔</span>
-                    <span>API access (optional)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right: Contact Form */}
-              <div className="bg-terminal-card rounded-lg p-5 border border-terminal-border">
-                <label htmlFor="enterprise-email" className="block text-sm font-medium text-terminal-text mb-2">
-                  Work email
-                </label>
-                <form onSubmit={handleEnterpriseSubmit} className="space-y-3">
-                  <input
-                    id="enterprise-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Work email"
-                    required
-                    className="w-full px-4 py-2.5 bg-terminal-bg border border-terminal-border rounded-lg focus:outline-none focus:ring-2 focus:ring-profit/30 focus:border-transparent text-terminal-text placeholder-terminal-muted"
-                  />
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
-                  >
-                    {submitting ? 'Submitting...' : 'Request pricing'}
-                  </button>
-                  <div className="text-center">
-                    <a
-                      href={process.env.NEXT_PUBLIC_CALENDLY_LINK || 'https://calendly.com/your-calendly-link'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-profit hover:text-profit/80 hover:underline"
-                    >
-                      Schedule a demo
-                    </a>
-                  </div>
-                </form>
-              </div>
             </div>
           </div>
 

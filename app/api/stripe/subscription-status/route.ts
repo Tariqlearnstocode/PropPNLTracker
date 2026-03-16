@@ -1,10 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { getActiveSubscription, getCurrentPeriodUsage } from '@/lib/stripe/helpers';
-import { stripe } from '@/lib/stripe/client';
-import Stripe from 'stripe';
+import { getActiveSubscription } from '@/lib/stripe/helpers';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -28,11 +26,6 @@ export async function GET(request: NextRequest) {
         hasSubscription: true,
         plan: 'lifetime',
         status: 'lifetime',
-        canCreateVerification: true,
-        limitReached: false,
-        requiresPayment: false,
-        limit: null,
-        currentUsage: 0,
         isLifetime: true,
       });
     }
@@ -51,9 +44,6 @@ export async function GET(request: NextRequest) {
         hasSubscription: true,
         plan: 'one_time',
         status: 'one_time',
-        canCreateVerification: true,
-        limitReached: false,
-        requiresPayment: false,
       });
     }
 
@@ -65,26 +55,7 @@ export async function GET(request: NextRequest) {
         hasSubscription: false,
         plan: 'none',
         status: null,
-        canCreateVerification: false,
-        requiresPayment: true,
       });
-    }
-
-    // Get detailed subscription info from Stripe (monthly plan)
-    let stripeSubscription: Stripe.Subscription | null = null;
-    let currentUsage = 0;
-
-    try {
-      stripeSubscription = await stripe!.subscriptions.retrieve(
-        subscription.stripe_subscription_id as string
-      );
-
-      // Get current period usage from meter
-      currentUsage = await getCurrentPeriodUsage(
-        user.id,
-        subscription.stripe_subscription_id as string
-      );
-    } catch {
     }
 
     return NextResponse.json({
@@ -94,24 +65,6 @@ export async function GET(request: NextRequest) {
       currentPeriodStart: subscription.current_period_start,
       currentPeriodEnd: subscription.current_period_end,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      canCreateVerification: true,
-      limitReached: false,
-      requiresPayment: false,
-      currentUsage,
-      usageInfo: {
-        totalUsage: currentUsage,
-        periodStart: subscription.current_period_start,
-        periodEnd: subscription.current_period_end,
-      },
-      stripeSubscription: stripeSubscription
-        ? {
-            id: stripeSubscription.id,
-            status: stripeSubscription.status,
-            // TODO: current_period_start/end exist at runtime but not in this Stripe types version
-            current_period_start: (stripeSubscription as unknown as Record<string, number>).current_period_start,
-            current_period_end: (stripeSubscription as unknown as Record<string, number>).current_period_end,
-          }
-        : null,
     });
   } catch (error: unknown) {
     return NextResponse.json(
