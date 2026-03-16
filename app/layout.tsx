@@ -9,6 +9,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { createClient } from '@/utils/supabase/server';
 import { AuthModalWrapper } from '@/components/AuthModalWrapper';
 import { ReportNavProvider } from '@/contexts/ReportNavContext';
+import { Analytics } from '@vercel/analytics/next';
 import 'styles/main.css';
 
 const title = 'Prop PNL | Prop Firm P&L Tracker';
@@ -105,6 +106,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
             <Toaster />
           </Suspense>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
