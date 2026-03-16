@@ -8,6 +8,16 @@ import { useTellerConnect } from 'teller-connect-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PricingModal } from '@/components/ui/Pricing';
+import { BetaCodeModal } from '@/components/ui/BetaCodeModal';
+
+// ━━━ Beta toggle ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// GO LIVE: Change this to false. That's it.
+// - Beta code gate disappears
+// - Stripe payment gate + PricingModal activate
+// - Snapshot/Lifetime plan logic, reconnection blocking,
+//   and all subscription checks are already wired up below.
+const BETA_MODE = true;
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function openSignupModal() {
   window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } }));
@@ -21,6 +31,11 @@ export default function ConnectPage() {
   const [connecting, setConnecting] = useState(false);
   const [tellerConfig, setTellerConfig] = useState<{ applicationId: string; environment: string } | null>(null);
   const hasOpenedModal = useRef(false);
+
+  // Beta gate state
+  const [hasBetaAccess, setHasBetaAccess] = useState<boolean | null>(BETA_MODE ? null : true);
+
+  // Payment gate state (used when BETA_MODE is false)
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
   const [plan, setPlan] = useState<string | null>(null);
   const [hasReport, setHasReport] = useState(false);
@@ -35,10 +50,37 @@ export default function ConnectPage() {
     }
   }, [user]);
 
+  // Beta access check
+  useEffect(() => {
+    if (!BETA_MODE || !user) return;
+
+    async function checkBetaAccess() {
+      try {
+        const response = await fetch('/api/beta/status');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.hasBetaAccess) {
+            setHasBetaAccess(true);
+            return;
+          }
+        }
+      } catch {}
+
+      setHasBetaAccess(false);
+    }
+
+    checkBetaAccess();
+  }, [user]);
+
   // Check if user has an active plan before allowing bank connection
   // If payment=success, poll until the webhook records the payment
   useEffect(() => {
     if (!user) return;
+    // In beta mode, skip payment check — beta access is the gate
+    if (BETA_MODE) {
+      setHasPaid(true);
+      return;
+    }
 
     let attempts = 0;
     let cancelled = false;
@@ -215,8 +257,8 @@ export default function ConnectPage() {
     );
   }
 
-  // Show loading while checking subscription / waiting for payment confirmation
-  if (hasPaid === null) {
+  // Show loading while checking access
+  if (hasBetaAccess === null || hasPaid === null) {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center">
         <div className="text-center">
@@ -229,7 +271,19 @@ export default function ConnectPage() {
     );
   }
 
-  // Show pricing modal if user hasn't paid
+  // Beta gate (only active when BETA_MODE is true)
+  if (!hasBetaAccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gradient-hero">
+        <BetaCodeModal
+          isOpen={true}
+          onSuccess={() => setHasBetaAccess(true)}
+        />
+      </div>
+    );
+  }
+
+  // Payment gate (active when BETA_MODE is false)
   if (!hasPaid) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gradient-hero">
