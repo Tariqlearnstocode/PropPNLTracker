@@ -47,7 +47,7 @@ export function ExportBlockedPopup({ open, onClose, onGetStarted }: ExportBlocke
           Get my report
         </button>
         <p className="text-center text-[11px] text-terminal-muted mt-2.5 font-mono">
-          Plans from $14.95/mo · Cancel anytime
+          Snapshot from $39.99 · Lifetime $97
         </p>
       </div>
     </div>

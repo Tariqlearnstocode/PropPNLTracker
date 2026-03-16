@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { checkRateLimit } from '@/utils/rate-limit';
 import { calculatePNLReport, type RawFinancialData } from '@/lib/pnl-calculations';
-import { getActiveSubscription } from '@/lib/stripe/helpers';
+import { getUserPlan } from '@/lib/stripe/helpers';
 import { encryptToken } from '@/utils/teller-token-encryption';
 import https from 'https';
 import { z } from 'zod';
@@ -19,9 +19,8 @@ interface TellerAccount {
 }
 
 // ============ CONFIGURATION ============
-// Auto-refresh frequency for subscription users
-// Change this to 'weekly' or 'monthly' as needed
-const AUTO_REFRESH_FREQUENCY: 'weekly' | 'monthly' = 'monthly';
+// Auto-refresh frequency for lifetime users
+const AUTO_REFRESH_FREQUENCY: 'daily' | 'weekly' | 'monthly' = 'daily';
 
 // Transaction sync overlap (days)
 // Teller recommends 7-10 days to capture transactions that shift dates when moving from pending to posted
@@ -172,9 +171,9 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    // 3. Check if user has active subscription
-    const subscription = await getActiveSubscription(user.id);
-    const hasSubscription = !!subscription;
+    // 3. Check user's plan
+    const { plan } = await getUserPlan(user.id);
+    const isLifetime = plan === 'lifetime';
 
     // 4. Get last_synced_at for all accounts (for merge mode)
     const accountIds = accounts.map((acc: TellerAccount) => acc.id);
@@ -206,7 +205,7 @@ export async function POST(request: NextRequest) {
       try {
         // Determine start date for this account
         let startDate: string;
-        if (hasSubscription && lastSyncedMap.has(account.id)) {
+        if (isLifetime && lastSyncedMap.has(account.id)) {
           // Merge mode: fetch from last_synced_at - SYNC_OVERLAP_DAYS
           // Teller recommends 7-10 days overlap to capture transactions that shift dates when posting
           const lastSynced = new Date(lastSyncedMap.get(account.id)!);
@@ -230,7 +229,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use earliest start date for the overall date range
-    const overallStartDate = hasSubscription && lastSyncedMap.size > 0
+    const overallStartDate = isLifetime && lastSyncedMap.size > 0
       ? (() => {
           const dates = Array.from(lastSyncedMap.values()).map(d => {
             const date = new Date(d);
@@ -331,19 +330,36 @@ export async function POST(request: NextRequest) {
         account_name: account.name,
         account_type: account.type,
         enrollment_id: account.enrollment_id || null,
-        enrollment_status: 'connected',
         last_synced_at: new Date().toISOString(),
         needs_refresh: false,
         updated_at: new Date().toISOString(),
       };
-      if (access_token) {
+
+      if (isLifetime && access_token) {
+        // Lifetime: store token, stay connected, allow refresh
         try {
           accountUpdateData.encrypted_access_token = encryptToken(access_token);
           accountUpdateData.token_encrypted_at = new Date().toISOString();
           accountUpdateData.can_refresh_daily = true;
+          accountUpdateData.enrollment_status = 'connected';
+        } catch {
+        }
+      } else {
+        // Snapshot: don't store token, disconnect, block refresh
+        accountUpdateData.encrypted_access_token = null;
+        accountUpdateData.can_refresh_daily = false;
+        accountUpdateData.enrollment_status = 'disconnected';
+
+        // Disconnect account from Teller
+        try {
+          await tellerFetch(`${TELLER_API_URL}/accounts/${account.id}`, {
+            method: 'DELETE',
+            headers,
+          });
         } catch {
         }
       }
+
       const { error: accountError } = await supabaseAdmin
         .from('connected_accounts')
         .upsert(accountUpdateData, { onConflict: 'user_id,account_id' });

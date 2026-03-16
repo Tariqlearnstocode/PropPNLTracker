@@ -377,6 +377,7 @@ export default function SettingsPage() {
           onCancelDeleteConfirm={() => setShowDeleteAccountConfirm(null)}
           onDeleteAccount={handleDeleteAccount}
           formatDate={formatDate}
+          plan={subscription?.plan}
         />
 
         <DangerZoneSection

@@ -6,7 +6,7 @@ import { validatePriceIds } from '@/lib/stripe/prices';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
-  plan: z.enum(['one_time', 'monthly', 'lifetime']),
+  plan: z.enum(['snapshot', 'lifetime']),
 });
 
 export async function POST(request: NextRequest) {
@@ -56,8 +56,7 @@ export async function POST(request: NextRequest) {
 
     // Map plan to price ID
     const priceIdMap: Record<string, string | undefined> = {
-      one_time: prices.oneTime,
-      monthly: prices.monthly,
+      snapshot: prices.snapshot,
       lifetime: prices.lifetime,
     };
 
@@ -73,58 +72,26 @@ export async function POST(request: NextRequest) {
     const successUrl = `${origin}/connect?payment=success`;
     const cancelUrl = `${origin}/#pricing`;
 
-    // Determine checkout mode based on plan
-    const isRecurring = plan === 'monthly';
-
-    if (isRecurring) {
-      // Subscription checkout for monthly plan
-      const session = await stripe.checkout.sessions.create({
-        customer: customerId,
-        mode: 'subscription',
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        subscription_data: {
-          metadata: {
-            user_id: user.id,
-            plan_tier: plan,
-          },
+    // Both plans are one-time payments
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: 'payment',
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
         },
-        allow_promotion_codes: true,
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-        metadata: {
-          user_id: user.id,
-          plan_tier: plan,
-        },
-      });
+      ],
+      allow_promotion_codes: true,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        user_id: user.id,
+        plan_tier: plan,
+      },
+    });
 
-      return NextResponse.json({ url: session.url });
-    } else {
-      // One-time payment checkout for one_time and lifetime plans
-      const session = await stripe.checkout.sessions.create({
-        customer: customerId,
-        mode: 'payment',
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        allow_promotion_codes: true,
-        success_url: successUrl,
-        cancel_url: cancelUrl,
-        metadata: {
-          user_id: user.id,
-          plan_tier: plan,
-        },
-      });
-
-      return NextResponse.json({ url: session.url });
-    }
+    return NextResponse.json({ url: session.url });
   } catch (error: unknown) {
     return NextResponse.json(
       { error: 'Failed to create checkout session', details: error instanceof Error ? error.message : 'Unknown error' },

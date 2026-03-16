@@ -50,7 +50,7 @@ export function TransactionsTeaser({ transactionCount, onGetStarted }: Transacti
             Track My Transactions
           </button>
           <p className="text-[11px] text-terminal-muted mt-2 font-mono">
-            Plans from $14.95/mo
+            Snapshot from $39.99
           </p>
         </div>
       </div>

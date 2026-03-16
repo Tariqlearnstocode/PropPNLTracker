@@ -18,7 +18,7 @@ export function PublicCTABanner({ displayName, onGetStarted, onDismiss }: Public
             }
           </p>
           <span className="text-[10px] text-terminal-muted font-mono hidden sm:inline flex-shrink-0">
-            Plans from $14.95/mo
+            Snapshot from $39.99
           </span>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">

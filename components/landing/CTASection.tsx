@@ -11,7 +11,7 @@ export function CTASection() {
           <span className="block mt-2 text-profit">Connect your bank → see your P&L.</span>
         </h2>
         <p className="text-xl text-terminal-text mb-6 max-w-2xl mx-auto">
-          Real P&L in ~60 seconds. Plans from $14.95/mo. Cancel anytime.
+          Real P&L in ~60 seconds. Snapshot from $39.99. No subscriptions.
         </p>
         <p className="text-sm text-terminal-muted mb-8 max-w-xl mx-auto font-mono">
           Sign up → connect bank → get your report. That&apos;s it.

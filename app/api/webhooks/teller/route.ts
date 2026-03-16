@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
-import { getActiveSubscription } from '@/lib/stripe/helpers';
+import { getUserPlan } from '@/lib/stripe/helpers';
 import { refreshAccountData } from '@/lib/teller-refresh';
 import crypto from 'crypto';
 
@@ -127,8 +127,8 @@ async function handleTransactionsProcessed(payload: TellerWebhookPayload) {
   }
 
   const userId = connectedAccount.user_id;
-  const subscription = await getActiveSubscription(userId);
-  if (!subscription) {
+  const { plan } = await getUserPlan(userId);
+  if (plan !== 'lifetime') {
     return;
   }
 

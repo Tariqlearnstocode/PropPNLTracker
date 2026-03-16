@@ -74,7 +74,7 @@ export default function Sidebar() {
               <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white text-lg">✅</span>
               </div>
-              <span className="font-semibold text-gray-900">Income Verifier</span>
+              <span className="font-semibold text-gray-900">Prop PNL</span>
             </Link>
           ) : (
             <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mx-auto">

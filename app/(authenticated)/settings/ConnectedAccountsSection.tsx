@@ -22,6 +22,7 @@ interface ConnectedAccountsSectionProps {
   onCancelDeleteConfirm: () => void;
   onDeleteAccount: (accountId: string) => void;
   formatDate: (dateString: string | null) => string;
+  plan?: string | null;
 }
 
 export function ConnectedAccountsSection({
@@ -33,7 +34,9 @@ export function ConnectedAccountsSection({
   onCancelDeleteConfirm,
   onDeleteAccount,
   formatDate,
+  plan,
 }: ConnectedAccountsSectionProps) {
+  const isSnapshot = plan === 'snapshot' || plan === 'one_time';
   return (
     <div className="bg-terminal-card rounded-xl border border-terminal-border p-6 mb-6">
       <div className="flex items-center justify-between mb-6">
@@ -43,13 +46,15 @@ export function ConnectedAccountsSection({
           </div>
           <h2 className="text-xl font-semibold text-terminal-text">Connected Bank Accounts</h2>
         </div>
-        <Link
-          href="/connect"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg text-sm transition-colors"
-        >
-          <span>➕</span>
-          Add Account
-        </Link>
+        {!isSnapshot && (
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg text-sm transition-colors"
+          >
+            <span>➕</span>
+            Add Account
+          </Link>
+        )}
       </div>
 
       {loading ? (
@@ -107,14 +112,18 @@ export function ConnectedAccountsSection({
                   {account.enrollment_status === 'disconnected' && (
                     <div className="mt-3 px-3 py-2 rounded-lg border border-yellow-500/20 bg-yellow-500/5 flex items-center justify-between gap-3">
                       <span className="text-[12px] text-yellow-300/80">
-                        Bank connection lost. Reconnect to resume auto-sync.
+                        {isSnapshot
+                          ? 'Snapshot plan — bank disconnected after report generation.'
+                          : 'Bank connection lost. Reconnect to resume auto-sync.'}
                       </span>
-                      <Link
-                        href="/connect"
-                        className="shrink-0 px-3 py-1 text-[11px] font-medium rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
-                      >
-                        Reconnect
-                      </Link>
+                      {!isSnapshot && (
+                        <Link
+                          href="/connect"
+                          className="shrink-0 px-3 py-1 text-[11px] font-medium rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
+                        >
+                          Reconnect
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>

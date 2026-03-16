@@ -36,25 +36,6 @@ export async function POST(request: NextRequest) {
 
   try {
     switch (event.type) {
-      case 'customer.subscription.created':
-      case 'customer.subscription.updated': {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdate(subscription);
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
-        await handleSubscriptionDeleted(subscription);
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        await handlePaymentFailed(invoice);
-        break;
-      }
-
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         await handleCheckoutCompleted(session);
@@ -71,89 +52,6 @@ export async function POST(request: NextRequest) {
       { error: 'Webhook handler failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
-  }
-}
-
-async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
-  if (!userId) {
-    return;
-  }
-
-  // Get customer ID
-  const customerId =
-    typeof subscription.customer === 'string'
-      ? subscription.customer
-      : subscription.customer.id;
-
-  // Determine plan tier from price metadata
-  const recurringItem = subscription.items.data[0];
-
-  const planTier =
-    recurringItem?.price.metadata?.type === 'monthly'
-      ? 'monthly'
-      : subscription.metadata?.plan_tier || 'monthly';
-
-  // TODO: current_period_start/end exist at runtime but not in this Stripe types version
-  const subRecord = subscription as unknown as Record<string, number>;
-
-  // Upsert subscription in database
-  // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
-  await supabaseAdmin.from('stripe_subscriptions' as unknown as 'stripe_subscriptions').upsert({
-    user_id: userId,
-    stripe_subscription_id: subscription.id,
-    stripe_customer_id: customerId,
-    stripe_price_id: recurringItem?.price.id || '',
-    status: subscription.status,
-    plan_tier: planTier,
-    current_period_start: new Date(
-      subRecord.current_period_start * 1000
-    ).toISOString(),
-    current_period_end: new Date(
-      subRecord.current_period_end * 1000
-    ).toISOString(),
-    cancel_at_period_end: subscription.cancel_at_period_end,
-    updated_at: new Date().toISOString(),
-  } as unknown as Record<string, unknown>);
-}
-
-async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
-  if (!userId) {
-    return;
-  }
-
-  // Update subscription status to canceled
-  // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
-  await supabaseAdmin
-    .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
-    .update({
-      status: 'canceled',
-      updated_at: new Date().toISOString(),
-    } as unknown as Record<string, unknown>)
-    .eq('stripe_subscription_id', subscription.id);
-}
-
-
-async function handlePaymentFailed(invoice: Stripe.Invoice) {
-  // TODO: invoice.subscription exists at runtime but types differ across Stripe versions
-  const invoiceRecord = invoice as unknown as Record<string, unknown>;
-  const sub = invoiceRecord.subscription;
-  const subscriptionId =
-    typeof sub === 'string'
-      ? sub
-      : (sub as { id?: string } | null)?.id;
-
-  if (subscriptionId) {
-    // Update subscription status to past_due
-    // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
-    await supabaseAdmin
-      .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
-      .update({
-        status: 'past_due',
-        updated_at: new Date().toISOString(),
-      } as unknown as Record<string, unknown>)
-      .eq('stripe_subscription_id', subscriptionId);
   }
 }
 
@@ -179,17 +77,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       } as unknown as Record<string, unknown>);
   }
 
-  // Handle subscription checkouts (monthly) - handled by subscription webhooks
-  if (session.mode === 'subscription') {
-    return;
-  }
-
-  // Handle one-time payment checkouts (one_time and lifetime)
+  // Handle one-time payment checkouts (snapshot and lifetime)
   if (session.mode === 'payment') {
     const planTier = session.metadata?.plan_tier;
 
     if (planTier === 'lifetime') {
-      // Grant permanent lifetime access by inserting into stripe_subscriptions with status 'lifetime'
+      // Grant permanent lifetime access
       // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
       await supabaseAdmin
         .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
@@ -205,18 +98,18 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           cancel_at_period_end: false,
           updated_at: new Date().toISOString(),
         } as unknown as Record<string, unknown>);
-    } else if (planTier === 'one_time') {
-      // One-time payment - grant single-use access
+    } else if (planTier === 'snapshot') {
+      // Snapshot payment - grant single-use access
       // TODO: Replace casts with generated Supabase types for stripe_subscriptions table
       await supabaseAdmin
         .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
         .insert({
           user_id: userId,
-          stripe_subscription_id: `one_time_${session.id}`,
+          stripe_subscription_id: `snapshot_${session.id}`,
           stripe_customer_id: customerId || '',
           stripe_price_id: '',
-          status: 'one_time',
-          plan_tier: 'one_time',
+          status: 'snapshot',
+          plan_tier: 'snapshot',
           current_period_start: new Date().toISOString(),
           current_period_end: null,
           cancel_at_period_end: false,

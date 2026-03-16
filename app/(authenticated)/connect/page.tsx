@@ -22,6 +22,8 @@ export default function ConnectPage() {
   const [tellerConfig, setTellerConfig] = useState<{ applicationId: string; environment: string } | null>(null);
   const hasOpenedModal = useRef(false);
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
+  const [plan, setPlan] = useState<string | null>(null);
+  const [hasReport, setHasReport] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
   const paymentSuccess = searchParams.get('payment') === 'success';
 
@@ -48,6 +50,15 @@ export default function ConnectPage() {
           const data = await response.json();
           if (data.hasSubscription) {
             setHasPaid(true);
+            setPlan(data.plan);
+            // Check if user already has a report (for snapshot reconnection blocking)
+            try {
+              const reportRes = await fetch('/api/user/report-token');
+              if (reportRes.ok) {
+                const reportData = await reportRes.json();
+                if (reportData.reportToken) setHasReport(true);
+              }
+            } catch {}
             return;
           }
         }
@@ -182,7 +193,7 @@ export default function ConnectPage() {
             Connect your bank → see your P&L.
           </h2>
           <p className="text-xl text-terminal-text mb-6 max-w-2xl mx-auto">
-            Real P&L in ~60 seconds. Plans from $14.95/mo. Cancel anytime.
+            Snapshot from $39.99. Lifetime for $97. No subscriptions.
           </p>
           <p className="text-sm text-terminal-muted mb-8 max-w-xl mx-auto font-mono">
             Sign up → connect bank → get your report. That&apos;s it.
@@ -233,6 +244,29 @@ export default function ConnectPage() {
           </button>
         </div>
         <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
+      </div>
+    );
+  }
+
+  // Snapshot users with existing report: block reconnection
+  if (plan === 'snapshot' && hasReport) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-gradient-hero">
+        <div className="w-full max-w-md text-center">
+          <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8">
+            <span className="text-4xl block mb-4">📸</span>
+            <h2 className="text-xl font-bold text-terminal-text mb-3">Snapshot Report Generated</h2>
+            <p className="text-terminal-muted text-sm mb-6 leading-relaxed">
+              Your snapshot report has been generated. Upgrade to Lifetime for daily syncs and reconnection.
+            </p>
+            <Link
+              href="/#pricing"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+            >
+              Upgrade to Lifetime — $97
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

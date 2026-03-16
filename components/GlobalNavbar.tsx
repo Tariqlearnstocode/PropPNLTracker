@@ -84,9 +84,13 @@ export default function GlobalNavbar() {
             <span className="text-terminal-muted text-xs font-mono hidden sm:inline truncate max-w-[180px]">
               {user.email}
             </span>
-            {reportToken && (
+            {reportToken ? (
               <Link href={`/report/${reportToken}`} className={barButtonClass}>
                 Report
+              </Link>
+            ) : (
+              <Link href="/connect" className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-terminal-bg transition-colors flex-shrink-0 whitespace-nowrap">
+                Connect Your Bank
               </Link>
             )}
             <Link href="/settings" className={barButtonClass}>

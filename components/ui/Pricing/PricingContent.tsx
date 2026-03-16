@@ -38,20 +38,20 @@ export function PricingContent() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-terminal-text mb-3">Simple, Transparent Pricing</h1>
         <p className="text-lg text-terminal-text">
-          One report. Real numbers. Pick your plan.
+          One report. Real numbers. No subscriptions.
         </p>
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        {/* One-Time */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 max-w-3xl mx-auto">
+        {/* Snapshot */}
         <div className="border-2 border-terminal-border rounded-xl p-6 hover:border-terminal-muted transition-colors">
           <div className="mb-4">
-            <p className="text-sm font-medium text-terminal-muted mb-1">One-Time</p>
+            <p className="text-sm font-medium text-terminal-muted mb-1">Snapshot</p>
             <div className="mt-2">
               <span className="text-3xl font-bold text-terminal-text">$39.99</span>
             </div>
-            <div className="text-xs text-terminal-muted mt-1">Single snapshot report, no recurring updates</div>
+            <div className="text-xs text-terminal-muted mt-1">One-time payment, single snapshot report</div>
           </div>
           <div className="space-y-2 text-sm text-terminal-text mb-6">
             <div className="flex items-center gap-2">
@@ -71,8 +71,8 @@ export function PricingContent() {
               <span>Shareable link</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-loss">✗</span>
-              <span className="text-terminal-muted">No recurring updates</span>
+              <span className="text-terminal-muted">—</span>
+              <span className="text-terminal-muted">No syncs or reconnection</span>
             </div>
           </div>
           <Link
@@ -83,73 +83,36 @@ export function PricingContent() {
           </Link>
         </div>
 
-        {/* Monthly - Most Popular */}
+        {/* Lifetime - Best Value */}
         <div className="border-2 border-profit rounded-xl p-6 relative bg-profit/10 hover:border-profit/80 transition-colors">
           <div className="absolute top-4 right-4">
             <span className="px-2 py-1 bg-profit text-terminal-bg text-xs font-medium rounded">
-              POPULAR
-            </span>
-          </div>
-          <div className="mb-4">
-            <p className="text-sm font-medium text-terminal-muted mb-1">Monthly</p>
-            <div className="mt-2">
-              <span className="text-3xl font-bold text-terminal-text">$14.95</span>
-              <span className="text-terminal-text text-sm ml-1">/mo</span>
-            </div>
-            <div className="text-xs text-terminal-muted mt-1">Cancel anytime</div>
-          </div>
-          <div className="space-y-2 text-sm text-terminal-text mb-6">
-            <div className="flex items-center gap-2">
-              <span className="text-profit">✓</span>
-              <span>Up to 5 bank accounts</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-profit">✓</span>
-              <span>Up to 12 months transaction history</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-profit">✓</span>
-              <span>Weekly transaction sync</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-profit">✓</span>
-              <span>Always up to date</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-profit">✓</span>
-              <span>Leaderboard eligible</span>
-            </div>
-          </div>
-          <Link
-            href="/connect"
-            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
-          >
-            Start Monthly Plan
-          </Link>
-        </div>
-
-        {/* Lifetime - Best Value */}
-        <div className="border-2 border-terminal-border rounded-xl p-6 relative hover:border-terminal-muted transition-colors">
-          <div className="absolute top-4 right-4">
-            <span className="px-2 py-1 bg-terminal-text text-terminal-bg text-xs font-medium rounded">
               BEST VALUE
             </span>
           </div>
           <div className="mb-4">
             <p className="text-sm font-medium text-terminal-muted mb-1">Lifetime</p>
             <div className="mt-2">
-              <span className="text-3xl font-bold text-terminal-text">$199</span>
+              <span className="text-3xl font-bold text-terminal-text">$97</span>
             </div>
             <div className="text-xs text-terminal-muted mt-1">One-time payment, permanent access</div>
           </div>
           <div className="space-y-2 text-sm text-terminal-text mb-6">
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>Everything in Monthly, forever</span>
+              <span>Everything in Snapshot</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
-              <span>Permanent weekly syncs</span>
+              <span>Daily automatic syncs</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-profit">✓</span>
+              <span>Reconnect anytime</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-profit">✓</span>
+              <span>Leaderboard eligible</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-profit">✓</span>
@@ -251,8 +214,7 @@ export function PricingContent() {
             <thead>
               <tr className="bg-terminal-card-hover border-b border-terminal-border">
                 <th className="px-6 py-3 text-left text-sm font-semibold text-terminal-text">Features</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">One-Time</th>
-                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Monthly</th>
+                <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Snapshot</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Lifetime</th>
                 <th className="px-6 py-3 text-center text-sm font-semibold text-terminal-text">Enterprise</th>
               </tr>
@@ -260,13 +222,12 @@ export function PricingContent() {
             <tbody className="divide-y divide-terminal-border">
               {/* Core Features */}
               <tr className="bg-terminal-card">
-                <td colSpan={5} className="px-6 py-2 bg-terminal-card-hover">
+                <td colSpan={4} className="px-6 py-2 bg-terminal-card-hover">
                   <span className="text-xs font-semibold text-terminal-muted uppercase tracking-wide">Core Features</span>
                 </td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Bank account connections</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 5</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Custom</td>
@@ -276,11 +237,9 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
                 <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
-                <td className="px-6 py-3 text-center text-sm text-terminal-text">Up to 12 months</td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Advanced prop firm matching</td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
@@ -290,11 +249,9 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Per-prop-firm PNL breakdown</td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
@@ -304,11 +261,9 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">CSV/PDF export</td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
@@ -318,39 +273,40 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Shareable public link</td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
-                <td className="px-6 py-3 text-sm text-terminal-text">Weekly transaction sync</td>
+                <td className="px-6 py-3 text-sm text-terminal-text">Daily automatic sync</td>
+                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
+                <td className="px-6 py-3 text-center"><span className="text-profit">✓ Custom</span></td>
+              </tr>
+              <tr className="bg-terminal-card">
+                <td className="px-6 py-3 text-sm text-terminal-text">Reconnect anytime</td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓ Custom</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Leaderboard eligible</td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
 
               {/* Enterprise Features */}
               <tr className="bg-terminal-card">
-                <td colSpan={5} className="px-6 py-2 bg-terminal-card-hover">
+                <td colSpan={4} className="px-6 py-2 bg-terminal-card-hover">
                   <span className="text-xs font-semibold text-terminal-muted uppercase tracking-wide">Enterprise Features</span>
                 </td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Custom account limits</td>
-                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
@@ -359,19 +315,16 @@ export function PricingContent() {
                 <td className="px-6 py-3 text-sm text-terminal-text">Priority support</td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">Dedicated account manager</td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
-                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>
               </tr>
               <tr className="bg-terminal-card">
                 <td className="px-6 py-3 text-sm text-terminal-text">API access</td>
-                <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-terminal-muted">—</span></td>
                 <td className="px-6 py-3 text-center"><span className="text-profit">✓</span></td>

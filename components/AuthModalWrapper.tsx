@@ -24,7 +24,7 @@ export function AuthModalWrapper() {
   const handleAuthSuccess = async () => {
     // Check if there's a pending checkout from pricing
     const pendingPlan = sessionStorage.getItem('pendingCheckout');
-    if (pendingPlan && ['one_time', 'monthly', 'lifetime'].includes(pendingPlan)) {
+    if (pendingPlan && ['snapshot', 'lifetime'].includes(pendingPlan)) {
       sessionStorage.removeItem('pendingCheckout');
       try {
         const response = await fetch('/api/stripe/create-checkout', {

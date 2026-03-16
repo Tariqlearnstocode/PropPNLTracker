@@ -20,7 +20,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'How do I get started?',
         answer:
-          'Sign up, pick a plan, and connect your bank. Your full P&L report is generated in about 60 seconds. We offer a One-Time snapshot for $39.99, a Monthly plan at $14.95/mo with weekly syncs, and a Lifetime plan for $199 with permanent access.',
+          'Sign up, pick a plan, and connect your bank. Your full P&L report is generated in about 60 seconds. We offer a Snapshot for $39.99 (single report, no recurring updates) and a Lifetime plan for $97 (daily syncs, reconnect anytime, permanent access). Both are one-time payments — no subscriptions.',
       },
       {
         question: 'How long does it take to set up?',
@@ -61,12 +61,12 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'What are the pricing plans?',
         answer:
-          'We offer three options. One-Time: $39.99, a single snapshot report with up to 5 bank accounts and up to 12 months of history\u2014ideal for tax time. Monthly: $14.95/mo, includes up to 5 bank accounts, up to 12 months of history, weekly automatic transaction syncs, and leaderboard eligibility. Cancel anytime. Lifetime: $199 one-time payment, everything in Monthly forever with no recurring charges. All plans include the full dashboard, charts, per-firm breakdowns, CSV/PDF export, and a shareable public P&L link.',
+          'We offer two plans, both one-time payments. Snapshot: $39.99, a single snapshot report with up to 5 bank accounts and up to 12 months of history\u2014ideal for tax time. Your bank is disconnected after the report is generated. Lifetime: $97 one-time payment, everything in Snapshot plus daily automatic transaction syncs, reconnect anytime, and leaderboard eligibility\u2014permanent access with no recurring charges. Both plans include the full dashboard, charts, per-firm breakdowns, CSV/PDF export, and a shareable public P&L link.',
       },
       {
-        question: 'Can I cancel my Pro subscription?',
+        question: 'Are there any recurring charges?',
         answer:
-          'Yes. Cancel anytime\u2014no questions asked, no cancellation fees. Payments are processed through Stripe, and you can manage your subscription from your account settings.',
+          'No. Both plans are one-time payments. There are no subscriptions, no monthly fees, and no surprise charges. You pay once and you are done.',
       },
     ],
   },
@@ -76,7 +76,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'Is connecting my bank account safe?',
         answer:
-          'Yes. We use Teller, a financial data provider that is SOC 2 Type II and PCI DSS certified\u2014the same technology used by major tax and finance apps. Your bank login credentials are never stored on our servers. The connection is strictly read-only, meaning we can only view transactions and balances. We cannot move money, initiate transfers, or access your full account numbers. Access tokens are deleted immediately after fetching your data, and bank connections are disconnected right after use.',
+          'Yes. We use Teller, a financial data provider that is SOC 2 Type II and PCI DSS certified\u2014the same technology used by major tax and finance apps. Your bank login credentials are never stored on our servers. The connection is strictly read-only, meaning we can only view transactions and balances. We cannot move money, initiate transfers, or access your full account numbers. For Snapshot users, access tokens are deleted and bank connections are disconnected immediately after your report is generated. For Lifetime users, tokens are encrypted and stored to enable daily syncs.',
       },
       {
         question: 'What data do you store and how is it protected?',
@@ -96,7 +96,7 @@ export const faqCategories: FAQCategory[] = [
       {
         question: 'Can I export my data for taxes?',
         answer:
-          'Yes. Every plan supports CSV and PDF export. You can download your full transaction history, monthly P&L breakdowns, and per-firm summaries in a format your accountant can use directly. The One-Time plan at $39.99 is specifically designed for traders who just need a clean export for tax season without an ongoing subscription.',
+          'Yes. Every plan supports CSV and PDF export. You can download your full transaction history, monthly P&L breakdowns, and per-firm summaries in a format your accountant can use directly. The Snapshot plan at $39.99 is specifically designed for traders who just need a clean export for tax season.',
       },
       {
         question: 'Can I connect multiple bank accounts?',
@@ -125,7 +125,7 @@ export const faqCategories: FAQCategory[] = [
 /** Curated subset for the homepage — the questions that matter most for conversion */
 export const homepageFAQs: FAQItem[] = [
   faqCategories[0].faqs[0], // What is Prop PNL
-  faqCategories[0].faqs[1], // Credit card needed?
+  faqCategories[0].faqs[1], // How do I get started?
   faqCategories[1].faqs[0], // Connect to prop firm accounts?
   faqCategories[3].faqs[0], // Is it safe?
   faqCategories[2].faqs[0], // Pricing plans

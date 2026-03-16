@@ -55,19 +55,37 @@ export async function getOrCreateStripeCustomer(userId: string, email: string, n
 }
 
 /**
- * Get user's active subscription
+ * Get user's plan from stripe_subscriptions.
+ * Returns the plan type and record, treating legacy 'one_time' as 'snapshot'.
  */
-export async function getActiveSubscription(userId: string) {
+export async function getUserPlan(userId: string): Promise<{ plan: 'lifetime' | 'snapshot' | null; record: Record<string, unknown> | null }> {
   const supabase = await createClient();
 
-  const { data: subscription } = await supabase
-    .from('stripe_subscriptions')
+  // Check for lifetime first
+  const { data: lifetimeRecord } = await supabase
+    .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
     .select('*')
     .eq('user_id', userId)
-    .eq('status', 'active')
-    // TODO: Replace cast with generated Supabase types for stripe_subscriptions table
+    .eq('status', 'lifetime')
+    .limit(1)
     .single() as { data: Record<string, unknown> | null };
 
-  return subscription;
-}
+  if (lifetimeRecord) {
+    return { plan: 'lifetime', record: lifetimeRecord };
+  }
 
+  // Check for snapshot or legacy one_time
+  const { data: snapshotRecord } = await supabase
+    .from('stripe_subscriptions' as unknown as 'stripe_subscriptions')
+    .select('*')
+    .eq('user_id', userId)
+    .in('status', ['snapshot', 'one_time'])
+    .limit(1)
+    .single() as { data: Record<string, unknown> | null };
+
+  if (snapshotRecord) {
+    return { plan: 'snapshot', record: snapshotRecord };
+  }
+
+  return { plan: null, record: null };
+}

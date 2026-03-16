@@ -1,15 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { useToast } from '@/components/ui/Toasts/use-toast';
 
 interface SubscriptionData {
   hasSubscription: boolean;
   plan: string;
   status: string | null;
-  currentPeriodEnd?: string;
-  cancelAtPeriodEnd?: boolean;
   isLifetime?: boolean;
 }
 
@@ -20,51 +16,19 @@ interface SubscriptionSectionProps {
 }
 
 const planLabels: Record<string, string> = {
-  one_time: 'One-Time Snapshot',
-  monthly: 'Monthly',
+  snapshot: 'Snapshot',
+  one_time: 'Snapshot',
   lifetime: 'Lifetime',
   none: 'No Plan',
 };
 
 const statusLabels: Record<string, { label: string; className: string }> = {
-  active: { label: 'Active', className: 'bg-profit/20 text-profit' },
   lifetime: { label: 'Lifetime', className: 'bg-profit/20 text-profit' },
+  snapshot: { label: 'Active', className: 'bg-profit/20 text-profit' },
   one_time: { label: 'Active', className: 'bg-profit/20 text-profit' },
-  past_due: { label: 'Past Due', className: 'bg-yellow-500/20 text-yellow-400' },
-  canceled: { label: 'Canceled', className: 'bg-loss/20 text-loss' },
 };
 
-export function SubscriptionSection({ subscription, loading, formatDate }: SubscriptionSectionProps) {
-  const { toast } = useToast();
-  const [managingBilling, setManagingBilling] = useState(false);
-
-  const handleManageBilling = async () => {
-    setManagingBilling(true);
-    try {
-      const response = await fetch('/api/stripe/create-portal', {
-        method: 'POST',
-      });
-      const data = await response.json();
-      if (response.ok && data.url) {
-        window.location.href = data.url;
-      } else {
-        toast({
-          title: 'Error',
-          description: data.error || 'Failed to open billing portal',
-          variant: 'destructive',
-        });
-      }
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to open billing portal',
-        variant: 'destructive',
-      });
-    } finally {
-      setManagingBilling(false);
-    }
-  };
-
+export function SubscriptionSection({ subscription, loading }: SubscriptionSectionProps) {
   const plan = subscription?.plan || 'none';
   const status = subscription?.status || null;
   const statusInfo = status ? statusLabels[status] || { label: status, className: 'bg-terminal-border text-terminal-muted' } : null;
@@ -109,25 +73,6 @@ export function SubscriptionSection({ subscription, loading, formatDate }: Subsc
 
           {/* Plan details */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-terminal-border">
-            {plan === 'monthly' && subscription.currentPeriodEnd && (
-              <div>
-                <label className="text-sm text-terminal-muted mb-1 block">
-                  {subscription.cancelAtPeriodEnd ? 'Access Until' : 'Next Billing Date'}
-                </label>
-                <p className="text-terminal-text text-sm font-medium">
-                  {formatDate(subscription.currentPeriodEnd)}
-                </p>
-              </div>
-            )}
-
-            {plan === 'monthly' && subscription.cancelAtPeriodEnd && (
-              <div>
-                <p className="text-yellow-400 text-sm">
-                  Your subscription is set to cancel at the end of the current period.
-                </p>
-              </div>
-            )}
-
             {plan === 'lifetime' && (
               <div>
                 <label className="text-sm text-terminal-muted mb-1 block">Access</label>
@@ -135,7 +80,7 @@ export function SubscriptionSection({ subscription, loading, formatDate }: Subsc
               </div>
             )}
 
-            {plan === 'one_time' && (
+            {(plan === 'snapshot' || plan === 'one_time') && (
               <div>
                 <label className="text-sm text-terminal-muted mb-1 block">Access</label>
                 <p className="text-terminal-text text-sm font-medium">Single snapshot report</p>
@@ -145,23 +90,21 @@ export function SubscriptionSection({ subscription, loading, formatDate }: Subsc
             <div>
               <label className="text-sm text-terminal-muted mb-1 block">Price</label>
               <p className="text-terminal-text text-sm font-medium">
-                {plan === 'one_time' && '$39.99'}
-                {plan === 'monthly' && '$14.95/mo'}
-                {plan === 'lifetime' && '$199 (one-time)'}
+                {(plan === 'snapshot' || plan === 'one_time') && '$39.99 (one-time)'}
+                {plan === 'lifetime' && '$97 (one-time)'}
               </p>
             </div>
           </div>
 
-          {/* Manage billing (monthly only) */}
-          {plan === 'monthly' && (
+          {/* Upgrade CTA for snapshot users */}
+          {(plan === 'snapshot' || plan === 'one_time') && (
             <div className="pt-2">
-              <button
-                onClick={handleManageBilling}
-                disabled={managingBilling}
-                className="px-4 py-2 text-sm font-medium text-terminal-text border border-terminal-border rounded-lg hover:bg-terminal-border/20 transition-colors disabled:opacity-50"
+              <Link
+                href="/#pricing"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg text-sm transition-colors"
               >
-                {managingBilling ? 'Loading...' : 'Manage Billing'}
-              </button>
+                Upgrade to Lifetime — $97
+              </Link>
             </div>
           )}
         </div>

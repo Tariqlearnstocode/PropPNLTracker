@@ -3,8 +3,7 @@
  */
 export function getPriceIds() {
   return {
-    oneTime: process.env.STRIPE_PRICE_ONE_TIME,
-    monthly: process.env.STRIPE_PRICE_MONTHLY,
+    snapshot: process.env.STRIPE_PRICE_SNAPSHOT,
     lifetime: process.env.STRIPE_PRICE_LIFETIME,
   };
 }
@@ -16,8 +15,7 @@ export function validatePriceIds() {
   const prices = getPriceIds();
   const missing: string[] = [];
 
-  if (!prices.oneTime) missing.push('STRIPE_PRICE_ONE_TIME');
-  if (!prices.monthly) missing.push('STRIPE_PRICE_MONTHLY');
+  if (!prices.snapshot) missing.push('STRIPE_PRICE_SNAPSHOT');
   if (!prices.lifetime) missing.push('STRIPE_PRICE_LIFETIME');
 
   if (missing.length > 0) {
