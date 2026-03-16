@@ -82,7 +82,7 @@ export default function OgImage() {
             display: 'flex',
           }}
         >
-          Bank-verified prop firm P&L tracking
+          Track your prop firm P&L from real bank data
         </div>
 
       </div>

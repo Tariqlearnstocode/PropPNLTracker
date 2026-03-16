@@ -6,14 +6,14 @@ const siteUrl = getURL();
 export const metadata: Metadata = {
   title: { absolute: 'Security & Privacy | Prop PNL Data Protection' },
   description:
-    'Prop PNL security practices: AES-256 encryption, read-only bank access, instant connection deletion, and GDPR compliance. Your trading data stays safe.',
+    'How Prop PNL keeps your data safe. Read-only bank access, encrypted storage, instant connection deletion. You stay in control.',
   alternates: {
     canonical: `${siteUrl}/security`,
   },
   openGraph: {
     title: 'Security & Privacy | Prop PNL Data Protection',
     description:
-      'Prop PNL security: AES-256 encryption, read-only bank access, instant connection deletion, GDPR compliance. Your trading data stays safe.',
+      'How Prop PNL keeps your data safe. Read-only bank access, encrypted storage, instant connection deletion. You stay in control.',
     url: `${siteUrl}/security`,
     siteName: 'Prop PNL',
     locale: 'en_US',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Security & Privacy | Prop PNL Data Protection',
     description:
-      'Prop PNL security: AES-256 encryption, read-only bank access, instant connection deletion, GDPR compliance. Your trading data stays safe.',
+      'How Prop PNL keeps your data safe. Read-only bank access, encrypted storage, instant connection deletion. You stay in control.',
     site: '@proppnl',
     creator: '@proppnl',
   },

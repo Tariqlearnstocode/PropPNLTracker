@@ -1,6 +1,6 @@
 # Prop PNL
 
-Bank-verified P&L tracking for prop traders.
+Prop Firm P&L tracking, directly from the bank account.
 
 ## What It Does
 

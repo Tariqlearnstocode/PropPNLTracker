@@ -11,9 +11,9 @@ import { AuthModalWrapper } from '@/components/AuthModalWrapper';
 import { ReportNavProvider } from '@/contexts/ReportNavContext';
 import 'styles/main.css';
 
-const title = 'Prop PNL | Bank-Verified Prop Firm P&L Tracker';
+const title = 'Prop PNL | Prop Firm P&L Tracker';
 const description =
-  'Bank-verified prop firm P&L tracker. Auto-track payouts and fees from Topstep, FTMO, Apex, Rise. Connect your bank, see results in ~60 seconds.';
+  'Track your prop firm profit and loss with real bank data. No spreadsheets, no screenshots. Payouts and fees from Topstep, FTMO, Apex, Rise.';
 
 const siteUrl = getURL();
 

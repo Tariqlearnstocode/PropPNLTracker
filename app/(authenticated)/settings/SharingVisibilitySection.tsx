@@ -102,7 +102,7 @@ export function SharingVisibilitySection({
           <div>
             <p className="text-sm text-terminal-text mb-1">Show on public leaderboard</p>
             <p className="text-xs text-terminal-muted">
-              Opt in to display your bank-verified P&L on the{' '}
+              Opt in to display your verified P&L on the{' '}
               <Link href="/leaderboard" className="text-profit hover:text-profit/80 underline">
                 public leaderboard
               </Link>

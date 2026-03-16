@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   // Default metadata used as fallback
   const defaultMetadata: Metadata = {
-    title: { absolute: 'Bank-Verified Trading Report | Prop PNL' },
-    description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
+    title: { absolute: 'Prop Trading P&L Report | Prop PNL' },
+    description: 'Shareable prop trading P&L report pulled from real bank data. Send your verified track record to anyone with a link.',
     openGraph: {
-      title: 'Bank-Verified Trading Report | Prop PNL',
-      description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
+      title: 'Prop Trading P&L Report | Prop PNL',
+      description: 'Shareable prop trading P&L report pulled from real bank data. Send your verified track record to anyone with a link.',
       url: `${siteUrl}/report/${token}`,
       siteName: 'Prop PNL',
       images: [
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           url: `${siteUrl}/api/og/report?token=${token}`,
           width: 1200,
           height: 630,
-          alt: 'Bank-Verified Prop Trading P&L Report',
+          alt: 'Prop Trading P&L Report',
         },
       ],
       locale: 'en_US',
@@ -45,8 +45,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Bank-Verified Trading Report | Prop PNL',
-      description: 'Bank-verified prop trading P&L report. Real payouts, fees, and net profit tracked automatically from connected bank data.',
+      title: 'Prop Trading P&L Report | Prop PNL',
+      description: 'Shareable prop trading P&L report pulled from real bank data. Send your verified track record to anyone with a link.',
       images: [`${siteUrl}/api/og/report?token=${token}`],
       site: '@proppnl',
       creator: '@proppnl',
@@ -89,15 +89,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `${netPNL >= 0 ? '+' : ''}${((netPNL / summary.totalFees) * 100).toFixed(0)}%`
       : 'N/A';
 
-    const description = `Bank-verified P&L: ${formattedPNL} net | ${firmCount} firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI — tracked automatically via Prop PNL.`;
+    const description = `Prop firm P&L: ${formattedPNL} net | ${firmCount} firm${firmCount !== 1 ? 's' : ''} | ${roi} ROI — pulled directly from bank data via Prop PNL.`;
 
     const ogImageUrl = `${siteUrl}/api/og/report?token=${token}`;
 
     return {
-      title: { absolute: 'Bank-Verified Trading Report | Prop PNL' },
+      title: { absolute: 'Prop Trading P&L Report | Prop PNL' },
       description,
       openGraph: {
-        title: 'Bank-Verified Trading Report | Prop PNL',
+        title: 'Prop Trading P&L Report | Prop PNL',
         description,
         url: `${siteUrl}/report/${token}`,
         siteName: 'Prop PNL',
@@ -106,7 +106,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             url: ogImageUrl,
             width: 1200,
             height: 630,
-            alt: 'Bank-Verified Prop Trading P&L Report',
+            alt: 'Prop Trading P&L Report',
           },
         ],
         locale: 'en_US',
@@ -114,7 +114,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'Bank-Verified Trading Report | Prop PNL',
+        title: 'Prop Trading P&L Report | Prop PNL',
         description,
         images: [ogImageUrl],
         site: '@proppnl',

@@ -18,7 +18,7 @@ export function ShareableLinkSection() {
                 <span className="text-profit mt-0.5 flex-shrink-0">✓</span>
                 <div>
                   <div className="font-medium text-terminal-text">Build trust publicly</div>
-                  <div className="text-terminal-text text-sm">Show followers and investors bank-verified results</div>
+                  <div className="text-terminal-text text-sm">Show followers and investors your real results</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">

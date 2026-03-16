@@ -191,7 +191,7 @@ export default function LeaderboardContent() {
                 </span>
               )}
               <span className="text-[11px] font-mono text-terminal-muted">
-                Bank-verified rankings
+                Verified rankings
               </span>
             </div>
             <div className="flex items-center gap-2">

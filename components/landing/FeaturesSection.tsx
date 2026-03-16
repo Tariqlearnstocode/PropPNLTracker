@@ -29,7 +29,7 @@ export function FeaturesSection() {
             <span className="text-3xl block mb-4">🔗</span>
             <h3 className="text-xl font-semibold text-terminal-text mb-3">Shareable link</h3>
             <p className="text-terminal-text">
-              One link to prove bank-verified P&L. Investors and followers see the real numbers.
+              One link to prove your P&L. Investors and followers see the real numbers, straight from your bank.
             </p>
           </div>
           <div className="bg-terminal-card rounded-lg border border-terminal-border p-8">

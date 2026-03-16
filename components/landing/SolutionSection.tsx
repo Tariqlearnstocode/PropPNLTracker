@@ -21,7 +21,7 @@ export function SolutionSection() {
           </div>
           <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
             <div className="text-lg font-semibold text-terminal-text mb-2">Net P&L</div>
-            <p className="text-terminal-text text-sm">The number that matters. Bank-verified.</p>
+            <p className="text-terminal-text text-sm">The number that matters. Pulled from your bank.</p>
           </div>
           <div className="bg-terminal-bg rounded-lg border border-terminal-border p-6">
             <div className="text-lg font-semibold text-terminal-text mb-2">Monthly breakdown</div>

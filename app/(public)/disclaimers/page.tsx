@@ -6,14 +6,14 @@ const siteUrl = getURL();
 export const metadata: Metadata = {
   title: { absolute: 'Disclaimers & Limitations | Prop PNL' },
   description:
-    'Prop PNL disclaimers: data accuracy limits, PNL estimate methodology, liability terms, and user responsibilities for our prop firm P&L tracker.',
+    'How Prop PNL calculates P&L estimates, data accuracy limitations, and your responsibilities when using the platform.',
   alternates: {
     canonical: `${siteUrl}/disclaimers`,
   },
   openGraph: {
     title: 'Disclaimers & Limitations | Prop PNL',
     description:
-      'Prop PNL disclaimers: data accuracy limits, PNL estimate methodology, liability terms, and user responsibilities for our prop firm P&L tracker.',
+      'How Prop PNL calculates P&L estimates, data accuracy limitations, and your responsibilities when using the platform.',
     url: `${siteUrl}/disclaimers`,
     siteName: 'Prop PNL',
     locale: 'en_US',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Disclaimers & Limitations | Prop PNL',
     description:
-      'Prop PNL disclaimers: data accuracy limits, PNL estimate methodology, liability terms, and user responsibilities for our prop firm P&L tracker.',
+      'How Prop PNL calculates P&L estimates, data accuracy limitations, and your responsibilities when using the platform.',
     site: '@proppnl',
     creator: '@proppnl',
   },
