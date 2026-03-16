@@ -106,7 +106,7 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
             }}
             placeholder="BETA-XXXX"
             autoFocus
-            className="w-full px-4 py-3 bg-terminal-bg border border-terminal-border rounded-lg text-terminal-text placeholder:text-terminal-muted/50 font-mono text-center text-lg tracking-widest focus:outline-none focus:border-profit/50 focus:ring-2 focus:ring-profit/20"
+            className="w-full px-4 py-3 bg-terminal-bg border border-terminal-border rounded-lg text-terminal-text placeholder:text-terminal-muted/50 font-mono text-center text-lg tracking-wider focus:outline-none focus:border-profit/50 focus:ring-2 focus:ring-profit/20"
           />
 
           {status === 'error' && (

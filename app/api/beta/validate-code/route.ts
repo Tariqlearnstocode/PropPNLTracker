@@ -40,12 +40,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Look up the code
-    const { data: betaCode } = await supabaseAdmin
+    const { data: betaCode, error: lookupError } = await supabaseAdmin
       .from('beta_codes')
       .select('*')
       .eq('code', code)
       .eq('is_active', true)
       .maybeSingle();
+
+    if (lookupError) {
+      console.error('Beta code lookup error:', lookupError);
+      return NextResponse.json({ error: 'Failed to validate code' }, { status: 500 });
+    }
 
     if (!betaCode) {
       return NextResponse.json({ error: 'Invalid beta code' }, { status: 400 });
