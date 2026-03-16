@@ -36,6 +36,7 @@ interface ReportHeaderProps {
   onTabChange: (tab: string) => void;
   canRefreshDaily?: boolean;
   lastRefreshAttempt?: string | null;
+  lastSyncedAt?: string | null;
   onRefreshData?: () => Promise<void>;
   displayName?: string;
   onGetStarted?: () => void;
@@ -72,6 +73,7 @@ export function ReportHeader({
   onTabChange,
   canRefreshDaily = false,
   lastRefreshAttempt = null,
+  lastSyncedAt = null,
   onRefreshData,
   displayName = '',
   onGetStarted,
@@ -209,7 +211,7 @@ export function ReportHeader({
               )}
             </div>
             <span className="text-[11px] font-mono text-terminal-muted">
-              Updated {formatDate(report.updated_at)}
+              Last synced {lastSyncedAt ? formatDate(lastSyncedAt) : 'Never'}
             </span>
             {!isPublicView && (
               <>

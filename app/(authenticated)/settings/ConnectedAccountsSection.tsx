@@ -9,6 +9,8 @@ interface ConnectedAccount {
   account_type: string | null;
   last_synced_at: string | null;
   created_at: string;
+  enrollment_status: string | null;
+  can_refresh_daily: boolean | null;
 }
 
 interface ConnectedAccountsSectionProps {
@@ -84,6 +86,17 @@ export function ConnectedAccountsSection({
                         {account.account_type}
                       </span>
                     )}
+                    {account.enrollment_status === 'disconnected' ? (
+                      <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-yellow-500" />
+                        Disconnected
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-profit bg-profit/10 border border-profit/20 rounded">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-profit" />
+                        Connected
+                      </span>
+                    )}
                   </div>
                   <div className="space-y-1 text-sm text-terminal-muted">
                     <p className="flex items-center gap-2">
@@ -91,6 +104,19 @@ export function ConnectedAccountsSection({
                       Last synced: {formatDate(account.last_synced_at)}
                     </p>
                   </div>
+                  {account.enrollment_status === 'disconnected' && (
+                    <div className="mt-3 px-3 py-2 rounded-lg border border-yellow-500/20 bg-yellow-500/5 flex items-center justify-between gap-3">
+                      <span className="text-[12px] text-yellow-300/80">
+                        Bank connection lost. Reconnect to resume auto-sync.
+                      </span>
+                      <Link
+                        href="/connect"
+                        className="shrink-0 px-3 py-1 text-[11px] font-medium rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
+                      >
+                        Reconnect
+                      </Link>
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => onShowDeleteConfirm(account.account_id)}

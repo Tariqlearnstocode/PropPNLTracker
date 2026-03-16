@@ -52,12 +52,13 @@ interface Props {
   pnlData: PNLReport;
   canRefreshDaily?: boolean;
   lastRefreshAttempt?: string | null;
+  lastSyncedAt?: string | null;
   isPublicView?: boolean;
   enrollmentDisconnected?: boolean;
 }
 
 
-export default function ReportContent({ report, pnlData, canRefreshDaily = false, lastRefreshAttempt = null, isPublicView = false, enrollmentDisconnected = false }: Props) {
+export default function ReportContent({ report, pnlData, canRefreshDaily = false, lastRefreshAttempt = null, lastSyncedAt = null, isPublicView = false, enrollmentDisconnected = false }: Props) {
   const { summary, monthlyBreakdown, perFirmBreakdown, transactions, accounts } = pnlData;
   const { setReportNav } = useReportNav();
   const [activeTab, setActiveTab] = useState<'overview' | 'firms' | 'transactions' | 'analytics'>('overview');
@@ -317,6 +318,7 @@ export default function ReportContent({ report, pnlData, canRefreshDaily = false
           }}
           canRefreshDaily={!isPublicView}
           lastRefreshAttempt={isPublicView ? null : lastRefreshAttempt}
+          lastSyncedAt={lastSyncedAt}
           onRefreshData={isPublicView ? undefined : handleRefreshData}
           enrollmentDisconnected={isPublicView ? false : enrollmentDisconnected}
           displayName={displayName}

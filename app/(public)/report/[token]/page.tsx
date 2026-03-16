@@ -263,9 +263,10 @@ export default async function ReportPage({ params }: PageProps) {
   let enrollmentDisconnected = false;
   const { data: connectedAccount } = await supabaseAdmin
     .from('connected_accounts')
-    .select('can_refresh_daily, last_refresh_attempt, enrollment_status')
+    .select('can_refresh_daily, last_refresh_attempt, enrollment_status, last_synced_at')
     .eq('user_id', user.id)
-    .eq('account_id', reportData.account_id)
+    .order('last_synced_at', { ascending: false, nullsFirst: false })
+    .limit(1)
     .single();
 
   if (connectedAccount) {
@@ -289,6 +290,7 @@ export default async function ReportPage({ params }: PageProps) {
       pnlData={pnlData}
       canRefreshDaily={canRefreshDaily}
       lastRefreshAttempt={lastRefreshAttempt}
+      lastSyncedAt={connectedAccount?.last_synced_at || null}
       enrollmentDisconnected={enrollmentDisconnected}
     />
   );

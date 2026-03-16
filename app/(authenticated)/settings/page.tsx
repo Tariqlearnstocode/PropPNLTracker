@@ -18,6 +18,8 @@ interface ConnectedAccount {
   account_type: string | null;
   last_synced_at: string | null;
   created_at: string;
+  enrollment_status: string | null;
+  can_refresh_daily: boolean | null;
 }
 
 export default function SettingsPage() {
