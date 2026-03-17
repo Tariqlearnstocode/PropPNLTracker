@@ -57,11 +57,11 @@ export function TransactionsTab({
   return (
     <div className="space-y-4">
       {/* View Toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex bg-terminal-bg rounded-lg p-1 gap-1 border border-terminal-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="flex bg-terminal-bg rounded-lg p-1 gap-1 border border-terminal-border overflow-x-auto dark-scroll">
           <button
             onClick={() => onTransactionViewChange('payouts')}
-            className={`px-4 py-2 text-sm font-medium font-mono rounded-md transition-colors ${
+            className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium font-mono rounded-md transition-colors whitespace-nowrap ${
               transactionView === 'payouts'
                 ? 'bg-profit/20 text-profit border border-profit/30'
                 : 'text-terminal-muted hover:bg-terminal-card-hover'
@@ -71,7 +71,7 @@ export function TransactionsTab({
           </button>
           <button
             onClick={() => onTransactionViewChange('purchases')}
-            className={`px-4 py-2 text-sm font-medium font-mono rounded-md transition-colors ${
+            className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium font-mono rounded-md transition-colors whitespace-nowrap ${
               transactionView === 'purchases'
                 ? 'bg-loss-dim text-loss border border-loss/30'
                 : 'text-terminal-muted hover:bg-terminal-card-hover'
@@ -81,7 +81,7 @@ export function TransactionsTab({
           </button>
           <button
             onClick={() => onTransactionViewChange('needs-assignment')}
-            className={`px-4 py-2 text-sm font-medium font-mono rounded-md transition-colors relative ${
+            className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium font-mono rounded-md transition-colors relative whitespace-nowrap ${
               transactionView === 'needs-assignment'
                 ? 'bg-accent-amber/20 text-accent-amber border border-accent-amber/30'
                 : 'text-terminal-muted hover:bg-terminal-card-hover'
@@ -89,13 +89,13 @@ export function TransactionsTab({
           >
             Needs Assignment
             {needsAssignmentTransactions.length > 0 && (
-              <span className="ml-2 px-1.5 py-0.5 text-[10px] font-mono font-medium bg-accent-amber/30 text-accent-amber rounded-full">
+              <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-mono font-medium bg-accent-amber/30 text-accent-amber rounded-full">
                 {needsAssignmentTransactions.length}
               </span>
             )}
           </button>
         </div>
-        <div className="text-sm font-mono text-terminal-muted">
+        <div className="text-xs sm:text-sm font-mono text-terminal-muted">
           {filteredTransactions.length} {transactionView === 'payouts' ? 'payouts' : transactionView === 'purchases' ? 'purchases' : 'transactions'}
         </div>
       </div>
@@ -104,30 +104,30 @@ export function TransactionsTab({
       {transactionView === 'needs-assignment' ? (
         <div className="space-y-6">
           {selectedTransactionIds.size > 0 && (
-            <div className="bg-accent-blue/10 border border-accent-blue/30 rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-accent-blue/10 border border-accent-blue/30 rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium font-mono text-accent-blue">
+                <span className="text-xs sm:text-sm font-medium font-mono text-accent-blue">
                   {selectedTransactionIds.size} transaction{selectedTransactionIds.size > 1 ? 's' : ''} selected
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={onDeselectAllTransactions}
-                  className="px-3 py-1.5 text-sm text-terminal-muted hover:text-terminal-text hover:bg-terminal-card-hover rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs sm:text-sm text-terminal-muted hover:text-terminal-text hover:bg-terminal-card-hover rounded-lg transition-colors"
                 >
                   Clear
                 </button>
                 <button
                   onClick={() => onBulkDismiss(selectedTransactionIds)}
-                  className="px-4 py-1.5 text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border hover:bg-terminal-card-hover rounded-lg transition-colors font-medium"
+                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm text-terminal-muted hover:text-terminal-text border border-terminal-border hover:bg-terminal-card-hover rounded-lg transition-colors font-medium"
                 >
-                  Dismiss Selected
+                  Dismiss
                 </button>
                 <button
                   onClick={onOpenBulkAssignModal}
-                  className="px-4 py-1.5 text-sm bg-profit text-terminal-bg rounded-lg transition-colors font-medium hover:bg-profit/90"
+                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-profit text-terminal-bg rounded-lg transition-colors font-medium hover:bg-profit/90"
                 >
-                  Assign Selected
+                  Assign
                 </button>
               </div>
             </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useId } from 'react';
 import { PNLReport, formatCurrency } from '@/lib/pnl-calculations';
 
 interface MonthlyPNLHeatmapProps {
@@ -14,6 +14,8 @@ function parseMonthKey(key: string): Date {
 }
 
 export function MonthlyPNLHeatmap({ monthlyBreakdown }: MonthlyPNLHeatmapProps) {
+  const gridId = useId().replace(/:/g, '');
+
   const heatmapData = useMemo(() => {
     // Sort by month key string (YYYY-MM) — newest first, take last 12
     const sorted = [...monthlyBreakdown]
@@ -57,12 +59,17 @@ export function MonthlyPNLHeatmap({ monthlyBreakdown }: MonthlyPNLHeatmapProps) 
     });
   }, [monthlyBreakdown]);
 
-  // Use 4 columns, or fewer if less data
+  // Use 4 columns on sm+, 2 on mobile — capped by data length
   const cols = Math.min(heatmapData.length, 4);
+  const mobileCols = Math.min(heatmapData.length, 2);
 
   return (
     <div className="space-y-3">
-      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+      <style>{`
+        #${gridId} { grid-template-columns: repeat(${mobileCols}, minmax(0, 1fr)); }
+        @media (min-width: 640px) { #${gridId} { grid-template-columns: repeat(${cols}, minmax(0, 1fr)); } }
+      `}</style>
+      <div id={gridId} className="grid gap-1.5 sm:gap-2">
         {heatmapData.map((month) => {
           const date = parseMonthKey(month.month);
           const monthName = date.toLocaleDateString('en-US', { month: 'short' });
@@ -70,7 +77,7 @@ export function MonthlyPNLHeatmap({ monthlyBreakdown }: MonthlyPNLHeatmapProps) 
           return (
             <div
               key={month.month}
-              className="rounded-lg p-3 transition-all duration-200 hover:scale-[1.02] cursor-pointer min-h-[72px] flex flex-col justify-between"
+              className="rounded-lg p-2.5 sm:p-3 transition-all duration-200 hover:scale-[1.02] cursor-pointer min-h-[60px] sm:min-h-[72px] flex flex-col justify-between"
               style={{
                 background: month.bgColor,
                 border: `1px solid ${month.borderColor}`,

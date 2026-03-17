@@ -18,9 +18,9 @@ export function TopFirmsTable({ perFirmBreakdown }: TopFirmsTableProps) {
           <tr className="border-b border-terminal-border">
             <th className="text-left py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">#</th>
             <th className="text-left py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Firm</th>
+            <th className="text-right py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Net PNL</th>
             <th className="text-right py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Deposits</th>
             <th className="text-right py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Fees</th>
-            <th className="text-right py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Net PNL</th>
             <th className="text-right py-2.5 px-3 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">ROI</th>
           </tr>
         </thead>
@@ -46,12 +46,6 @@ export function TopFirmsTable({ perFirmBreakdown }: TopFirmsTableProps) {
                     </span>
                   </div>
                 </td>
-                <td className="py-3 px-3 font-number text-sm text-right text-profit/80">
-                  +{formatCurrency(firm.deposits)}
-                </td>
-                <td className="py-3 px-3 font-number text-sm text-right text-loss/80">
-                  -{formatCurrency(firm.fees)}
-                </td>
                 <td className={`py-3 px-3 font-number text-sm text-right font-bold ${
                   isPositive ? 'text-profit' : 'text-loss'
                 }`}>
@@ -62,6 +56,12 @@ export function TopFirmsTable({ perFirmBreakdown }: TopFirmsTableProps) {
                     }
                     {isPositive ? '+' : ''}{formatCurrency(firm.netPNL)}
                   </div>
+                </td>
+                <td className="py-3 px-3 font-number text-sm text-right text-profit/80">
+                  +{formatCurrency(firm.deposits)}
+                </td>
+                <td className="py-3 px-3 font-number text-sm text-right text-loss/80">
+                  -{formatCurrency(firm.fees)}
                 </td>
                 <td className={`py-3 px-3 font-number text-xs text-right font-semibold ${
                   roi >= 0 ? 'text-profit' : 'text-loss'

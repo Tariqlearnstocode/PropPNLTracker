@@ -28,6 +28,14 @@ export const metadata: Metadata = {
     siteName: 'Prop PNL',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: `${siteUrl}opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'Prop PNL — Prop Firm P&L Tracker',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -36,6 +44,7 @@ export const metadata: Metadata = {
       'Prop firm P&L tracker that pulls real payouts and fees directly from your bank. Works with Topstep, FTMO, Apex, Rise. Set up in 60 seconds.',
     site: '@proppnl',
     creator: '@proppnl',
+    images: [`${siteUrl}twitter-image`],
   },
 };
 

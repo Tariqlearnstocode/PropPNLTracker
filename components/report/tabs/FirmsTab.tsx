@@ -97,10 +97,10 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
               <YAxis
                 type="category"
                 dataKey="name"
-                tick={axisTickStyle}
+                tick={{ ...axisTickStyle, fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={120}
+                width={90}
               />
               <Tooltip
                 contentStyle={{
@@ -162,9 +162,9 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
               <tr className="border-b border-terminal-border">
                 <th className="text-left py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">#</th>
                 <th className="text-left py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Firm Name</th>
+                <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Net PNL</th>
                 <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Deposits</th>
                 <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Fees</th>
-                <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Net PNL</th>
                 <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">ROI</th>
                 <th className="text-right py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Txns</th>
                 <th className="text-center py-3 px-4 text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Match</th>
@@ -197,12 +197,6 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 font-number text-sm text-right text-profit/80">
-                      +{formatCurrency(firm.deposits)}
-                    </td>
-                    <td className="py-3 px-4 font-number text-sm text-right text-loss/80">
-                      -{formatCurrency(firm.fees)}
-                    </td>
                     <td className={`py-3 px-4 font-number text-sm text-right font-bold ${
                       isPositive ? 'text-profit' : 'text-loss'
                     }`}>
@@ -213,6 +207,12 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                         }
                         {isPositive ? '+' : ''}{formatCurrency(firm.netPNL)}
                       </div>
+                    </td>
+                    <td className="py-3 px-4 font-number text-sm text-right text-profit/80">
+                      +{formatCurrency(firm.deposits)}
+                    </td>
+                    <td className="py-3 px-4 font-number text-sm text-right text-loss/80">
+                      -{formatCurrency(firm.fees)}
                     </td>
                     <td className={`py-3 px-4 font-number text-xs text-right font-semibold ${
                       roi >= 0 ? 'text-profit' : 'text-loss'
@@ -254,14 +254,14 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                 <tr className="border-t border-terminal-border bg-terminal-bg/50">
                   <td className="py-3 px-4" />
                   <td className="py-3 px-4 text-sm font-semibold text-terminal-text">Total</td>
+                  <td className={`py-3 px-4 font-number text-sm text-right font-bold ${totalPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
+                    {totalPNL >= 0 ? '+' : ''}{formatCurrency(totalPNL)}
+                  </td>
                   <td className="py-3 px-4 font-number text-sm text-right font-semibold text-profit">
                     +{formatCurrency(totalDeposits)}
                   </td>
                   <td className="py-3 px-4 font-number text-sm text-right font-semibold text-loss">
                     -{formatCurrency(totalFees)}
-                  </td>
-                  <td className={`py-3 px-4 font-number text-sm text-right font-bold ${totalPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
-                    {totalPNL >= 0 ? '+' : ''}{formatCurrency(totalPNL)}
                   </td>
                   <td className="py-3 px-4" />
                   <td className="py-3 px-4 font-number text-xs text-right font-semibold text-terminal-text">

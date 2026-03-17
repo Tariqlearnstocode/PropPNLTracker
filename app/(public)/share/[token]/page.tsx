@@ -152,6 +152,15 @@ export default async function SharePage({ params }: PageProps) {
     }
   }
 
+  // Fetch last_synced_at from connected_accounts for this user
+  const { data: connectedAccount } = await supabaseAdmin
+    .from('connected_accounts')
+    .select('last_synced_at')
+    .eq('user_id', reportRow.user_id)
+    .order('last_synced_at', { ascending: false, nullsFirst: false })
+    .limit(1)
+    .single();
+
   if (!pnlData) {
     return (
       <div className="min-h-screen bg-terminal-bg flex items-center justify-center p-4">
@@ -176,6 +185,7 @@ export default async function SharePage({ params }: PageProps) {
         share_slug: reportRow.share_slug || null,
       }}
       pnlData={pnlData}
+      lastSyncedAt={connectedAccount?.last_synced_at || null}
       isPublicView
     />
   );

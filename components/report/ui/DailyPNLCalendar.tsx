@@ -129,12 +129,13 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
         </div>
       </div>
 
-      <div className="grid grid-cols-8 gap-2">
+      <div className="overflow-x-auto dark-scroll -mx-2 px-2 pb-2">
+      <div className="grid grid-cols-8 gap-1.5 sm:gap-2 min-w-[580px]">
         {/* Day headers -- brighter text for readability */}
         {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Week'].map((label) => (
           <div
             key={label}
-            className="text-xs font-mono uppercase tracking-wider text-terminal-text/70 text-center py-2 font-semibold"
+            className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-terminal-text/70 text-center py-2 font-semibold"
           >
             {label}
           </div>
@@ -145,7 +146,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
           <React.Fragment key={`week-${weekIdx}`}>
             {week.map((day, dayIdx) => {
               if (day.day === 0) {
-                return <div key={`empty-${weekIdx}-${dayIdx}`} className="h-20" />;
+                return <div key={`empty-${weekIdx}-${dayIdx}`} className="h-16 sm:h-20" />;
               }
 
               const hasData = day.data !== null;
@@ -156,7 +157,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
               return (
                 <div
                   key={day.date || `day-${weekIdx}-${dayIdx}`}
-                  className={`h-20 rounded border transition-all ${
+                  className={`h-16 sm:h-20 rounded border transition-all ${
                     hasData
                       ? 'border-white/10 hover:border-white/25 cursor-pointer'
                       : 'border-terminal-border/40'
@@ -168,9 +169,9 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
                   }
                   title={day.date ? `${day.date}: ${formatCurrency(netPNL)}` : ''}
                 >
-                  <div className="h-full flex flex-col p-1.5">
+                  <div className="h-full flex flex-col p-1 sm:p-1.5">
                     <div
-                      className={`text-xs font-mono font-bold ${
+                      className={`text-[10px] sm:text-xs font-mono font-bold ${
                         hasData ? 'text-white' : 'text-terminal-text/40'
                       }`}
                     >
@@ -178,10 +179,10 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
                     </div>
                     {hasData && (
                       <div className="flex-1 flex flex-col justify-center items-center">
-                        <div className="text-sm font-bold font-number leading-tight text-center text-white">
+                        <div className="text-xs sm:text-sm font-bold font-number leading-tight text-center text-white">
                           {formatCurrency(netPNL)}
                         </div>
-                        <div className="text-[10px] font-mono mt-0.5 text-white/80">
+                        <div className="text-[9px] sm:text-[10px] font-mono mt-0.5 text-white/80">
                           {purchases}P / {payouts}D
                         </div>
                       </div>
@@ -193,7 +194,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
             {/* Week total */}
             <div
               key={`week-total-${weekIdx}`}
-              className="h-20 border border-terminal-border/60 rounded flex flex-col items-center justify-center p-1.5 bg-terminal-card/80"
+              className="h-16 sm:h-20 border border-terminal-border/60 rounded flex flex-col items-center justify-center p-1 sm:p-1.5 bg-terminal-card/80"
             >
               <div className="text-[11px] font-mono font-bold text-terminal-text/50 mb-1">W{weekIdx + 1}</div>
               {(() => {
@@ -220,6 +221,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
             </div>
           </React.Fragment>
         ))}
+      </div>
       </div>
     </div>
   );

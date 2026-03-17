@@ -12,9 +12,9 @@ export function HeroSection() {
             <span className="inline-block mb-4 px-3 py-1 text-xs font-mono font-medium text-profit border border-profit/30 rounded-full bg-profit/10">
               Closed Beta
             </span>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-terminal-text mb-5 leading-[1.1] tracking-tight">
               Are you actually profitable?
-              <span className="block mt-2 text-profit whitespace-nowrap">Your bank knows.</span>
+              <span className="block mt-2 text-profit sm:whitespace-nowrap">Your bank knows.</span>
             </h1>
             <p className="text-lg text-terminal-muted max-w-lg mx-auto lg:mx-0 mb-3">
               We connect to your bank and show you the real number. Then we give you a link to prove it.
@@ -68,7 +68,7 @@ function HeroDashboardPreview() {
         <div className="w-12" />
       </div>
 
-      <div className="p-4 sm:p-5 bg-terminal-bg space-y-3">
+      <div className="p-3 sm:p-5 bg-terminal-bg space-y-3">
         {/* Header row */}
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-2">
@@ -82,10 +82,10 @@ function HeroDashboardPreview() {
         </div>
 
         {/* Hero stat cards */}
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           <div className="col-span-2 bg-terminal-card rounded border border-terminal-border p-3">
             <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Net PNL</div>
-            <div className="text-2xl font-semibold font-mono text-profit leading-none">+$3,541</div>
+            <div className="text-xl sm:text-2xl font-semibold font-mono text-profit leading-none">+$3,541</div>
             <div className="text-[9px] font-mono text-profit/60 mt-1">+12.4% margin</div>
           </div>
           <div className="bg-terminal-card rounded border border-terminal-border p-3">
@@ -98,7 +98,7 @@ function HeroDashboardPreview() {
             <div className="text-sm font-semibold font-mono text-loss leading-none">-$28,600</div>
             <div className="text-[9px] font-mono text-terminal-muted mt-1">164 purchases</div>
           </div>
-          <div className="bg-terminal-card rounded border border-terminal-border p-3">
+          <div className="col-span-2 sm:col-span-1 bg-terminal-card rounded border border-terminal-border p-3">
             <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Firms</div>
             <div className="text-sm font-semibold font-mono text-terminal-text leading-none">7</div>
             <div className="text-[9px] font-mono text-terminal-muted mt-1">tracked</div>
@@ -108,7 +108,7 @@ function HeroDashboardPreview() {
         {/* Monthly heatmap */}
         <div>
           <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1.5">Monthly PNL</div>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {[
               { m: "Oct '25", v: -474, p: false },
               { m: "Nov '25", v: 1380, p: true },

@@ -61,6 +61,14 @@ export const metadata: Metadata = {
     siteName: 'Prop PNL',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: `${siteUrl}opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: 'Prop PNL — Prop Firm P&L Tracker',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -68,6 +76,7 @@ export const metadata: Metadata = {
     description: description,
     site: '@proppnl',
     creator: '@proppnl',
+    images: [`${siteUrl}twitter-image`],
   },
   other: {
     'msapplication-TileColor': '#0a0a0f',

@@ -195,7 +195,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           </div>
           {biggestPayout ? (
             <>
-              <div className="font-number text-3xl font-bold text-profit">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                 {formatCurrency(biggestPayout.amount)}
               </div>
               <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -203,7 +203,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -213,7 +213,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           </div>
           {bestFirm ? (
             <>
-              <div className="font-number text-3xl font-bold text-profit">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                 {bestFirm.firmName}
               </div>
               <div className="text-xs font-mono text-profit mt-1">
@@ -221,7 +221,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -231,7 +231,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           </div>
           {worstFirm ? (
             <>
-              <div className="font-number text-3xl font-bold text-loss">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
                 {worstFirm.firmName}
               </div>
               <div className="text-xs font-mono text-loss mt-1">
@@ -239,7 +239,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
       </div>
@@ -298,14 +298,14 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
             Best Day
           </div>
           {bestWorstStats.bestDay ? (
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
               <div>
-                <div className="font-number text-3xl font-bold text-profit">
+                <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                   {formatCurrency(bestWorstStats.bestDay.netPNL)}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-mono text-terminal-muted">
+              <div className="sm:text-right">
+                <div className="text-xs sm:text-sm font-mono text-terminal-muted">
                   {formatDate(bestWorstStats.bestDay.date)}
                 </div>
                 <div className="text-xs font-mono text-terminal-muted mt-0.5">
@@ -314,7 +314,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </div>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -323,14 +323,14 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
             Worst Day
           </div>
           {worstDay ? (
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
               <div>
-                <div className="font-number text-3xl font-bold text-loss">
+                <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
                   {formatCurrency(worstDay.netPNL)}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-mono text-terminal-muted">
+              <div className="sm:text-right">
+                <div className="text-xs sm:text-sm font-mono text-terminal-muted">
                   {formatDate(worstDay.date)}
                 </div>
                 <div className="text-xs font-mono text-terminal-muted mt-0.5">
@@ -339,7 +339,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </div>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
       </div>
@@ -350,7 +350,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Win Rate
           </div>
-          <div className="font-number text-3xl font-bold text-terminal-text">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-text">
             {streakStats.winRate.toFixed(1)}%
           </div>
           <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -362,7 +362,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Profit Factor
           </div>
-          <div className={`font-number text-3xl font-bold ${roiStats.returnPerDollar >= 1 ? 'text-profit' : 'text-loss'}`}>
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${roiStats.returnPerDollar >= 1 ? 'text-profit' : 'text-loss'}`}>
             {roiStats.returnPerDollar.toFixed(2)}x
           </div>
           <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -374,7 +374,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Current Streak
           </div>
-          <div className={`font-number text-3xl font-bold ${
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${
             currentStreak.type === 'win' ? 'text-profit' :
             currentStreak.type === 'loss' ? 'text-loss' :
             'text-terminal-muted'
@@ -394,7 +394,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Avg Payout Size
           </div>
-          <div className="font-number text-3xl font-bold text-profit">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
             {formatCurrency(activityStats.averagePayoutSize)}
           </div>
         </div>
@@ -403,7 +403,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Avg Purchase Size
           </div>
-          <div className="font-number text-3xl font-bold text-loss">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
             {formatCurrency(activityStats.averagePurchaseSize)}
           </div>
         </div>
@@ -412,7 +412,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Return on Investment
           </div>
-          <div className={`font-number text-3xl font-bold ${roiStats.roi >= 0 ? 'text-profit' : 'text-loss'}`}>
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${roiStats.roi >= 0 ? 'text-profit' : 'text-loss'}`}>
             {roiStats.roi.toFixed(1)}%
           </div>
           <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -428,14 +428,14 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
             Best Month
           </div>
           {bestWorstStats.bestMonth ? (
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
               <div>
-                <div className="font-number text-3xl font-bold text-profit">
+                <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                   {formatCurrency(bestWorstStats.bestMonth.netPNL)}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-mono text-terminal-muted">
+              <div className="sm:text-right">
+                <div className="text-xs sm:text-sm font-mono text-terminal-muted">
                   {formatMonth(bestWorstStats.bestMonth.month)}
                 </div>
                 <div className="text-xs font-mono text-terminal-muted mt-0.5">
@@ -444,7 +444,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </div>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -453,14 +453,14 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
             Worst Month
           </div>
           {bestWorstStats.worstMonth ? (
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
               <div>
-                <div className="font-number text-3xl font-bold text-loss">
+                <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
                   {formatCurrency(bestWorstStats.worstMonth.netPNL)}
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-mono text-terminal-muted">
+              <div className="sm:text-right">
+                <div className="text-xs sm:text-sm font-mono text-terminal-muted">
                   {formatMonth(bestWorstStats.worstMonth.month)}
                 </div>
                 <div className="text-xs font-mono text-terminal-muted mt-0.5">
@@ -469,7 +469,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
               </div>
             </div>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
       </div>
@@ -564,7 +564,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Most Active Day
           </div>
-          <div className="font-number text-3xl font-bold text-terminal-text">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-text">
             {dayOfWeekDerived.mostActive?.day ?? '---'}
           </div>
           {dayOfWeekDerived.mostActive && (
@@ -580,7 +580,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Most Profitable Day
           </div>
-          <div className="font-number text-3xl font-bold text-terminal-text">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-text">
             {dayOfWeekDerived.mostProfitable?.day ?? '---'}
           </div>
           {dayOfWeekDerived.mostProfitable && (
@@ -594,7 +594,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Least Profitable Day
           </div>
-          <div className="font-number text-3xl font-bold text-terminal-text">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-text">
             {dayOfWeekDerived.leastProfitable?.day ?? '---'}
           </div>
           {dayOfWeekDerived.leastProfitable && (
@@ -656,7 +656,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Avg Monthly PNL
           </div>
-          <div className={`font-number text-3xl font-bold ${growthTrends.averageMonthlyPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${growthTrends.averageMonthlyPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
             {formatCurrency(growthTrends.averageMonthlyPNL)}
           </div>
         </div>
@@ -665,7 +665,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Monthly Growth Rate
           </div>
-          <div className={`font-number text-3xl font-bold ${avgGrowthRate >= 0 ? 'text-profit' : 'text-loss'}`}>
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${avgGrowthRate >= 0 ? 'text-profit' : 'text-loss'}`}>
             {avgGrowthRate >= 0 ? '+' : ''}{avgGrowthRate.toFixed(1)}%
           </div>
           <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -677,7 +677,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Projected Annual PNL
           </div>
-          <div className={`font-number text-3xl font-bold ${growthTrends.projectedAnnualPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
+          <div className={`font-number text-2xl sm:text-3xl font-bold ${growthTrends.projectedAnnualPNL >= 0 ? 'text-profit' : 'text-loss'}`}>
             {formatCurrency(growthTrends.projectedAnnualPNL)}
           </div>
         </div>
@@ -689,7 +689,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Total Transactions
           </div>
-          <div className="font-number text-3xl font-bold text-terminal-text">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-text">
             {totalTransactions.toLocaleString()}
           </div>
           <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -701,7 +701,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Total Payouts
           </div>
-          <div className="font-number text-3xl font-bold text-profit">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
             {activityStats.totalPayouts.toLocaleString()}
           </div>
         </div>
@@ -710,7 +710,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
           <div className="text-[11px] font-mono uppercase tracking-widest text-terminal-muted mb-2">
             Total Purchases
           </div>
-          <div className="font-number text-3xl font-bold text-loss">
+          <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
             {activityStats.totalPurchases.toLocaleString()}
           </div>
         </div>

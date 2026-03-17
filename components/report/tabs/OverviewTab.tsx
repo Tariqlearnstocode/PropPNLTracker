@@ -57,7 +57,7 @@ export function OverviewTab({
               )}
             </div>
 
-            <div className={`font-number text-5xl md:text-6xl font-extrabold tracking-tight mb-4 ${isProfit ? 'text-profit profit-glow' : 'text-loss loss-glow'}`}>
+            <div className={`font-number text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 ${isProfit ? 'text-profit profit-glow' : 'text-loss loss-glow'}`}>
               {isProfit ? '+' : ''}{formatCurrency(displayPNL)}
             </div>
 
@@ -117,7 +117,7 @@ export function OverviewTab({
           </div>
           {tradingStats.payoutPerformanceStats?.largestPayout ? (
             <>
-              <div className="font-number text-3xl font-bold text-profit">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                 {formatCurrency(tradingStats.payoutPerformanceStats.largestPayout.amount)}
               </div>
               <div className="text-xs font-mono text-terminal-muted mt-1">
@@ -125,7 +125,7 @@ export function OverviewTab({
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -135,7 +135,7 @@ export function OverviewTab({
           </div>
           {tradingStats.bestWorstStats?.bestFirm ? (
             <>
-              <div className="font-number text-3xl font-bold text-profit">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-profit">
                 {tradingStats.bestWorstStats.bestFirm.firmName}
               </div>
               <div className="text-xs font-mono text-profit mt-1">
@@ -143,7 +143,7 @@ export function OverviewTab({
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
 
@@ -153,7 +153,7 @@ export function OverviewTab({
           </div>
           {tradingStats.bestWorstStats?.worstFirm ? (
             <>
-              <div className="font-number text-3xl font-bold text-loss">
+              <div className="font-number text-2xl sm:text-3xl font-bold text-loss">
                 {tradingStats.bestWorstStats.worstFirm.firmName}
               </div>
               <div className="text-xs font-mono text-loss mt-1">
@@ -161,7 +161,7 @@ export function OverviewTab({
               </div>
             </>
           ) : (
-            <div className="font-number text-3xl font-bold text-terminal-muted">---</div>
+            <div className="font-number text-2xl sm:text-3xl font-bold text-terminal-muted">---</div>
           )}
         </div>
       </div>
