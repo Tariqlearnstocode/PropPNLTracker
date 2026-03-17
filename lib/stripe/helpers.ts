@@ -49,6 +49,7 @@ export async function getOrCreateStripeCustomer(userId: string, email: string, n
     .upsert({
       user_id: userId,
       stripe_customer_id: customer.id,
+      display_name: name || null,
     } as unknown as Record<string, unknown>);
 
   return customer.id;
