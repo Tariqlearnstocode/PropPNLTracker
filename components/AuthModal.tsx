@@ -54,23 +54,20 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
 
       if (signUpError) throw signUpError;
 
-      // Create Stripe customer for the new user (async, don't wait)
-      // The name will be retrieved from user metadata by the API endpoint
+      // Create Stripe customer for the new user
       if (signUpData.user) {
-        // Don't await - let it run in background
-        fetch('/api/stripe/create-customer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: signUpData.user.id,
-            email: signUpData.user.email || email,
-          }),
-        }).catch(() => {
-          // Don't fail sign up if Stripe customer creation fails
+        try {
+          await fetch('/api/stripe/create-customer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: signUpData.user.id,
+              email: signUpData.user.email || email,
+            }),
+          });
+        } catch {
           // Customer will be created lazily on first payment
-        });
+        }
       }
 
       // Success - modal will close via onAuthStateChange in AuthContext
