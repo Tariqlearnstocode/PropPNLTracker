@@ -1,21 +1,105 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import Script from 'next/script';
+import { getURL } from '@/utils/helpers';
 import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, type FirmWithAccounts } from '@/lib/firms';
 import { getFirmsWithAccounts } from '@/lib/firms.server';
 import { PromoCodeBadge } from '@/components/PromoCodeBadge';
 
 export const dynamic = 'force-dynamic';
 
+const siteUrl = getURL();
+
 export const metadata: Metadata = {
   title: 'Best Prop Trading Firms 2026 | Compare Drawdowns, Fees & Payouts',
   description:
     'Compare the top prop trading firms side by side. Drawdown rules, evaluation pricing, profit splits, platforms, and payout processors — all in one place.',
+  alternates: {
+    canonical: `${siteUrl}/firms`,
+  },
   openGraph: {
     title: 'Best Prop Trading Firms 2026 | Prop PNL',
     description:
       'Compare the top prop trading firms side by side. Drawdown rules, evaluation pricing, profit splits, and platforms.',
+    url: `${siteUrl}/firms`,
+    siteName: 'Prop PNL',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Best Prop Trading Firms 2026 | Prop PNL',
+    description:
+      'Compare the top prop trading firms side by side. Drawdown rules, evaluation pricing, profit splits, and platforms.',
+    site: '@proppnl',
+    creator: '@proppnl',
   },
 };
+
+function buildFirmsListSchema(firms: FirmWithAccounts[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Best Prop Trading Firms 2026',
+    description:
+      'Directory of top prop trading firms with evaluation pricing, drawdown rules, profit splits, and platform support.',
+    url: `${siteUrl}/firms`,
+    numberOfItems: firms.length,
+    itemListElement: firms.map((firm, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Organization',
+        name: firm.name,
+        url: firm.website ?? `${siteUrl}/firms/${firm.slug}`,
+        ...(firm.logo_url ? { logo: firm.logo_url } : {}),
+        ...(firm.rating
+          ? {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: firm.rating,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
+      },
+    })),
+  };
+}
+
+function buildFaqSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is a prop trading firm?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'A prop trading firm (proprietary trading firm) funds traders with its own capital in exchange for a share of the profits. Traders pay for an evaluation challenge, and once they pass, they trade a funded account with the firm\'s money.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How do I choose the right prop firm?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Compare drawdown type (EOD, trailing, static), evaluation pricing, profit target, profit split, payout frequency, and supported platforms. Also consider consistency rules and maximum funded allocation.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the difference between EOD and trailing drawdown?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'End-of-Day (EOD) drawdown resets to your closing balance each day, while trailing drawdown follows your equity high watermark in real time. EOD is generally more forgiving as intraday dips don\'t permanently move your drawdown floor.',
+        },
+      },
+    ],
+  };
+}
 
 function StarRating({ rating }: { rating: number }) {
   const fullStars = Math.floor(rating);
@@ -104,6 +188,19 @@ export default async function FirmsPage() {
   const firms = await getFirmsWithAccounts();
 
   return (
+    <>
+      <Script
+        id="firms-list-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildFirmsListSchema(firms)),
+        }}
+      />
+      <Script
+        id="firms-faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFaqSchema()) }}
+      />
     <div className="min-h-screen bg-terminal-bg">
       {/* Hero — compact inline bar (matches Leaderboard) */}
       <div className="border-b border-terminal-border bg-gradient-hero-short">
@@ -333,5 +430,6 @@ export default async function FirmsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

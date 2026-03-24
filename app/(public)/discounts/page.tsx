@@ -1,19 +1,37 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
+import { getURL } from '@/utils/helpers';
 import { getFirmsWithAccounts } from '@/lib/firms.server';
 import { hasDiscount, getEvalPrice, type FirmWithAccounts } from '@/lib/firms';
 import { DiscountsClient } from './discounts-client';
 
 export const dynamic = 'force-dynamic';
 
+const siteUrl = getURL();
+
 export const metadata: Metadata = {
   title: 'Prop Firm Discounts & Promo Codes (March 2026) | Prop PNL',
   description:
     'Active prop firm discount codes and deals for March 2026. Save on evaluations from top futures prop firms like TakeProfitTrader, MyFundedFutures, Tradeify, and more.',
+  alternates: {
+    canonical: `${siteUrl}/discounts`,
+  },
   openGraph: {
     title: 'Prop Firm Discounts & Promo Codes | Prop PNL',
     description:
       'Active prop firm discount codes and deals. Save on evaluations from top futures prop firms.',
+    url: `${siteUrl}/discounts`,
+    siteName: 'Prop PNL',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Prop Firm Discounts & Promo Codes | Prop PNL',
+    description:
+      'Active prop firm discount codes and deals. Save on evaluations from top futures prop firms.',
+    site: '@proppnl',
+    creator: '@proppnl',
   },
 };
 

@@ -1,11 +1,15 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import Script from 'next/script';
 import { notFound } from 'next/navigation';
-import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, type FirmAccount } from '@/lib/firms';
+import { getURL } from '@/utils/helpers';
+import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, type FirmAccount, type FirmWithAccounts } from '@/lib/firms';
 import { getFirmBySlug } from '@/lib/firms.server';
 import { AccountTable } from './account-table';
 
 export const dynamic = 'force-dynamic';
+
+const siteUrl = getURL();
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,10 +23,98 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${firm.name} Review | Drawdown Rules, Pricing & Payouts | Prop PNL`,
     description: `${firm.name} prop firm review. Compare ${firm.name} evaluation pricing, drawdown rules, consistency rules, profit splits, and payout details.`,
+    alternates: {
+      canonical: `${siteUrl}/firms/${firm.slug}`,
+    },
     openGraph: {
       title: `${firm.name} Review | Prop PNL`,
       description: `${firm.name} prop firm details — pricing, drawdown, rules, and payouts.`,
+      url: `${siteUrl}/firms/${firm.slug}`,
+      siteName: 'Prop PNL',
+      locale: 'en_US',
+      type: 'website',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${firm.name} Review | Prop PNL`,
+      description: `${firm.name} prop firm details — pricing, drawdown, rules, and payouts.`,
+      site: '@proppnl',
+      creator: '@proppnl',
+    },
+  };
+}
+
+function buildOrganizationSchema(firm: FirmWithAccounts) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: firm.name,
+    url: firm.website ?? `${siteUrl}/firms/${firm.slug}`,
+    ...(firm.logo_url ? { logo: firm.logo_url } : {}),
+    ...(firm.founded_year ? { foundingDate: `${firm.founded_year}` } : {}),
+    ...(firm.country ? { address: { '@type': 'PostalAddress', addressCountry: firm.country } } : {}),
+    ...(firm.rating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: firm.rating,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+  };
+}
+
+function buildBreadcrumbSchema(firmName: string, firmSlug: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Firms',
+        item: `${siteUrl}/firms`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: firmName,
+        item: `${siteUrl}/firms/${firmSlug}`,
+      },
+    ],
+  };
+}
+
+function buildFaqSchema(firmName: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `Is ${firmName} a legit prop firm?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `We track real bank-verified payouts from ${firmName} traders on our leaderboard. Check the data to see actual payout history and trader performance.`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: `What drawdown rules does ${firmName} use?`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `${firmName}'s drawdown rules vary by account type and size. See the account table above for exact drawdown limits and type (EOD, Trailing, or Static) for each plan.`,
+        },
+      },
+    ],
   };
 }
 
@@ -115,6 +207,28 @@ export default async function FirmDetailPage({ params }: PageProps) {
   const sampleAccount = accounts[0] as FirmAccount | undefined;
 
   return (
+    <>
+      <Script
+        id="firm-org-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildOrganizationSchema(firm)),
+        }}
+      />
+      <Script
+        id="firm-breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildBreadcrumbSchema(firm.name, firm.slug)),
+        }}
+      />
+      <Script
+        id="firm-faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildFaqSchema(firm.name)),
+        }}
+      />
     <div className="min-h-screen bg-terminal-bg">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24">
@@ -345,5 +459,6 @@ export default async function FirmDetailPage({ params }: PageProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -489,7 +489,7 @@ export function CompareClient({ firms }: CompareClientProps) {
       </div>
 
       {/* Table */}
-      <section className="bg-terminal-bg">
+      <section className="bg-gradient-hero">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {filteredRows.length === 0 ? (
             <div className="text-center py-20">
