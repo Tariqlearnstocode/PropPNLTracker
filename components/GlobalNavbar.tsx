@@ -72,12 +72,24 @@ export default function GlobalNavbar() {
     return (
       <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-terminal-border">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-6 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <span className="relative flex h-6 w-6">
                 <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
               </span>
               <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
+            </Link>
+            <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+              Leaderboard
+            </Link>
+            <Link href="/firms" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+              Firms
+            </Link>
+            <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+              Compare
+            </Link>
+            <Link href="/discounts" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+              Discounts
             </Link>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -132,6 +144,9 @@ export default function GlobalNavbar() {
           </Link>
           <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
             Compare
+          </Link>
+          <Link href="/discounts" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+            Discounts
           </Link>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">

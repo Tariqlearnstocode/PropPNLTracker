@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, hasFundedDifferences, type FirmWithAccounts } from '@/lib/firms';
+import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, type FirmWithAccounts } from '@/lib/firms';
 import { getFirmsWithAccounts } from '@/lib/firms.server';
+import { PromoCodeBadge } from '@/components/PromoCodeBadge';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,15 +85,19 @@ function getCheapestAccount(firm: FirmWithAccounts) {
   }, firm.firm_accounts[0]);
 }
 
-/** Get the most common profit split across accounts */
-function getDisplayProfitSplit(firm: FirmWithAccounts): string {
-  if (firm.profit_split_note) return firm.profit_split_note;
-  const splits = firm.firm_accounts.map((a) => a.profit_split).filter(Boolean);
-  if (splits.length === 0) return 'N/A';
-  // Return the most common one
-  const counts: Record<string, number> = {};
-  splits.forEach((s) => { counts[s!] = (counts[s!] || 0) + 1; });
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+/** Get unique promo codes across a firm's accounts */
+function getPromoCodes(firm: FirmWithAccounts): string[] {
+  const codes = new Set<string>();
+  for (const a of firm.firm_accounts) {
+    if (a.promo_code) codes.add(a.promo_code);
+  }
+  return Array.from(codes);
+}
+
+/** Get all unique profit splits across accounts */
+function getUniqueProfitSplits(firm: FirmWithAccounts): string[] {
+  const splits = firm.firm_accounts.map((a) => a.profit_split).filter(Boolean) as string[];
+  return Array.from(new Set(splits));
 }
 
 export default async function FirmsPage() {
@@ -139,9 +144,10 @@ export default async function FirmsPage() {
                 const cheapest = firm.firm_accounts.length > 0 ? getCheapestAccount(firm) : null;
                 const accountTypes = getAccountTypes(firm);
                 const drawdownTypes = getDrawdownTypes(firm);
-                const profitSplit = getDisplayProfitSplit(firm);
-                const hasFundedRuleDiffs = firm.firm_accounts.some(hasFundedDifferences);
-                const maxVisible = 4;
+                const profitSplits = getUniqueProfitSplits(firm);
+                const promoCodes = getPromoCodes(firm);
+
+                const maxVisible = 3;
                 const extraPlatforms =
                   firm.platforms.length > maxVisible
                     ? firm.platforms.length - maxVisible
@@ -190,7 +196,7 @@ export default async function FirmsPage() {
                       {accountTypes.length > 0 && (
                         <div className="flex items-center gap-2">
                           <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
-                            Account type :
+                            Account type
                           </span>
                           <div className="flex items-center gap-1.5">
                             {accountTypes.map((t) => (
@@ -202,7 +208,7 @@ export default async function FirmsPage() {
                       {drawdownTypes.length > 0 && (
                         <div className="flex items-center gap-2">
                           <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
-                            Drawdown :
+                            Drawdown
                           </span>
                           <div className="flex items-center gap-1.5">
                             {drawdownTypes.map((d) => (
@@ -214,23 +220,27 @@ export default async function FirmsPage() {
                       {firm.max_funded_allocation && (
                         <div className="flex items-center gap-2">
                           <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
-                            Max Funded :
+                            Max Funded
                           </span>
                           <Badge>{firm.max_funded_allocation}</Badge>
                         </div>
                       )}
-                      <div className="flex items-center gap-2">
-                        <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
-                          Profit Split :
-                        </span>
-                        <span className="text-profit font-mono text-xs">
-                          {profitSplit}
-                        </span>
-                      </div>
+                      {profitSplits.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            Profit Split
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {profitSplits.map((s) => (
+                              <span key={s} className="text-profit font-mono text-xs">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       {cheapest && (
                         <div className="flex items-center gap-2">
                           <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
-                            From :
+                            From
                           </span>
                           <span className="font-mono text-xs">
                             {hasEvalDiscount(cheapest) ? (
@@ -247,6 +257,18 @@ export default async function FirmsPage() {
                           </span>
                         </div>
                       )}
+                      {promoCodes.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            Promo
+                          </span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {promoCodes.map((code) => (
+                              <PromoCodeBadge key={code} code={code} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       {firm.platforms.length > 0 && (() => {
                         const sorted = sortPlatforms(firm.platforms);
                         const visible = sorted.slice(0, maxVisible);
@@ -254,7 +276,7 @@ export default async function FirmsPage() {
                         return (
                           <div className="flex items-start gap-2">
                             <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap pt-1.5">
-                              Platforms :
+                              Platforms
                             </span>
                             <div className="flex items-center gap-1.5 flex-wrap">
                               {visible.map((p) => (
@@ -277,11 +299,6 @@ export default async function FirmsPage() {
                         <span className="text-xs font-mono px-2 py-0.5 rounded bg-profit/10 text-profit border border-profit/20">
                           {getCategoryLabel(firm.category)}
                         </span>
-                        {hasFundedRuleDiffs && (
-                          <span className="text-xs font-mono px-2 py-0.5 rounded bg-accent-amber/10 text-accent-amber border border-accent-amber/20">
-                            Funded rules differ
-                          </span>
-                        )}
                       </div>
                       {firm.payout_methods.length > 0 && (
                         <span className="text-xs font-mono text-terminal-muted">

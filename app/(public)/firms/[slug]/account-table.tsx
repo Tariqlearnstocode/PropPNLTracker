@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, hasActivationDiscount, getFundedValue, type FirmAccount } from '@/lib/firms';
+import { PromoCodeBadge } from '@/components/PromoCodeBadge';
 
 function formatMoney(n: number): string {
   return '$' + n.toLocaleString();
@@ -30,18 +31,18 @@ function EvalView({ accounts }: { accounts: FirmAccount[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-terminal-border bg-terminal-card">
-            <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3">Plan</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Size</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Eval Price</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Activation</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Profit Target</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Max Drawdown</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">DLL</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Min Days</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Consistency</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Max Contracts</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Split</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Reset Cost</th>
+            <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 whitespace-nowrap">Plan</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Size</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Eval Price</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Activation</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Profit Target</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Max Drawdown</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Split</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">DLL</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Min Days</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Consistency</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Max Contracts</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Reset Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +64,7 @@ function EvalView({ accounts }: { accounts: FirmAccount[] }) {
                     <span className="text-terminal-muted line-through text-xs">{formatMoney(a.price ?? 0)}</span>
                     <span className="text-profit font-medium ml-1">{formatMoney(getEvalPrice(a))}</span>
                     {a.promo_code && (
-                      <span className="block text-[10px] text-accent-amber">{a.promo_code}</span>
+                      <div className="mt-1"><PromoCodeBadge code={a.promo_code} /></div>
                     )}
                   </>
                 ) : (
@@ -97,6 +98,9 @@ function EvalView({ accounts }: { accounts: FirmAccount[] }) {
                   </span>
                 )}
               </td>
+              <td className="px-3 py-3 text-center font-mono text-profit">
+                {a.profit_split ?? '—'}
+              </td>
               <td className="px-3 py-3 text-center font-mono text-terminal-text">
                 {a.daily_loss_limit ? formatMoney(a.daily_loss_limit) : '—'}
               </td>
@@ -112,9 +116,6 @@ function EvalView({ accounts }: { accounts: FirmAccount[] }) {
               </td>
               <td className="px-3 py-3 text-center font-mono text-terminal-text">
                 {a.max_contract_size ?? '—'}
-              </td>
-              <td className="px-3 py-3 text-center font-mono text-profit">
-                {a.profit_split ?? '—'}
               </td>
               <td className="px-3 py-3 text-center font-mono text-terminal-text">
                 {a.reset_cost ? formatMoney(a.reset_cost) : 'Free'}
@@ -136,16 +137,16 @@ function FundedView({ accounts }: { accounts: FirmAccount[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-terminal-border bg-terminal-card">
-            <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3">Plan</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Size</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Drawdown Mode</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Consistency</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Max Contracts</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Split</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Scaling Rule</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Min Profit/Day</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Max Payout</th>
-            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3">Days to Payout</th>
+            <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 whitespace-nowrap">Plan</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Size</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Drawdown Mode</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Consistency</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Max Contracts</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Split</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Scaling Rule</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Min Profit/Day</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Max Payout</th>
+            <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 whitespace-nowrap">Days to Payout</th>
           </tr>
         </thead>
         <tbody>
@@ -174,37 +175,19 @@ function FundedView({ accounts }: { accounts: FirmAccount[] }) {
                   ) : (
                     <span className="text-terminal-muted text-xs">—</span>
                   )}
-                  {!a.funded_drawdown_type && ddType && (
-                    <span className="block text-[10px] text-terminal-muted">same as eval</span>
-                  )}
                 </td>
                 <td className="px-3 py-3 text-center font-mono text-sm">
                   {consistency && consistency.toLowerCase() !== 'none' ? (
-                    <span className={a.funded_consistency_rule ? 'text-profit font-semibold' : 'text-accent-amber'}>
-                      {consistency}
-                    </span>
+                    <span className="text-accent-amber">{consistency}</span>
                   ) : (
                     <span className="text-profit">None</span>
                   )}
-                  {!a.funded_consistency_rule && consistency && consistency.toLowerCase() !== 'none' && (
-                    <span className="block text-[10px] text-terminal-muted">same as eval</span>
-                  )}
                 </td>
-                <td className="px-3 py-3 text-center font-mono text-sm">
-                  <span className={a.funded_max_contract_size ? 'text-profit font-semibold' : 'text-terminal-text'}>
-                    {maxContracts ?? '—'}
-                  </span>
-                  {!a.funded_max_contract_size && maxContracts && (
-                    <span className="block text-[10px] text-terminal-muted">same as eval</span>
-                  )}
+                <td className="px-3 py-3 text-center font-mono text-terminal-text text-sm">
+                  {maxContracts ?? '—'}
                 </td>
-                <td className="px-3 py-3 text-center font-mono text-sm">
-                  <span className={a.funded_profit_split ? 'text-profit font-semibold' : 'text-profit'}>
-                    {split ?? '—'}
-                  </span>
-                  {!a.funded_profit_split && split && (
-                    <span className="block text-[10px] text-terminal-muted">same as eval</span>
-                  )}
+                <td className="px-3 py-3 text-center font-mono text-profit text-sm">
+                  {split ?? '—'}
                 </td>
                 <td className="px-3 py-3 text-center text-sm">
                   {scalingRule ? (
@@ -248,7 +231,7 @@ function MobileCard({ account, phase }: { account: FirmAccount; phase: 'eval' | 
                 <span className="font-mono text-terminal-muted line-through text-xs">{formatMoney(account.price ?? 0)}</span>
                 <span className="font-mono text-profit font-medium text-sm ml-1">{formatMoney(getEvalPrice(account))}</span>
                 {account.promo_code && (
-                  <span className="block text-[10px] text-accent-amber">{account.promo_code}</span>
+                  <span className="block text-[10px] text-profit">{account.promo_code}</span>
                 )}
               </>
             ) : (
@@ -301,6 +284,12 @@ function MobileCard({ account, phase }: { account: FirmAccount; phase: 'eval' | 
             <span className="text-terminal-muted block mb-0.5">Max Contracts</span>
             <span className="font-mono text-terminal-text">{account.max_contract_size ?? '—'}</span>
           </div>
+          {account.promo_code && (
+            <div className="bg-accent-amber/5 rounded px-3 py-2 col-span-2 flex items-center justify-between">
+              <span className="text-terminal-muted text-xs">Promo Code</span>
+              <PromoCodeBadge code={account.promo_code} />
+            </div>
+          )}
         </div>
       </div>
     );
