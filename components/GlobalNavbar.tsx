@@ -30,7 +30,7 @@ export default function GlobalNavbar() {
     const displayName = reportNav?.displayName ?? null;
     const onGetStarted = reportNav?.onGetStarted ?? (() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } })));
     return (
-      <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
+      <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-terminal-border">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -70,7 +70,7 @@ export default function GlobalNavbar() {
     const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
     return (
-      <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
+      <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-terminal-border">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -89,7 +89,7 @@ export default function GlobalNavbar() {
                 Report
               </Link>
             ) : (
-              <Link href="/connect" className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-terminal-bg transition-colors flex-shrink-0 whitespace-nowrap">
+              <Link href="/connect" className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-white transition-colors flex-shrink-0 whitespace-nowrap">
                 Connect Your Bank
               </Link>
             )}
@@ -115,7 +115,7 @@ export default function GlobalNavbar() {
   const barButtonClass = 'px-4 py-2 text-xs font-mono font-medium text-profit border border-profit/30 hover:bg-profit/10 rounded-lg transition-colors flex-shrink-0 whitespace-nowrap';
 
   return (
-    <header className="sticky top-0 z-40 border-b border-profit/20 bg-gradient-nav">
+    <header className="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-terminal-border">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
@@ -127,6 +127,12 @@ export default function GlobalNavbar() {
           <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
             Leaderboard
           </Link>
+          <Link href="/firms" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+            Firms
+          </Link>
+          <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors hidden sm:inline">
+            Compare
+          </Link>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
@@ -137,7 +143,7 @@ export default function GlobalNavbar() {
           </button>
           <button
             onClick={() => handleOpenAuthModal('signup')}
-            className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-terminal-bg transition-colors flex-shrink-0 whitespace-nowrap"
+            className="px-4 py-2 text-xs font-mono font-medium rounded-lg bg-profit hover:bg-profit/90 text-white transition-colors flex-shrink-0 whitespace-nowrap"
           >
             {primaryCtaLabel}
           </button>

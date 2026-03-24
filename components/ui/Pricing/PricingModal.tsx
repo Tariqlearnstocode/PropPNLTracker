@@ -83,9 +83,9 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-terminal-card-hover rounded-lg transition-colors"
+            className="p-2 hover:bg-terminal-card-hover rounded-lg transition-colors text-terminal-text"
           >
-            <span className="text-terminal-muted text-lg">✕</span>
+            <span className="text-lg">✕</span>
           </button>
         </div>
 
@@ -127,7 +127,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
               <button
                 onClick={() => handleCheckout('snapshot')}
                 disabled={loading === 'snapshot'}
-                className="w-full py-2.5 bg-terminal-text hover:bg-terminal-text/90 disabled:bg-terminal-muted text-terminal-bg font-medium rounded-lg transition-colors"
+                className="w-full py-2.5 bg-terminal-text hover:bg-terminal-text/90 disabled:bg-terminal-muted text-white font-medium rounded-lg transition-colors"
               >
                 {loading === 'snapshot' ? 'Loading...' : 'Get Snapshot Report'}
               </button>
@@ -172,7 +172,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
               <button
                 onClick={() => handleCheckout('lifetime')}
                 disabled={loading === 'lifetime'}
-                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
+                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-white font-medium rounded-lg transition-colors"
               >
                 {loading === 'lifetime' ? 'Loading...' : 'Get Lifetime Access'}
               </button>

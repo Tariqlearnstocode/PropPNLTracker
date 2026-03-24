@@ -58,7 +58,7 @@ export function FirmDonutChart({ perFirmBreakdown }: FirmDonutChartProps) {
             ))}
           </Pie>
           <Tooltip
-            contentStyle={{ backgroundColor: '#111118', border: '1px solid #1e1e2a', borderRadius: '8px', padding: '8px' }}
+            contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '8px' }}
             formatter={(_value, _name, props) => {
               const data = props.payload as { netPNL: number; name: string } | undefined;
               if (!data) return [String(_value ?? ''), String(_name ?? '')];

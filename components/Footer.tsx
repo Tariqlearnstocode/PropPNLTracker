@@ -16,6 +16,8 @@ export default function Footer() {
           <div className="flex items-center gap-6">
             <Link href="/connect" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Connect Bank</Link>
             <Link href="/leaderboard" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Leaderboard</Link>
+            <Link href="/firms" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Firms</Link>
+            <Link href="/compare" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Compare</Link>
             <Link href="/security" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Security</Link>
             <Link href="/disclaimers" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Disclaimers</Link>
             <a href="mailto:support@proppnl.com" className="text-xs font-mono text-terminal-muted hover:text-profit transition-colors">Contact</a>

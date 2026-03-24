@@ -77,7 +77,7 @@ export function PricingContent() {
           </div>
           <Link
             href="/connect"
-            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-white font-medium rounded-lg transition-colors"
           >
             Get Snapshot Report
           </Link>
@@ -121,7 +121,7 @@ export function PricingContent() {
           </div>
           <Link
             href="/connect"
-            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors"
+            className="block w-full text-center py-2.5 bg-profit hover:bg-profit/90 text-white font-medium rounded-lg transition-colors"
           >
             Get Lifetime Access
           </Link>
@@ -185,7 +185,7 @@ export function PricingContent() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
+                className="w-full py-2.5 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-white font-medium rounded-lg transition-colors"
               >
                 {submitting ? 'Submitting...' : 'Request pricing'}
               </button>

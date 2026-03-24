@@ -139,7 +139,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
       <div className="bg-terminal-card rounded-2xl max-w-md w-full mx-4 overflow-hidden border border-terminal-border">
         <div className="p-6 border-b border-terminal-border flex items-start justify-between">
           <div>
@@ -234,7 +234,7 @@ export function AuthModal({ isOpen, onClose, initialMode = 'signup', onAuthSucce
           <button
             type="submit"
             disabled={loading || resetEmailSent}
-            className="w-full py-3 px-4 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {loading && <span className="inline-block animate-pulse text-base">⏳</span>}
             {mode === 'signup' ? 'Create Account' : mode === 'signin' ? 'Sign In' : 'Send Reset Link'}

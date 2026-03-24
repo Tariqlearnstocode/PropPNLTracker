@@ -153,7 +153,7 @@ export default function LeaderboardContent() {
                   <button
                     onClick={() => { setSelectedFirm(null); setFirmDropdownOpen(false); }}
                     className={`w-full text-left px-3 py-2 text-xs font-mono transition-colors ${
-                      !selectedFirm ? 'text-profit bg-profit/10' : 'text-terminal-text hover:bg-terminal-card-hover'
+                      !selectedFirm ? 'text-profit bg-profit/10' : 'text-terminal-text hover:bg-black/5'
                     }`}
                   >
                     All Firms
@@ -163,7 +163,7 @@ export default function LeaderboardContent() {
                       key={firm}
                       onClick={() => { setSelectedFirm(firm); setFirmDropdownOpen(false); }}
                       className={`w-full text-left px-3 py-2 text-xs font-mono transition-colors border-t border-terminal-border/50 ${
-                        selectedFirm === firm ? 'text-profit bg-profit/10' : 'text-terminal-text hover:bg-terminal-card-hover'
+                        selectedFirm === firm ? 'text-profit bg-profit/10' : 'text-terminal-text hover:bg-black/5'
                       }`}
                     >
                       {firm}
@@ -242,7 +242,7 @@ export default function LeaderboardContent() {
                   return (
                     <tr
                       key={entry.id}
-                      className={`border-b border-terminal-border/50 hover:bg-terminal-card-hover transition-colors ${
+                      className={`border-b border-terminal-border/50 hover:bg-black/2 transition-colors ${
                         rank <= 3 ? 'bg-profit/[0.02]' : ''
                       }`}
                     >

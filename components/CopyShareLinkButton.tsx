@@ -19,7 +19,7 @@ export function CopyShareLinkButton() {
     <button
       type="button"
       onClick={handleCopy}
-      className="w-full px-4 py-2 bg-profit text-terminal-bg rounded-md text-sm font-medium hover:bg-profit/90 transition-colors flex items-center justify-center gap-2"
+      className="w-full px-4 py-2 bg-profit text-white rounded-md text-sm font-medium hover:bg-profit/90 transition-colors flex items-center justify-center gap-2"
     >
       <span>🔗</span>
       Copy Share Link

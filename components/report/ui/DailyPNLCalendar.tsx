@@ -76,7 +76,7 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
   // Uses rgba with a raised floor so even small values are clearly visible
   const getDayCellStyle = (netPNL: number, maxAbsPNL: number): React.CSSProperties => {
     if (netPNL === 0) {
-      return { backgroundColor: 'rgba(30, 30, 42, 0.7)' };
+      return { backgroundColor: 'rgba(209, 213, 219, 0.7)' };
     }
 
     const ratio = maxAbsPNL > 0 ? Math.abs(netPNL) / maxAbsPNL : 0;
@@ -159,30 +159,30 @@ export function DailyPNLCalendar({ dailyPNL, selectedMonth, onMonthChange }: Dai
                   key={day.date || `day-${weekIdx}-${dayIdx}`}
                   className={`h-16 sm:h-20 rounded border transition-all ${
                     hasData
-                      ? 'border-white/10 hover:border-white/25 cursor-pointer'
+                      ? 'border-black/10 hover:border-black/25 cursor-pointer'
                       : 'border-terminal-border/40'
                   }`}
                   style={
                     hasData
                       ? getDayCellStyle(netPNL, monthData.maxAbsPNL)
-                      : { backgroundColor: 'rgba(17, 17, 24, 0.6)' } // subtle neutral for no-data days
+                      : { backgroundColor: 'rgba(229, 231, 235, 0.6)' } // subtle neutral for no-data days
                   }
                   title={day.date ? `${day.date}: ${formatCurrency(netPNL)}` : ''}
                 >
                   <div className="h-full flex flex-col p-1 sm:p-1.5">
                     <div
                       className={`text-[10px] sm:text-xs font-mono font-bold ${
-                        hasData ? 'text-white' : 'text-terminal-text/40'
+                        hasData ? 'text-terminal-text' : 'text-terminal-text/40'
                       }`}
                     >
                       {day.day}
                     </div>
                     {hasData && (
                       <div className="flex-1 flex flex-col justify-center items-center">
-                        <div className="text-xs sm:text-sm font-bold font-number leading-tight text-center text-white">
+                        <div className="text-xs sm:text-sm font-bold font-number leading-tight text-center text-terminal-text">
                           {formatCurrency(netPNL)}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] font-mono mt-0.5 text-white/80">
+                        <div className="text-[9px] sm:text-[10px] font-mono mt-0.5 text-terminal-text/80">
                           {purchases}P / {payouts}D
                         </div>
                       </div>

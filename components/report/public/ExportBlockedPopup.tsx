@@ -42,7 +42,7 @@ export function ExportBlockedPopup({ open, onClose, onGetStarted }: ExportBlocke
 
         <button
           onClick={handleCTA}
-          className="w-full py-3 px-4 bg-profit hover:bg-profit/90 text-terminal-bg font-semibold rounded-lg transition-colors text-sm"
+          className="w-full py-3 px-4 bg-profit hover:bg-profit/90 text-white font-semibold rounded-lg transition-colors text-sm"
         >
           Get my report
         </button>

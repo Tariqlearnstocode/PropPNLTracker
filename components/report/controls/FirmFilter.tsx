@@ -82,7 +82,7 @@ export function FirmFilter({
                       {firmName}
                       <button
                         onClick={() => onToggleFirm(firmName)}
-                        className="hover:text-white transition-colors"
+                        className="hover:text-profit transition-colors"
                       >
                         <span>✕</span>
                       </button>

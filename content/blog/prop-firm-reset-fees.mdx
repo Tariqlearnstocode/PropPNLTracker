@@ -1,0 +1,87 @@
+---
+title: "Prop Firm Reset Fees: How Much Are You Really Spending on Resets?"
+description: "Reset fees are the silent killer of prop trading profitability. Here is exactly how much they cost and how fast they add up."
+date: "2025-05-15"
+readTime: "8 min read"
+tags: ["costs", "fees", "profitability"]
+---
+
+You blew the challenge. Hit the drawdown limit on day four, or broke a rule you forgot about, or the market gapped against you overnight. It happens. The firm sends you an email: "Reset your account for just $99 and try again." It sounds reasonable. It is cheaper than buying a whole new challenge. So you click the button, pay the fee, and start over.
+
+Then it happens again. And again. Each time, the $99 feels small in isolation. But reset fees are the silent killer of prop trading profitability. They compound faster than most traders realize, and they are the single largest hidden cost in the prop firm business model. Let us do the math.
+
+## What Resets Are and Why They Exist
+
+A reset restores your evaluation account to its starting balance and clears any rule violations so you can attempt the challenge again. It is essentially a discounted do-over. Instead of purchasing an entirely new challenge at full price, you pay a fraction of the original cost.
+
+From the firm's perspective, resets are extremely profitable. The infrastructure cost of resetting a simulated account is near zero — it is a database operation. The <Highlight>$50-$150</Highlight> reset fee is almost pure margin. This is why firms make the reset process so seamless: one click, instant restart, minimal friction. They want you to reset. It is a significant revenue stream.
+
+From the trader's perspective, the appeal is obvious. You already know the platform, the rules, and the evaluation structure. Starting over with a reset feels like picking up where you left off rather than beginning from scratch. But this convenience has a price that extends well beyond the stated fee.
+
+## Typical Reset Costs by Firm
+
+Reset fees scale with account size. Here are approximate ranges for common firms and account levels:
+
+- **Topstep ($50K account):** Resets are effectively built into the monthly subscription model. Each new month is a fresh evaluation at <Highlight>$49-$99/month</Highlight> depending on account size.
+- **Apex Trader Funding ($50K-$300K):** Reset fees range from <Highlight>$80 to $170</Highlight> depending on the account tier. During promotional periods, both challenges and resets can be significantly discounted.
+- **FTMO ($50K-$200K):** FTMO calls it a "Free Retry" under certain conditions, but if you fail Phase 1 badly, you need to repurchase. A new $100K challenge costs <Highlight>$540</Highlight>. There is no cheap reset — you buy a new challenge.
+- **The5ers:** Evaluation reset fees vary by program, typically <Highlight>$75-$150</Highlight> for their standard challenge accounts.
+
+The average reset fee across the industry lands around <Highlight>$80-$120</Highlight> for a mid-sized account. That number seems manageable. Until you see what happens over time.
+
+## The Compounding Math: A Realistic Example
+
+Meet a hypothetical trader — call them Trader A. They purchased a $100K challenge at Apex for <Highlight>$250</Highlight> during a promotional period. Solid strategy, decent execution, but they keep clipping the trailing drawdown limit during volatile sessions. Here is their reset history over six months:
+
+<CalcBox>
+<CalcRow label="Month 1: Challenge purchase" value="- $250" type="expense" />
+<CalcRow label="Month 1: Reset #1" value="- $100" type="expense" />
+<CalcRow label="Month 2: Reset #2" value="- $100" type="expense" />
+<CalcRow label="Month 2: Reset #3" value="- $100" type="expense" />
+<CalcRow label="Month 3: Reset #4" value="- $100" type="expense" />
+<CalcRow label="Month 3: Reset #5" value="- $100" type="expense" />
+<CalcRow label="Month 4: Reset #6" value="- $100" type="expense" />
+<CalcRow label="Month 5: Reset #7 (passed!)" value="- $100" type="expense" />
+<CalcRow label="Month 5: Activation fee" value="- $130" type="expense" />
+<CalcRow label="Total spent before first trade" value="$1,080" type="total" />
+</CalcBox>
+
+Trader A spent **$1,080** to get funded on a $100K account. The original challenge was $250. The seven resets at $100 each added $700 — nearly **three times the original challenge cost**. Plus the activation fee. This is not an unusual scenario. Many traders need 3-8 resets before passing, and some need more than 10.
+
+Now multiply this across firms. If Trader A is also running a second challenge at a different firm with similar reset patterns, the total can easily reach <Highlight>$2,000-$3,000</Highlight> in combined challenge and reset fees before a single funded trade is executed.
+
+## Resets Plus Everything Else
+
+Reset fees do not exist in isolation. They stack on top of your other ongoing costs:
+
+- **Data feeds:** You pay <Highlight>$11-$130/month</Highlight> for market data whether you are resetting or not. Each month you spend resetting is another month of data feed charges on an evaluation account that earns nothing.
+- **Platform subscriptions:** NinjaTrader at <Highlight>$75/month</Highlight> or similar keeps billing while you reset and reattempt.
+- **Subscription-model firms:** At Topstep, each month of the Trading Combine is effectively a reset — you pay the monthly fee to keep evaluating. Three months of attempts at $99/month is $297 in "resets" even though it is not labeled that way.
+
+Over six months with data feeds ($130/month) and platform costs ($75/month), Trader A adds <Highlight>$1,230</Highlight> in infrastructure costs to the $1,080 in challenge and reset fees. The total cost of getting funded: **$2,310**. That is the break-even number their funded account needs to exceed before they are truly profitable.
+
+## The Psychology of "Just One More Reset"
+
+Resets exploit a well-known cognitive bias: the **sunk cost fallacy**. You have already spent $250 on the challenge and $300 on three resets. If you walk away now, that $550 is gone with nothing to show for it. But if you reset one more time for $100, you might pass and recoup everything. The logic feels airtight in the moment.
+
+The problem is that this logic applies equally to reset #4, #5, #6, and #10. At every stage, you have sunk more cost and the emotional pressure to "make it worth it" increases. Each reset raises your break-even point, which means you need to earn more from the funded account to justify the total investment. And each reset that follows a failure may indicate that something fundamental about your strategy or risk management needs to change — not just a fresh start at the same challenge.
+
+> If you have reset the same challenge more than 5 times, the problem is probably not bad luck. Something structural needs to change — your strategy, your risk parameters, or potentially the firm's rules themselves.
+
+## When Resets Stop Making Financial Sense
+
+There is a point where resetting becomes more expensive than buying a new challenge at a different firm — or even reconsidering your approach entirely. Here is a simple framework:
+
+- **After 3 resets:** Evaluate honestly. What caused each failure? If it was the same issue each time, a reset will not fix it. You need practice, rule adjustment, or a different firm.
+- **After 5 resets:** Compare your total spend to the cost of a full new challenge at a different firm. A fresh challenge with different rules might suit your trading style better. Five resets at $100 ($500) plus the original challenge ($250) equals $750 — enough to buy a premium challenge at almost any firm.
+- **After 8+ resets:** Step back to demo trading for a month. The cost of resets has likely exceeded $1,000, and the funded account will need to generate significant profit just to break even. It is cheaper to practice for free and come back sharper.
+
+## How to Track Reset Spending Accurately
+
+The biggest issue with resets is that traders lose count. They remember the big challenge purchase but forget whether they reset three times or five. Over a year of trading with multiple firms, the total can be shocking when you finally add it up.
+
+Your bank account does not forget. Every reset fee shows up as a debit — usually to the firm's website or payment processor. Bank-connected tracking catches every single one and categorizes it as a prop firm expense. When you see the cumulative total displayed on a screen, it hits differently than individual $100 charges spread across months.
+
+Knowing your exact reset spend also changes behavior. Traders who can see they have spent <Highlight>$800</Highlight> on resets at one firm are more likely to pause and reassess than traders who vaguely remember "a few resets." Visibility creates accountability.
+
+<CTA title="See your total reset spend in seconds" description="Prop PNL connects to your bank and totals every challenge fee, reset, and payout automatically. No more guessing how much you have spent." />

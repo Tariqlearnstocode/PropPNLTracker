@@ -1,0 +1,320 @@
+import Link from 'next/link';
+import { Metadata } from 'next';
+import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, hasFundedDifferences, type FirmWithAccounts } from '@/lib/firms';
+import { getFirmsWithAccounts } from '@/lib/firms.server';
+
+export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Best Prop Trading Firms 2026 | Compare Drawdowns, Fees & Payouts',
+  description:
+    'Compare the top prop trading firms side by side. Drawdown rules, evaluation pricing, profit splits, platforms, and payout processors — all in one place.',
+  openGraph: {
+    title: 'Best Prop Trading Firms 2026 | Prop PNL',
+    description:
+      'Compare the top prop trading firms side by side. Drawdown rules, evaluation pricing, profit splits, and platforms.',
+  },
+};
+
+function StarRating({ rating }: { rating: number }) {
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating - fullStars >= 0.3;
+  return (
+    <span className="inline-flex items-center gap-0.5 text-sm">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
+          key={i}
+          className={
+            i < fullStars
+              ? 'text-profit'
+              : i === fullStars && hasHalf
+                ? 'text-profit/50'
+                : 'text-terminal-border'
+          }
+        >
+          ★
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function Badge({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center text-xs font-mono px-2 py-0.5 rounded bg-terminal-bg border border-terminal-border text-terminal-muted">
+      {children}
+    </span>
+  );
+}
+
+/** Priority order: ProjectX, Tradovate, Quantower first, then the rest */
+function sortPlatforms(platforms: string[]): string[] {
+  const priority = ['ProjectX', 'Tradovate', 'Quantower'];
+  const prioritized = priority.filter((p) => platforms.includes(p));
+  const rest = platforms.filter((p) => !priority.includes(p));
+  return [...prioritized, ...rest];
+}
+
+function PlatformBadge({ name }: { name: string }) {
+  return (
+    <span
+      className="inline-flex items-center justify-center px-2 h-8 rounded-md bg-terminal-bg border border-terminal-border text-xs font-mono text-terminal-muted whitespace-nowrap"
+    >
+      {name}
+    </span>
+  );
+}
+
+/** Derive unique account types from a firm's accounts */
+function getAccountTypes(firm: FirmWithAccounts): string[] {
+  return Array.from(new Set(firm.firm_accounts.map((a) => a.account_type)));
+}
+
+/** Derive unique drawdown types from a firm's accounts */
+function getDrawdownTypes(firm: FirmWithAccounts): string[] {
+  return Array.from(new Set(firm.firm_accounts.map((a) => a.drawdown_type).filter(Boolean))) as string[];
+}
+
+/** Get the cheapest account for a firm (uses discounted prices) */
+function getCheapestAccount(firm: FirmWithAccounts) {
+  return firm.firm_accounts.reduce((min, a) => {
+    const total = getEvalPrice(a) + getActivationFee(a);
+    const minTotal = getEvalPrice(min) + getActivationFee(min);
+    return total < minTotal ? a : min;
+  }, firm.firm_accounts[0]);
+}
+
+/** Get the most common profit split across accounts */
+function getDisplayProfitSplit(firm: FirmWithAccounts): string {
+  if (firm.profit_split_note) return firm.profit_split_note;
+  const splits = firm.firm_accounts.map((a) => a.profit_split).filter(Boolean);
+  if (splits.length === 0) return 'N/A';
+  // Return the most common one
+  const counts: Record<string, number> = {};
+  splits.forEach((s) => { counts[s!] = (counts[s!] || 0) + 1; });
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+export default async function FirmsPage() {
+  const firms = await getFirmsWithAccounts();
+
+  return (
+    <div className="min-h-screen bg-terminal-bg">
+      {/* Hero — compact inline bar (matches Leaderboard) */}
+      <div className="border-b border-terminal-border bg-gradient-hero-short">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-profit animate-pulse" />
+              <h1 className="text-xl sm:text-2xl font-bold text-terminal-text">
+                Prop <span className="text-profit">Firms</span>
+              </h1>
+            </div>
+            <p className="text-xs text-terminal-muted">
+              Compare prop firms by drawdown model, payout frequency, pricing, and platform support.
+            </p>
+          </div>
+          <Link
+            href="/compare"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-profit hover:bg-profit/90 text-white font-mono font-medium rounded-lg text-xs transition-colors"
+          >
+            Compare Side by Side
+            <span>→</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Firms Grid */}
+      <section className="py-8 bg-terminal-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {firms.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-terminal-muted text-lg">
+                Firms directory coming soon. We are verifying data for accuracy.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {firms.map((firm, index) => {
+                const cheapest = firm.firm_accounts.length > 0 ? getCheapestAccount(firm) : null;
+                const accountTypes = getAccountTypes(firm);
+                const drawdownTypes = getDrawdownTypes(firm);
+                const profitSplit = getDisplayProfitSplit(firm);
+                const hasFundedRuleDiffs = firm.firm_accounts.some(hasFundedDifferences);
+                const maxVisible = 4;
+                const extraPlatforms =
+                  firm.platforms.length > maxVisible
+                    ? firm.platforms.length - maxVisible
+                    : 0;
+
+                return (
+                  <Link
+                    key={firm.slug}
+                    href={`/firms/${firm.slug}`}
+                    className="relative bg-terminal-card rounded-lg border border-terminal-border p-6 sm:p-8 hover:border-profit/30 transition-colors group"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start gap-4 mb-5">
+                      {/* Logo */}
+                      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-terminal-bg border border-terminal-border flex items-center justify-center overflow-hidden">
+                        {firm.logo_url ? (
+                          <img src={firm.logo_url} alt={`${firm.name} logo`} className="w-full h-full object-contain p-2" />
+                        ) : (
+                          <span className="text-xl sm:text-2xl font-bold font-mono text-profit">
+                            {firm.name.slice(0, 2)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-xl sm:text-2xl font-bold text-terminal-text group-hover:text-profit transition-colors">
+                          {firm.name}
+                        </h2>
+                        <div className="flex items-center gap-2 mt-1">
+                          {firm.rating && (
+                            <>
+                              <span className="text-sm font-mono text-terminal-text">
+                                {firm.rating}
+                              </span>
+                              <StarRating rating={firm.rating} />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-terminal-muted group-hover:text-profit transition-colors text-xl mt-2 hidden sm:block">
+                        →
+                      </span>
+                    </div>
+
+                    {/* Details */}
+                    <div className="space-y-3 text-sm">
+                      {accountTypes.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            Account type :
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {accountTypes.map((t) => (
+                              <Badge key={t}>{t}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {drawdownTypes.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            Drawdown :
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {drawdownTypes.map((d) => (
+                              <Badge key={d}>{d}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {firm.max_funded_allocation && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            Max Funded :
+                          </span>
+                          <Badge>{firm.max_funded_allocation}</Badge>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                          Profit Split :
+                        </span>
+                        <span className="text-profit font-mono text-xs">
+                          {profitSplit}
+                        </span>
+                      </div>
+                      {cheapest && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap">
+                            From :
+                          </span>
+                          <span className="font-mono text-xs">
+                            {hasEvalDiscount(cheapest) ? (
+                              <>
+                                <span className="text-terminal-muted line-through">${cheapest.price}</span>
+                                <span className="text-profit ml-1">${getEvalPrice(cheapest)}</span>
+                              </>
+                            ) : (
+                              <span className="text-profit">${cheapest.price}</span>
+                            )}
+                            {(cheapest.activation_fee ?? 0) > 0 && (
+                              <span className="text-terminal-muted"> + ${getActivationFee(cheapest)} fee</span>
+                            )}
+                          </span>
+                        </div>
+                      )}
+                      {firm.platforms.length > 0 && (() => {
+                        const sorted = sortPlatforms(firm.platforms);
+                        const visible = sorted.slice(0, maxVisible);
+                        const extra = sorted.length > maxVisible ? sorted.length - maxVisible : 0;
+                        return (
+                          <div className="flex items-start gap-2">
+                            <span className="text-terminal-muted font-mono w-32 flex-shrink-0 whitespace-nowrap pt-1.5">
+                              Platforms :
+                            </span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {visible.map((p) => (
+                                <PlatformBadge key={p} name={p} />
+                              ))}
+                              {extra > 0 && (
+                                <span className="inline-flex items-center justify-center px-2 h-8 rounded-md bg-terminal-bg border border-terminal-border text-xs font-mono text-terminal-muted">
+                                  +{extra}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                    {/* Category tag + funded badge + payout */}
+                    <div className="mt-5 pt-4 border-t border-terminal-border flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono px-2 py-0.5 rounded bg-profit/10 text-profit border border-profit/20">
+                          {getCategoryLabel(firm.category)}
+                        </span>
+                        {hasFundedRuleDiffs && (
+                          <span className="text-xs font-mono px-2 py-0.5 rounded bg-accent-amber/10 text-accent-amber border border-accent-amber/20">
+                            Funded rules differ
+                          </span>
+                        )}
+                      </div>
+                      {firm.payout_methods.length > 0 && (
+                        <span className="text-xs font-mono text-terminal-muted">
+                          via {firm.payout_methods[0]}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 sm:p-12 max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-terminal-text mb-3">
+            Track your P&L across all these firms
+          </h2>
+          <p className="text-terminal-muted mb-6">
+            Connect your bank and Prop PNL auto-detects payouts and fees from
+            every firm on this page. See your real net P&L in 60 seconds.
+          </p>
+          <Link
+            href="/connect"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-white font-mono font-medium rounded-lg text-sm transition-colors"
+          >
+            Connect Your Bank — Free <span>→</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

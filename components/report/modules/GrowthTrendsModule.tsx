@@ -48,11 +48,11 @@ export function GrowthTrendsModule({ stats }: GrowthTrendsModuleProps) {
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2a" />
-          <XAxis dataKey="month" stroke="#6b6b80" fontSize={12} />
-          <YAxis stroke="#6b6b80" fontSize={12} tickFormatter={(value) => `${value.toFixed(0)}%`} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
+          <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(value) => `${value.toFixed(0)}%`} />
           <Tooltip
-            contentStyle={{ backgroundColor: '#111118', border: '1px solid #1e1e2a', borderRadius: '8px', color: '#e4e4ed' }}
+            contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#111827' }}
             formatter={(value: number | undefined) => value !== undefined ? `${value.toFixed(1)}%` : ''}
             labelFormatter={(label, payload) => payload?.[0]?.payload?.fullMonth || label}
           />

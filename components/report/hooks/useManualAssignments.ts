@@ -21,13 +21,22 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
     loadAssignments();
   }, [reportId]);
   
+  // Only unmatched transactions that need assignment can be modified.
+  // Already auto-matched transactions are locked to preserve report integrity.
+  const isEditable = (transactionId: string): boolean => {
+    const txn = transactions.find(t => t.id === transactionId);
+    if (!txn) return false;
+    return txn.match.type === 'unmatched' && txn.match.needsAssignment === true;
+  };
+
   // Save manual assignments to database
   const saveManualAssignment = async (transactionId: string, firmName: string) => {
+    if (!isEditable(transactionId)) return;
     const previousAssignments = manualAssignments;
     const newAssignments = { ...manualAssignments, [transactionId]: firmName };
     // Optimistically update UI
     setManualAssignments(newAssignments);
-    
+
     try {
       const response = await fetch('/api/pnl/assignments', {
         method: 'POST',
@@ -37,7 +46,7 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
           assignments: newAssignments,
         }),
       });
-      
+
       if (!response.ok) {
         // Revert on error
         setManualAssignments(previousAssignments);
@@ -79,7 +88,7 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
   // Bulk assign transactions
   const bulkAssign = async (transactionIds: Set<string>, firmName: string) => {
     if (!firmName.trim() || transactionIds.size === 0) return;
-    
+
     const previousAssignments = manualAssignments;
     const newAssignments = { ...manualAssignments };
     transactionIds.forEach(transactionId => {
@@ -116,6 +125,7 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
   
   // Dismiss a transaction (mark as not a prop firm transaction)
   const dismissTransaction = async (transactionId: string) => {
+    if (!isEditable(transactionId)) return;
     return saveManualAssignment(transactionId, '__dismissed__');
   };
 
@@ -125,7 +135,9 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
 
     const previousAssignments = manualAssignments;
     const newAssignments = { ...manualAssignments };
-    transactionIds.forEach(id => {
+    // Filter to only editable transactions
+    const editableIds = Array.from(transactionIds).filter(isEditable);
+    editableIds.forEach(id => {
       newAssignments[id] = '__dismissed__';
     });
 
@@ -165,8 +177,9 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
           }
         };
       }
-      if (assignedFirm && txn.match.type === 'unmatched') {
+      if (assignedFirm && txn.match.type === 'unmatched' && txn.match.needsAssignment) {
         // Convert unmatched transaction to deposit/fee when assigned (matches server-side logic)
+        // Only allowed for transactions that genuinely need assignment
         return {
           ...txn,
           match: {
@@ -174,16 +187,6 @@ export function useManualAssignments(reportId: string, transactions: PNLReport['
             firmName: assignedFirm,
             confidence: 'high' as const,
             needsAssignment: false,
-          }
-        };
-      } else if (assignedFirm) {
-        // Transaction already matched but firm name overridden
-        return {
-          ...txn,
-          match: {
-            ...txn.match,
-            firmName: assignedFirm,
-            confidence: 'high' as const,
           }
         };
       }

@@ -17,7 +17,7 @@ export function PublicInlineCTA({ message, ctaText = 'Start tracking', onGetStar
           </p>
           <button
             onClick={onGetStarted}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-lg transition-colors flex-shrink-0"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-mono font-medium text-white bg-profit hover:bg-profit/90 rounded-lg transition-colors flex-shrink-0"
           >
             {ctaText}
             <span>→</span>

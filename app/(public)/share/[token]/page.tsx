@@ -172,6 +172,15 @@ export default async function SharePage({ params }: PageProps) {
     );
   }
 
+  // Strip non-prop transactions from public view to prevent leaking
+  // personal bank data (Chick-fil-A, Walmart, etc.) via client payload
+  pnlData = {
+    ...pnlData,
+    transactions: pnlData.transactions.filter(
+      (t) => t.match.type === 'deposit' || t.match.type === 'fee'
+    ),
+  };
+
   return (
     <ReportContent
       report={{

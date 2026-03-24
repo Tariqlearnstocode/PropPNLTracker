@@ -81,7 +81,7 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
 
       <div className="relative bg-terminal-card rounded-2xl max-w-md w-full border border-terminal-border p-8">
         <div className="text-center mb-8">
@@ -116,7 +116,7 @@ export function BetaCodeModal({ isOpen, onSuccess }: BetaCodeModalProps) {
           <button
             type="submit"
             disabled={status === 'loading' || !code.trim()}
-            className="w-full py-3 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-terminal-bg font-medium rounded-lg transition-colors"
+            className="w-full py-3 bg-profit hover:bg-profit/90 disabled:bg-profit/40 text-white font-medium rounded-lg transition-colors"
           >
             {status === 'loading' ? 'Validating...' : 'Continue'}
           </button>

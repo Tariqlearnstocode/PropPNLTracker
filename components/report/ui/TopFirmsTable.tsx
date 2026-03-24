@@ -41,7 +41,7 @@ export function TopFirmsTable({ perFirmBreakdown }: TopFirmsTableProps) {
                     <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
                       isPositive ? 'bg-profit' : 'bg-loss'
                     }`} />
-                    <span className="text-sm font-medium text-terminal-text group-hover:text-white transition-colors">
+                    <span className="text-sm font-medium text-terminal-text group-hover:text-terminal-text transition-colors">
                       {firm.firmName}
                     </span>
                   </div>

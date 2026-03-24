@@ -25,7 +25,7 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-6">
               <Link
                 href="/connect"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-white font-mono font-medium rounded-lg text-sm transition-colors w-full sm:w-auto justify-center"
               >
                 Join the Waitlist
               </Link>
@@ -85,12 +85,11 @@ function HeroDashboardPreview() {
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           <div className="col-span-2 bg-terminal-card rounded border border-terminal-border p-3">
             <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Net PNL</div>
-            <div className="text-xl sm:text-2xl font-semibold font-mono text-profit leading-none">+$3,541</div>
-            <div className="text-[9px] font-mono text-profit/60 mt-1">+12.4% margin</div>
+            <div className="text-xl sm:text-2xl font-semibold font-mono text-profit leading-none">+$9,140</div>
           </div>
           <div className="bg-terminal-card rounded border border-terminal-border p-3">
             <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1">Deposits</div>
-            <div className="text-sm font-semibold font-mono text-profit leading-none">+$32,141</div>
+            <div className="text-sm font-semibold font-mono text-profit leading-none">+$37,740</div>
             <div className="text-[9px] font-mono text-terminal-muted mt-1">27 payouts</div>
           </div>
           <div className="bg-terminal-card rounded border border-terminal-border p-3">
@@ -110,14 +109,14 @@ function HeroDashboardPreview() {
           <div className="text-[9px] font-mono text-terminal-muted uppercase tracking-widest mb-1.5">Monthly PNL</div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {[
+              { m: "Aug '25", v: -1240, p: false },
+              { m: "Sep '25", v: 680, p: true },
               { m: "Oct '25", v: -474, p: false },
               { m: "Nov '25", v: 1380, p: true },
               { m: "Dec '25", v: -856, p: false },
               { m: "Jan '26", v: 2940, p: true },
-              { m: "Feb '26", v: 1125, p: true },
+              { m: "Feb '26", v: 7284, p: true },
               { m: "Mar '26", v: -574, p: false },
-              { m: "Apr", v: 0, p: null },
-              { m: "May", v: 0, p: null },
             ].map((mo) => (
               <div
                 key={mo.m}

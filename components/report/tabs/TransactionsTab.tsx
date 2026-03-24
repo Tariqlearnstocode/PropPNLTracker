@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { PNLReport, formatCurrency, formatDate } from '@/lib/pnl-calculations';
-import { ConfidenceBadge } from '../ui/ConfidenceBadge';
 
 interface TransactionsTabProps {
   transactionsWithAssignments: PNLReport['transactions'];
@@ -125,7 +124,7 @@ export function TransactionsTab({
                 </button>
                 <button
                   onClick={onOpenBulkAssignModal}
-                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-profit text-terminal-bg rounded-lg transition-colors font-medium hover:bg-profit/90"
+                  className="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-profit text-white rounded-lg transition-colors font-medium hover:bg-profit/90"
                 >
                   Assign
                 </button>
@@ -243,14 +242,13 @@ export function TransactionsTab({
                   <th className="px-4 py-3 text-left text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Description</th>
                   <th className="px-4 py-3 text-left text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Firm</th>
                   <th className="px-4 py-3 text-right text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Amount</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Confidence</th>
                   <th className="px-4 py-3 text-center text-[10px] font-mono font-medium text-terminal-muted uppercase tracking-widest">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTransactions.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-terminal-muted font-mono">
+                    <td colSpan={5} className="px-4 py-8 text-center text-terminal-muted font-mono">
                       No {transactionView === 'payouts' ? 'payouts' : 'purchases'} found for the selected filters.
                     </td>
                   </tr>
@@ -278,16 +276,17 @@ export function TransactionsTab({
                           {formatCurrency(txn.amount)}
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <ConfidenceBadge confidence={txn.match.confidence} />
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => onOpenAssignmentModal(txn.id)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium font-mono text-accent-blue hover:text-accent-blue/80 hover:bg-accent-blue/10 rounded transition-colors touch-manipulation"
-                          >
-                            <span>✏️</span>
-                            {assignedFirm ? 'Edit' : 'Assign'}
-                          </button>
+                          {txn.match.type === 'unmatched' && txn.match.needsAssignment ? (
+                            <button
+                              onClick={() => onOpenAssignmentModal(txn.id)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium font-mono text-accent-blue hover:text-accent-blue/80 hover:bg-accent-blue/10 rounded transition-colors touch-manipulation"
+                            >
+                              <span>✏️</span>
+                              Assign
+                            </button>
+                          ) : (
+                            <span className="text-[10px] font-mono text-terminal-muted">—</span>
+                          )}
                         </td>
                       </tr>
                     );

@@ -49,7 +49,9 @@ export function VisibilityControls({
                 isPublicToggle ? 'bg-profit' : 'bg-terminal-border'
               } ${togglingPublic ? 'opacity-50' : ''}`}
             >
-              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+              <span className={`inline-block h-3.5 w-3.5 transform rounded-full transition-transform ${
+                isPublicToggle ? 'bg-white' : 'bg-terminal-text'
+              } ${
                 isPublicToggle ? 'translate-x-[18px]' : 'translate-x-[3px]'
               }`} />
             </button>
@@ -63,7 +65,9 @@ export function VisibilityControls({
                 showOnLeaderboard ? 'bg-profit' : 'bg-terminal-border'
               } ${togglingLeaderboard ? 'opacity-50' : ''}`}
             >
-              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+              <span className={`inline-block h-3.5 w-3.5 transform rounded-full transition-transform ${
+                showOnLeaderboard ? 'bg-white' : 'bg-terminal-text'
+              } ${
                 showOnLeaderboard ? 'translate-x-[18px]' : 'translate-x-[3px]'
               }`} />
             </button>

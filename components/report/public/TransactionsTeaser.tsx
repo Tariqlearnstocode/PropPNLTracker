@@ -45,7 +45,7 @@ export function TransactionsTeaser({ transactionCount, onGetStarted }: Transacti
           </p>
           <button
             onClick={onGetStarted}
-            className="w-full py-2.5 px-4 bg-profit hover:bg-profit/90 text-terminal-bg font-medium rounded-lg transition-colors text-sm"
+            className="w-full py-2.5 px-4 bg-profit hover:bg-profit/90 text-white font-medium rounded-lg transition-colors text-sm"
           >
             Track My Transactions
           </button>

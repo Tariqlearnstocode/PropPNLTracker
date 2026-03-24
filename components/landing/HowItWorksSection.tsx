@@ -12,7 +12,7 @@ export function HowItWorksSection() {
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="text-center">
-            <div className="w-16 h-16 bg-profit text-terminal-bg rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            <div className="w-16 h-16 bg-profit text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
               1
             </div>
             <h3 className="text-xl font-semibold text-terminal-text mb-3">Connect</h3>
@@ -22,7 +22,7 @@ export function HowItWorksSection() {
           </div>
 
           <div className="text-center">
-            <div className="w-16 h-16 bg-profit text-terminal-bg rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            <div className="w-16 h-16 bg-profit text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
               2
             </div>
             <h3 className="text-xl font-semibold text-terminal-text mb-3">Sync</h3>
@@ -32,7 +32,7 @@ export function HowItWorksSection() {
           </div>
 
           <div className="text-center">
-            <div className="w-16 h-16 bg-profit text-terminal-bg rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+            <div className="w-16 h-16 bg-profit text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
               3
             </div>
             <h3 className="text-xl font-semibold text-terminal-text mb-3">Analyze</h3>
@@ -45,7 +45,7 @@ export function HowItWorksSection() {
           <p className="text-terminal-muted mb-4">Takes about 60 seconds. Your next step: connect your bank.</p>
           <Link
             href="/connect"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-profit hover:bg-profit/90 text-white font-mono font-medium rounded-lg text-sm transition-colors"
           >
             Connect Your Bank
             <span>→</span>

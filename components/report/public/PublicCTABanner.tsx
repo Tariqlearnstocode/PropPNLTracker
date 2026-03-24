@@ -24,7 +24,7 @@ export function PublicCTABanner({ displayName, onGetStarted, onDismiss }: Public
         <div className="flex items-center gap-3 flex-shrink-0">
           <button
             onClick={onGetStarted}
-            className="px-4 py-1.5 text-xs font-mono font-medium text-terminal-bg bg-profit hover:bg-profit/90 rounded-md transition-colors"
+            className="px-4 py-1.5 text-xs font-mono font-medium text-white bg-profit hover:bg-profit/90 rounded-md transition-colors"
           >
             Get Started
           </button>

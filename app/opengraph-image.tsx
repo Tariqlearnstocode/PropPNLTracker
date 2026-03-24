@@ -17,7 +17,7 @@ export default function OgImage() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0a0a0f',
+          backgroundColor: '#f8f9fb',
           fontFamily: 'system-ui, sans-serif',
         }}
       >
@@ -64,7 +64,7 @@ export default function OgImage() {
           style={{
             fontSize: '72px',
             fontWeight: 800,
-            color: '#e4e4ed',
+            color: '#111827',
             letterSpacing: '-2px',
             display: 'flex',
           }}
@@ -77,7 +77,7 @@ export default function OgImage() {
           style={{
             fontSize: '28px',
             fontWeight: 400,
-            color: '#6b6b80',
+            color: '#6b7280',
             marginTop: '16px',
             display: 'flex',
           }}

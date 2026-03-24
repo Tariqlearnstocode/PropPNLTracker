@@ -47,10 +47,10 @@ function formatAxisDate(dateStr: string): string {
 }
 
 // Shared axis/tooltip props
-const axisTickStyle = { fill: '#6b6b80', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' };
+const axisTickStyle = { fill: '#6b7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' };
 const xAxisProps = {
   tick: axisTickStyle,
-  axisLine: { stroke: '#1e1e2a' },
+  axisLine: { stroke: '#e5e7eb' },
   tickLine: false as const,
 };
 const yAxisProps = {
@@ -60,14 +60,14 @@ const yAxisProps = {
 };
 const tooltipStyle = {
   contentStyle: {
-    backgroundColor: '#111118',
-    border: '1px solid #1e1e2a',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e5e7eb',
     borderRadius: 8,
     fontFamily: 'JetBrains Mono, monospace',
     fontSize: 12,
   },
-  labelStyle: { color: '#6b6b80' },
-  itemStyle: { color: '#e4e4ed' },
+  labelStyle: { color: '#6b7280' },
+  itemStyle: { color: '#111827' },
 };
 
 // ---- Component ----
@@ -280,7 +280,7 @@ export function AnalyticsTab({ tradingStats }: AnalyticsTabProps) {
                 fill="url(#greenGradient)"
                 strokeWidth={2}
                 dot={false}
-                activeDot={{ r: 4, fill: '#00e676', stroke: '#111118', strokeWidth: 2 }}
+                activeDot={{ r: 4, fill: '#00e676', stroke: '#ffffff', strokeWidth: 2 }}
               />
             </AreaChart>
           </ResponsiveContainer>

@@ -53,14 +53,14 @@ export default function Sidebar() {
   };
 
   const sidebarWidth = isOpen ? 'w-64' : 'w-16';
-  const sidebarClasses = `fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-50 ${sidebarWidth} flex flex-col`;
+  const sidebarClasses = `fixed left-0 top-0 h-full bg-terminal-card border-r border-terminal-border transition-all duration-300 z-50 ${sidebarWidth} flex flex-col`;
 
   return (
     <>
       {/* Mobile overlay */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black/20 z-40"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -68,22 +68,22 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside className={sidebarClasses}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-terminal-border">
           {isOpen ? (
             <Link href="/" className="flex items-center gap-2 min-w-0">
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-profit rounded-lg flex items-center justify-center flex-shrink-0">
                 <span className="text-white text-lg">✅</span>
               </div>
-              <span className="font-semibold text-gray-900">Prop PNL</span>
+              <span className="font-semibold text-terminal-text">Prop PNL</span>
             </Link>
           ) : (
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center mx-auto">
+            <div className="w-8 h-8 bg-profit rounded-lg flex items-center justify-center mx-auto">
               <span className="text-white text-lg">✅</span>
             </div>
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-black/5 rounded-lg transition-colors"
             aria-label={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           >
             {isOpen ? <span className="text-lg">✕</span> : <span className="text-lg">☰</span>}
@@ -97,8 +97,8 @@ export default function Sidebar() {
               href={`/report/${reportToken}`}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                 pathname?.startsWith('/report/')
-                  ? 'bg-emerald-50 text-emerald-600'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-profit/10 text-profit'
+                  : 'text-terminal-text hover:bg-black/5'
               }`}
             >
               <span className="flex-shrink-0 text-lg">📊</span>
@@ -110,8 +110,8 @@ export default function Sidebar() {
             href="/settings"
             className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
               pathname === '/settings'
-                ? 'bg-emerald-50 text-emerald-600'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-profit/10 text-profit'
+                : 'text-terminal-text hover:bg-black/5'
             }`}
           >
             <span className="flex-shrink-0 text-lg">⚙️</span>
@@ -120,21 +120,21 @@ export default function Sidebar() {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-gray-200 p-4 space-y-2">
+        <div className="border-t border-terminal-border p-4 space-y-2">
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-gray-600 text-base">👤</span>
+            <div className="w-8 h-8 bg-black/5 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-terminal-muted text-base">👤</span>
             </div>
             {isOpen && (
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900 truncate">{user.email}</p>
+                <p className="text-sm font-medium text-terminal-text truncate">{user.email}</p>
               </div>
             )}
           </div>
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center gap-3 px-3 py-2 text-terminal-text hover:bg-black/5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="flex-shrink-0 text-lg">🚪</span>
             {isOpen && (

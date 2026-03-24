@@ -1,0 +1,85 @@
+---
+title: "Prop Firm Payout Processors Explained: Rise, Wise, Stripe and More"
+description: "How prop firm payouts actually reach your bank — Rise, Wise, Stripe, PayPal and direct transfers explained, with what each looks like on your bank statement."
+date: "2025-05-20"
+readTime: "9 min read"
+tags: ["education", "payouts", "processors"]
+---
+
+You passed the challenge, traded the funded account, and requested a payout. Then what? The money does not teleport from your prop firm's bank account to yours. It passes through a payout processor — a third-party company that handles the actual movement of funds. Which processor a firm uses determines how fast you get paid, what fees are deducted, and critically, what the deposit looks like on your bank statement.
+
+That last point matters more than most traders realize. When you are trying to track your real P&L — whether in a spreadsheet or through bank-connected software — the name on the deposit is often not the prop firm's name. It is the processor's name. And if you trade with three firms that all pay through Rise, you get three deposits that all say "Riseworks" with no indication of which firm sent the money. This is where tracking breaks down.
+
+Here is how the payout chain works and what to expect from each major processor.
+
+## How the Payout Chain Works
+
+The flow is straightforward in concept: **Prop Firm → Payout Processor → Your Bank**. But each step has its own timeline, fees, and complications.
+
+When you request a withdrawal from your prop firm dashboard, the firm initiates a payment through their chosen processor. The processor receives the funds from the firm (or holds them in escrow ahead of time), converts currency if needed, deducts any processing fees, and then sends the remaining amount to your bank account via ACH, wire transfer, or local bank rails depending on the processor and your country.
+
+The entire process typically takes <Highlight>1-7 business days</Highlight> from the time you hit "withdraw" to the time the money appears in your bank. First payouts are almost always slower due to additional KYC verification at the processor level. After that, subsequent payouts are faster because the processor already has your information on file.
+
+## Rise (Riseworks)
+
+Rise — formerly known as Riseworks — is the most common payout processor in the prop trading industry. It was originally built for paying remote contractors and freelancers, and prop firms adopted it because it handles international payments, tax form generation (1099s), and compliance in one platform.
+
+**Firms that use Rise:** Topstep, Apex Trader Funding, Earn2Trade, and many smaller futures prop firms. If you trade futures, there is a strong chance your payout comes through Rise.
+
+**What it looks like on your bank statement:** Deposits from Rise typically appear as <Highlight>"Riseworks"</Highlight>, <Highlight>"Riseworks Inc"</Highlight>, or <Highlight>"Rise"</Highlight>. The description field may include a reference number but rarely mentions the prop firm by name. If you receive payouts from both Topstep and Apex, both show up as "Riseworks" on your statement — making it impossible to tell them apart from the bank transaction alone.
+
+**Fees:** Rise typically charges <Highlight>$0-$3</Highlight> for US ACH transfers. International transfers may incur currency conversion fees of <Highlight>1-3%</Highlight>. Some firms absorb the Rise fee entirely; others pass it through to the trader. Rise also handles your 1099-NEC at year-end if you earned over $600 through the platform.
+
+**Speed:** US ACH deposits typically arrive in <Highlight>2-4 business days</Highlight>. International payments can take <Highlight>3-7 business days</Highlight> depending on the destination country and banking system.
+
+## Wise (formerly TransferWise)
+
+Wise is a global money transfer platform that specializes in international payments with competitive exchange rates. Forex prop firms based outside the US — particularly European firms — tend to favor Wise because it handles cross-border payments efficiently.
+
+**Firms that use Wise:** FTMO, The5ers, and several other forex-focused prop firms based in Europe and Israel. Some firms give traders the choice between Wise and a direct bank wire.
+
+**What it looks like on your bank statement:** Deposits appear as <Highlight>"Wise"</Highlight>, <Highlight>"Wise Payments Limited"</Highlight>, or sometimes <Highlight>"TransferWise"</Highlight> on older banking systems. The reference field occasionally includes the sender's name (the prop firm), but this is inconsistent. Most traders see a Wise deposit and have to cross-reference the amount and timing with their firm's dashboard to identify which payout it was.
+
+**Fees:** Wise is known for transparency. Fees are typically <Highlight>0.5-1.5%</Highlight> of the transfer amount, including currency conversion. A <Highlight>$2,000</Highlight> payout from FTMO (converted from CZK or EUR to USD) might arrive as <Highlight>$1,975-$1,990</Highlight> after Wise fees. The fee structure is clearly shown before you accept the transfer.
+
+**Speed:** Wise transfers to US bank accounts typically arrive in <Highlight>1-3 business days</Highlight>. Transfers to some countries can be near-instant if Wise has local banking partnerships.
+
+## Stripe
+
+Stripe is primarily a payment processing platform for businesses, not a payout processor per se. However, some newer prop firms use Stripe Connect to handle both incoming challenge fees and outgoing payouts through the same system. This is less common for payouts than Rise or Wise, but you may encounter it.
+
+**What it looks like on your bank statement:** Stripe payouts usually appear as <Highlight>"Stripe"</Highlight> or <Highlight>"Stripe Transfer"</Highlight>, though some firms configure Stripe to show their own business name. The inconsistency here is the biggest problem — you might see "Stripe" from one firm and the firm's actual name from another, even though both use Stripe under the hood.
+
+**Fees:** Stripe charges businesses roughly <Highlight>2.9% + $0.30</Highlight> per transaction for incoming payments. Payout fees to connected accounts (traders) are typically <Highlight>$0-$2</Highlight> for US bank transfers. Most firms absorb Stripe's fees rather than passing them to traders.
+
+## PayPal
+
+A handful of prop firms still offer PayPal as a payout option, though it is becoming less common. PayPal's higher fees and buyer-protection disputes have made many firms move away from it.
+
+**What it looks like on your bank statement:** If you withdraw from PayPal to your bank, it appears as <Highlight>"PayPal Transfer"</Highlight> or <Highlight>"PayPal"</Highlight>. The original sender (the prop firm) is visible in your PayPal account but not on the bank statement — adding another layer of confusion for tracking.
+
+**Fees:** PayPal's business payment fees can run <Highlight>2-5%</Highlight> depending on the countries involved and whether currency conversion is needed. This makes it the most expensive option for prop firm payouts. Withdrawing from PayPal to your bank is free but takes <Highlight>1-3 business days</Highlight>.
+
+## Direct Bank Transfer (Wire / ACH)
+
+Some larger or more established prop firms offer direct bank transfers — either domestic ACH or international wire — without going through a third-party processor. This is the most straightforward option for the trader but the most expensive for the firm, which is why fewer firms offer it.
+
+**What it looks like on your bank statement:** Direct wires usually show the sending firm's actual name or their bank's name. This is the clearest option for tracking because you can see <Highlight>"FTMO s.r.o."</Highlight> or <Highlight>"Topstep LLC"</Highlight> directly on the statement.
+
+**Fees:** Incoming domestic ACH transfers are usually free. International wires can incur fees of <Highlight>$15-$50</Highlight> at your receiving bank, plus the sending bank's fees. Some intermediary banks also take a cut on international wires, so a $2,000 wire might arrive as $1,950.
+
+## Why This Matters for Tracking Your P&L
+
+Here is the core problem: if you trade with Topstep, Apex, and FTMO simultaneously, your bank statement might show three deposits labeled <Highlight>"Riseworks"</Highlight>, <Highlight>"Riseworks"</Highlight>, and <Highlight>"Wise"</Highlight>. None of them mention the firm by name. On the expense side, your challenge fees might show as charges to the firm's website domain, the firm's legal entity name, or even the payment processor they use for incoming payments.
+
+If you are tracking your P&L manually, you have to cross-reference every single deposit with your firm dashboards to figure out which payout came from where. For one firm, this is manageable. For three or four firms with overlapping payout dates, it becomes a genuine headache. Most traders give up on accurate per-firm tracking within a couple of months.
+
+> The irony of payout processors: they make it easier for firms to pay you, but harder for you to track what you were paid.
+
+## How Bank-Connected Tracking Solves This
+
+Bank-connected P&L tools like Prop PNL are built to handle exactly this problem. When you connect your bank, the software reads the raw transaction data — including the processor name, amount, date, and any reference codes — and maps it back to the correct prop firm. It knows that "Riseworks" deposits on certain dates align with your Topstep or Apex payout schedule. It knows that "Wise Payments Limited" is likely an FTMO payout when the amount matches your profit split.
+
+This automatic categorization eliminates the manual cross-referencing that makes spreadsheet tracking so fragile. You see a clean, per-firm breakdown of payouts and fees without having to decode processor names yourself.
+
+<CTA title="Stop decoding bank statements manually" description="Prop PNL auto-identifies Rise, Wise, and Stripe payouts and maps them to your prop firms. See your real P&L per firm in 60 seconds." />

@@ -51,7 +51,7 @@ export function PricingSection() {
             </ul>
             <Link
               href="/connect"
-              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
+              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-white rounded-md text-sm font-medium transition-colors"
             >
               Get Snapshot Report
             </Link>
@@ -60,7 +60,7 @@ export function PricingSection() {
           {/* Lifetime */}
           <div className="bg-profit/10 rounded-lg border-2 border-profit p-8 relative">
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <span className="bg-profit text-terminal-bg px-3 py-1 rounded-full text-xs font-semibold">BEST VALUE</span>
+              <span className="bg-profit text-white px-3 py-1 rounded-full text-xs font-semibold">BEST VALUE</span>
             </div>
             <div className="mb-6">
               <div className="text-3xl font-bold text-terminal-text mb-2">$97</div>
@@ -100,7 +100,7 @@ export function PricingSection() {
             </ul>
             <Link
               href="/connect"
-              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-terminal-bg rounded-md text-sm font-medium transition-colors"
+              className="block w-full text-center px-4 py-2 bg-profit hover:bg-profit/90 text-white rounded-md text-sm font-medium transition-colors"
             >
               Get Lifetime Access
             </Link>

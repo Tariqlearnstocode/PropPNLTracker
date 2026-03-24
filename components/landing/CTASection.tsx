@@ -18,7 +18,7 @@ export function CTASection() {
         </p>
         <Link
           href="/connect"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-terminal-bg font-mono font-medium rounded-lg text-sm transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-profit hover:bg-profit/90 text-white font-mono font-medium rounded-lg text-sm transition-colors"
         >
           Connect Your Bank
           <span>→</span>

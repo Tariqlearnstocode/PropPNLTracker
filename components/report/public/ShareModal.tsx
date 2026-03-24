@@ -153,7 +153,7 @@ export function ShareModal({
             <button
               type="button"
               onClick={handleCopy}
-              className="px-3 py-2 text-xs font-mono font-medium rounded-lg bg-profit text-terminal-bg hover:bg-profit/90 transition-colors shrink-0"
+              className="px-3 py-2 text-xs font-mono font-medium rounded-lg bg-profit text-white hover:bg-profit/90 transition-colors shrink-0"
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>

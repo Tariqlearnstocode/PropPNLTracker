@@ -28,10 +28,10 @@ export function MonthlyPNLHeatmap({ monthlyBreakdown }: MonthlyPNLHeatmapProps) 
 
     return sorted.map(month => {
       // Zero-value cells: visible neutral background so they don't vanish
-      let bgColor = 'rgba(50, 50, 68, 0.6)';
-      let borderColor = 'rgba(60, 60, 80, 0.8)';
-      let textColor = '#8a8aa0';
-      let labelColor = '#8a8aa0';
+      let bgColor = 'rgba(229, 231, 235, 0.6)';
+      let borderColor = 'rgba(209, 213, 219, 0.8)';
+      let textColor = '#6b7280';
+      let labelColor = '#6b7280';
 
       if (month.netPNL > 0) {
         const intensity = maxPNL > 0 ? Math.min(month.netPNL / maxPNL, 1) : 0;
@@ -39,14 +39,14 @@ export function MonthlyPNLHeatmap({ monthlyBreakdown }: MonthlyPNLHeatmapProps) 
         bgColor = `rgba(0, 230, 118, ${alpha})`;
         borderColor = `rgba(0, 230, 118, ${0.15 + intensity * 0.20})`;
         textColor = '#00e676';
-        labelColor = '#e4e4ed';
+        labelColor = '#111827';
       } else if (month.netPNL < 0) {
         const intensity = minPNL < 0 ? Math.min(Math.abs(month.netPNL) / Math.abs(minPNL), 1) : 0;
         const alpha = 0.08 + intensity * 0.18;
         bgColor = `rgba(255, 82, 82, ${alpha})`;
         borderColor = `rgba(255, 82, 82, ${0.15 + intensity * 0.20})`;
         textColor = '#ff5252';
-        labelColor = '#e4e4ed';
+        labelColor = '#111827';
       }
 
       return {

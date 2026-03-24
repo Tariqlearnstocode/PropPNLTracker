@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     images: [`${siteUrl}twitter-image`],
   },
   other: {
-    'msapplication-TileColor': '#0a0a0f',
+    'msapplication-TileColor': '#f8f9fb',
   },
 };
 
@@ -94,12 +94,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#0a0a0f" />
+        <meta name="theme-color" content="#f8f9fb" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-[#0a0a0f] min-h-screen flex flex-col">
+      <body className="bg-terminal-bg text-terminal-text min-h-screen flex flex-col">
         <AuthProvider initialUser={user}>
           <ReportNavProvider>
             <GlobalNavbar />

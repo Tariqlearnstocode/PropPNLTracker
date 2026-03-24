@@ -31,11 +31,11 @@ export function DayOfWeekPatternsModule({ stats }: DayOfWeekPatternsModuleProps)
       </h3>
       <ResponsiveContainer width="100%" height={250}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2a" />
-          <XAxis dataKey="day" stroke="#6b6b80" fontSize={12} />
-          <YAxis stroke="#6b6b80" fontSize={12} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <XAxis dataKey="day" stroke="#6b7280" fontSize={12} />
+          <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
           <Tooltip
-            contentStyle={{ backgroundColor: '#111118', border: '1px solid #1e1e2a', borderRadius: '8px' }}
+            contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
             formatter={(value: number | undefined) => value !== undefined ? formatCurrency(value) : ''}
             labelFormatter={(label, payload) => payload?.[0]?.payload?.fullDay || label}
           />

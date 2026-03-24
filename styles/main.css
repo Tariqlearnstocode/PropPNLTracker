@@ -67,11 +67,11 @@ p a {
 
 /* Profit glow effect */
 .profit-glow {
-  text-shadow: 0 0 20px rgba(0, 230, 118, 0.3), 0 0 40px rgba(0, 230, 118, 0.1);
+  text-shadow: 0 0 12px rgba(0, 200, 83, 0.2);
 }
 
 .loss-glow {
-  text-shadow: 0 0 20px rgba(255, 82, 82, 0.3), 0 0 40px rgba(255, 82, 82, 0.1);
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
 }
 
 /* Card hover lift */
@@ -80,7 +80,7 @@ p a {
 }
 .card-hover:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 /* Subtle noise texture overlay */
@@ -94,7 +94,7 @@ p a {
   z-index: 0;
 }
 
-/* Custom scrollbar for dark theme */
+/* Custom scrollbar */
 .dark-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -103,11 +103,11 @@ p a {
   background: transparent;
 }
 .dark-scroll::-webkit-scrollbar-thumb {
-  background: #2a2a3a;
+  background: #d1d5db;
   border-radius: 3px;
 }
 .dark-scroll::-webkit-scrollbar-thumb:hover {
-  background: #3a3a4a;
+  background: #9ca3af;
 }
 
 /* Staggered animation delays */

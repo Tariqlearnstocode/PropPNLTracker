@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { supabaseAdmin } from '@/utils/supabase/admin';
 import { z } from 'zod';
+import { calculatePNLReport } from '@/lib/pnl-calculations';
 
 /**
  * GET /api/pnl/assignments?reportId=xxx
@@ -88,10 +89,10 @@ export async function POST(request: NextRequest) {
 
     const { reportId, assignments } = body;
 
-    // Fetch report to verify ownership
+    // Fetch report to verify ownership and get raw data for validation
     const { data: report, error: fetchError } = await supabaseAdmin
       .from('pnl_reports')
-      .select('id, user_id')
+      .select('id, user_id, raw_teller_data')
       .eq('id', reportId)
       .single();
 
@@ -105,6 +106,25 @@ export async function POST(request: NextRequest) {
     // Verify ownership (RLS should handle this, but double-check)
     if (report.user_id !== user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // Server-side integrity check: only allow assignments on unmatched
+    // transactions that need assignment. Auto-matched transactions are locked.
+    if (report.raw_teller_data && Object.keys(assignments).length > 0) {
+      const pnl = calculatePNLReport(report.raw_teller_data);
+      const editableIds = new Set(
+        pnl.transactions
+          .filter(t => t.match.type === 'unmatched' && t.match.needsAssignment)
+          .map(t => t.id)
+      );
+
+      const invalidIds = Object.keys(assignments).filter(id => !editableIds.has(id));
+      if (invalidIds.length > 0) {
+        return NextResponse.json(
+          { error: 'Cannot assign auto-matched transactions' },
+          { status: 403 }
+        );
+      }
     }
 
     // Update manual assignments

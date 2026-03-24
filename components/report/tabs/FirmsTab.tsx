@@ -14,7 +14,7 @@ import {
   LabelList,
 } from 'recharts';
 
-const axisTickStyle = { fill: '#6b6b80', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' };
+const axisTickStyle = { fill: '#6b7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' };
 
 function formatAxisDollar(v: number): string {
   if (Math.abs(v) >= 1000) return `$${(v / 1000).toFixed(0)}k`;
@@ -90,7 +90,7 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
               <XAxis
                 type="number"
                 tick={axisTickStyle}
-                axisLine={{ stroke: '#1e1e2a' }}
+                axisLine={{ stroke: '#e5e7eb' }}
                 tickLine={false}
                 tickFormatter={formatAxisDollar}
               />
@@ -104,14 +104,14 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: '#111118',
-                  border: '1px solid #1e1e2a',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e5e7eb',
                   borderRadius: 8,
                   fontFamily: 'JetBrains Mono, monospace',
                   fontSize: 12,
                 }}
-                labelStyle={{ color: '#6b6b80' }}
-                itemStyle={{ color: '#e4e4ed' }}
+                labelStyle={{ color: '#6b7280' }}
+                itemStyle={{ color: '#111827' }}
                 formatter={(value) => [formatCurrency(Number(value ?? 0)), 'Net P&L']}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={28}>
@@ -137,7 +137,7 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                         textAnchor={isNeg ? 'end' : 'start'}
                         dominantBaseline="central"
                         style={{
-                          fill: '#e4e4ed',
+                          fill: '#111827',
                           fontSize: 11,
                           fontFamily: 'JetBrains Mono, monospace',
                           fontWeight: 600,
@@ -192,7 +192,7 @@ export function FirmsTab({ filteredFirmBreakdown, allFirmBreakdown, selectedFirm
                         <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
                           isPositive ? 'bg-profit' : 'bg-loss'
                         }`} />
-                        <span className="text-sm font-medium text-terminal-text group-hover:text-white transition-colors">
+                        <span className="text-sm font-medium text-terminal-text group-hover:text-terminal-text transition-colors">
                           {firm.firmName}
                         </span>
                       </div>
