@@ -28,7 +28,7 @@ function Badge({ children, variant = 'default' }: { children: React.ReactNode; v
 function EvalView({ accounts }: { accounts: FirmAccount[] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-terminal-border">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm bg-gradient-hero">
         <thead>
           <tr className="border-b border-terminal-border bg-terminal-card">
             <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 whitespace-nowrap">Plan</th>
@@ -134,7 +134,7 @@ function EvalView({ accounts }: { accounts: FirmAccount[] }) {
 function FundedView({ accounts }: { accounts: FirmAccount[] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-terminal-border">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm bg-gradient-hero">
         <thead>
           <tr className="border-b border-terminal-border bg-terminal-card">
             <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 whitespace-nowrap">Plan</th>

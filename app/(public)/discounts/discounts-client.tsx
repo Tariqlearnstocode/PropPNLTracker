@@ -305,7 +305,7 @@ export function DiscountsClient({ firms }: DiscountsClientProps) {
             <>
               {/* Desktop Table */}
               <div className="hidden md:block overflow-x-auto rounded-lg border border-terminal-border">
-                <table className="w-full">
+                <table className="w-full bg-gradient-hero">
                   <thead>
                     <tr className="border-b border-terminal-border bg-terminal-card">
                       <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 text-sm min-w-[220px]">Firm / Plan</th>

@@ -489,7 +489,7 @@ export function CompareClient({ firms }: CompareClientProps) {
       </div>
 
       {/* Table */}
-      <section className="bg-gradient-hero">
+      <section className="bg-terminal-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {filteredRows.length === 0 ? (
             <div className="text-center py-20">
@@ -501,7 +501,7 @@ export function CompareClient({ firms }: CompareClientProps) {
             <>
               {/* Desktop Table */}
               <div className="hidden lg:block overflow-x-auto rounded-lg border border-terminal-border">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm bg-gradient-hero">
                   {phase === 'eval' ? (
                     <>
                       <thead>
