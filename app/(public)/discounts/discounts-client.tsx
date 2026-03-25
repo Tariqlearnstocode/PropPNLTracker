@@ -84,6 +84,16 @@ export function DiscountsClient({ firms }: DiscountsClientProps) {
   const [sizeFilter, setSizeFilter] = useState<number | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('savings');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const [expandedFirms, setExpandedFirms] = useState<Set<string>>(new Set());
+
+  const toggleFirm = (slug: string) => {
+    setExpandedFirms((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+  };
 
   // Dropdowns
   const [firmOpen, setFirmOpen] = useState(false);
@@ -160,6 +170,27 @@ export function DiscountsClient({ firms }: DiscountsClientProps) {
       <span className="text-profit ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
     );
   };
+
+  // Group filtered rows by firm, preserving sort order for the first account (determines firm order)
+  const groupedByFirm = useMemo(() => {
+    const map = new Map<string, { firm: FirmWithAccounts; rows: DealRow[]; bestSavings: number }>();
+    for (const row of filteredRows) {
+      const existing = map.get(row.firm.slug);
+      if (existing) {
+        existing.rows.push(row);
+        const s = getSavings(row.account);
+        if (s > existing.bestSavings) existing.bestSavings = s;
+      } else {
+        map.set(row.firm.slug, { firm: row.firm, rows: [row], bestSavings: getSavings(row.account) });
+      }
+    }
+    // Within each firm group, sort accounts by size descending
+    Array.from(map.values()).forEach((group) => {
+      group.rows.sort((a, b) => b.account.size - a.account.size);
+    });
+    // Firm group order: by best savings descending (so the firm with the biggest deal is first)
+    return Array.from(map.values()).sort((a, b) => b.bestSavings - a.bestSavings);
+  }, [filteredRows]);
 
   const activeFilterCount =
     (firmFilter !== null ? 1 : 0) +
@@ -303,184 +334,232 @@ export function DiscountsClient({ firms }: DiscountsClientProps) {
             </div>
           ) : (
             <>
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-x-auto rounded-lg border border-terminal-border">
-                <table className="w-full bg-gradient-hero">
-                  <thead>
-                    <tr className="border-b border-terminal-border bg-terminal-card">
-                      <th className="text-left text-terminal-muted font-mono font-medium px-4 py-3 text-sm min-w-[220px]">Firm / Plan</th>
-                      <th
-                        className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[100px] cursor-pointer hover:text-profit"
-                        onClick={() => handleSort('size')}
-                      >
-                        Size <SortIcon col="size" />
-                      </th>
-                      <th
-                        className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[120px] cursor-pointer hover:text-profit"
-                        onClick={() => handleSort('price')}
-                      >
-                        Eval Price <SortIcon col="price" />
-                      </th>
-                      <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[100px]">Activation</th>
-                      <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[100px]">All-In Cost</th>
-                      <th
-                        className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[100px] cursor-pointer hover:text-profit"
-                        onClick={() => handleSort('savings')}
-                      >
-                        You Save <SortIcon col="savings" />
-                      </th>
-                      <th
-                        className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[90px] cursor-pointer hover:text-profit"
-                        onClick={() => handleSort('split')}
-                      >
-                        Split <SortIcon col="split" />
-                      </th>
-                      <th className="text-center text-terminal-muted font-mono font-medium px-3 py-3 text-sm min-w-[120px]">Promo Code</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRows.map((row, i) => {
-                      const savings = getSavings(row.account);
-                      const allInCost = getEvalPrice(row.account) + getActivationFee(row.account);
-                      return (
-                        <tr
-                          key={`${row.firm.slug}-${row.account.id}`}
-                          className={`border-b border-terminal-border last:border-b-0 ${
-                            i % 2 === 0 ? 'bg-terminal-bg' : 'bg-terminal-card/50'
-                          } hover:bg-terminal-card-hover transition-colors`}
-                        >
-                          <td className="px-4 py-4">
-                            <Link href={`/firms/${row.firm.slug}`} className="flex items-center gap-3 group">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
-                                {row.firm.logo_url ? (
-                                  <img src={row.firm.logo_url} alt={`${row.firm.name} logo`} className="w-full h-full object-contain p-1" />
-                                ) : (
-                                  <span className="text-sm font-bold font-mono text-profit">{row.firm.name.slice(0, 2)}</span>
-                                )}
-                              </div>
-                              <div className="min-w-0">
-                                <span className="text-terminal-text font-medium group-hover:text-profit transition-colors block">{row.firm.name}</span>
-                                <span className="text-xs font-mono text-terminal-muted">{row.account.plan_name}</span>
-                              </div>
-                            </Link>
-                          </td>
-                          <td className="px-3 py-4 text-center font-mono text-terminal-muted text-sm">{row.account.size_label}</td>
-                          <td className="px-3 py-4 text-center font-mono text-sm">
-                            {hasEvalDiscount(row.account) ? (
-                              <>
-                                <span className="text-terminal-muted/60 line-through text-xs">{formatMoney(row.account.price ?? 0)}</span>
-                                <span className="text-terminal-text font-medium ml-1">{formatMoney(getEvalPrice(row.account))}</span>
-                              </>
-                            ) : (
-                              <span className="text-terminal-text">{formatMoney(row.account.price ?? 0)}</span>
-                            )}
-                          </td>
-                          <td className="px-3 py-4 text-center font-mono text-sm">
-                            {(row.account.activation_fee ?? 0) === 0 && !hasActivationDiscount(row.account) ? (
-                              <span className="text-terminal-muted">Free</span>
-                            ) : hasActivationDiscount(row.account) ? (
-                              <>
-                                <span className="text-terminal-muted/60 line-through text-xs">{formatMoney(row.account.activation_fee ?? 0)}</span>
-                                <span className="text-terminal-text font-medium ml-1">{getActivationFee(row.account) === 0 ? 'Free' : formatMoney(getActivationFee(row.account))}</span>
-                              </>
-                            ) : (
-                              <span className="text-terminal-text">{formatMoney(row.account.activation_fee ?? 0)}</span>
-                            )}
-                          </td>
-                          <td className="px-3 py-4 text-center font-mono text-sm">
-                            <span className="text-terminal-text font-semibold">{formatMoney(allInCost)}</span>
-                          </td>
-                          <td className="px-3 py-4 text-center font-mono text-sm">
-                            {savings > 0 ? (
-                              <span className="text-profit font-semibold">{formatMoney(savings)}</span>
-                            ) : (
-                              <span className="text-terminal-muted">—</span>
-                            )}
-                          </td>
-                          <td className="px-3 py-4 text-center font-mono text-terminal-muted text-sm">
-                            {row.account.profit_split ?? '—'}
-                          </td>
-                          <td className="px-3 py-4 text-center">
-                            {row.account.promo_code ? (
-                              <PromoCodeBadge code={row.account.promo_code} />
-                            ) : (
-                              <span className="text-terminal-muted text-xs">Auto-applied</span>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+              {/* Desktop Table — grouped by firm */}
+              <div className="hidden md:block space-y-4">
+                {groupedByFirm.map((group) => {
+                  const isExpanded = expandedFirms.has(group.firm.slug);
+                  const uniqueCodes = Array.from(new Set(group.rows.map((r) => r.account.promo_code).filter(Boolean))) as string[];
 
-              {/* Mobile Cards */}
-              <div className="md:hidden space-y-3">
-                {filteredRows.map((row) => {
-                  const savings = getSavings(row.account);
                   return (
-                    <div
-                      key={`m-${row.firm.slug}-${row.account.id}`}
-                      className="bg-terminal-card rounded-lg border border-terminal-border p-4"
+                  <div key={group.firm.slug} className="rounded-lg border border-terminal-border overflow-hidden">
+                    {/* Firm header — click to expand/collapse */}
+                    <button
+                      onClick={() => toggleFirm(group.firm.slug)}
+                      className="w-full flex items-center justify-between px-5 py-3.5 bg-terminal-card border-b border-terminal-border hover:bg-terminal-card-hover transition-colors text-left"
                     >
-                      <Link href={`/firms/${row.firm.slug}`} className="flex items-center gap-3 mb-3 group">
-                        <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
-                          {row.firm.logo_url ? (
-                            <img src={row.firm.logo_url} alt={`${row.firm.name} logo`} className="w-full h-full object-contain p-1" />
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
+                          {group.firm.logo_url ? (
+                            <img src={group.firm.logo_url} alt={`${group.firm.name} logo`} className="w-full h-full object-contain p-1" />
                           ) : (
-                            <span className="text-xs font-bold font-mono text-profit">{row.firm.name.slice(0, 2)}</span>
+                            <span className="text-sm font-bold font-mono text-profit">{group.firm.name.slice(0, 2)}</span>
                           )}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <span className="text-terminal-text font-medium group-hover:text-profit transition-colors block text-sm">{row.firm.name}</span>
-                          <span className="text-[10px] font-mono text-terminal-muted">{row.account.plan_name} · {row.account.size_label}</span>
-                        </div>
-                        {savings > 0 && (
-                          <span className="text-profit font-mono font-semibold text-sm">Save {formatMoney(savings)}</span>
-                        )}
-                      </Link>
-
-                      <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                        <div className="bg-terminal-bg rounded px-3 py-2">
-                          <span className="block text-terminal-muted mb-0.5">Eval</span>
-                          {hasEvalDiscount(row.account) ? (
-                            <>
-                              <span className="text-terminal-muted/60 line-through text-[10px]">{formatMoney(row.account.price ?? 0)}</span>
-                              <span className="block text-terminal-text font-medium">{formatMoney(getEvalPrice(row.account))}</span>
-                            </>
-                          ) : (
-                            <span className="text-terminal-text">{formatMoney(row.account.price ?? 0)}</span>
-                          )}
-                        </div>
-                        <div className="bg-terminal-bg rounded px-3 py-2">
-                          <span className="block text-terminal-muted mb-0.5">Activation</span>
-                          {(row.account.activation_fee ?? 0) === 0 && !hasActivationDiscount(row.account) ? (
-                            <span className="text-terminal-muted">Free</span>
-                          ) : hasActivationDiscount(row.account) ? (
-                            <>
-                              <span className="text-terminal-muted/60 line-through text-[10px]">{formatMoney(row.account.activation_fee ?? 0)}</span>
-                              <span className="block text-terminal-text font-medium">{getActivationFee(row.account) === 0 ? 'Free' : formatMoney(getActivationFee(row.account))}</span>
-                            </>
-                          ) : (
-                            <span className="text-terminal-text">{formatMoney(row.account.activation_fee ?? 0)}</span>
-                          )}
-                        </div>
-                        <div className="bg-terminal-bg rounded px-3 py-2">
-                          <span className="block text-terminal-muted mb-0.5">All-In Cost</span>
-                          <span className="text-terminal-text font-semibold">{formatMoney(getEvalPrice(row.account) + getActivationFee(row.account))}</span>
-                        </div>
-                        <div className="bg-terminal-bg rounded px-3 py-2">
-                          <span className="block text-terminal-muted mb-0.5">Split</span>
-                          <span className="text-terminal-muted">{row.account.profit_split ?? '—'}</span>
+                        <div>
+                          <span className="text-terminal-text font-semibold">{group.firm.name}</span>
+                          <span className="text-xs font-mono text-terminal-muted ml-2">
+                            {group.rows.length} deal{group.rows.length !== 1 ? 's' : ''}
+                          </span>
                         </div>
                       </div>
+                      <div className="flex items-center gap-3">
+                        {uniqueCodes.map((code) => (
+                          <span key={code} onClick={(e) => e.stopPropagation()}>
+                            <PromoCodeBadge code={code} />
+                          </span>
+                        ))}
+                        <span className="text-profit font-mono font-semibold text-sm">
+                          Save up to {formatMoney(group.bestSavings)}
+                        </span>
+                        <span className={`text-terminal-muted text-xs transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+                      </div>
+                    </button>
 
-                      {row.account.promo_code && (
-                        <div className="mt-3 pt-3 border-t border-terminal-border">
-                          <PromoCodeBadge code={row.account.promo_code} />
+                    {/* Account rows — collapsible */}
+                    {isExpanded && (
+                    <table className="w-full bg-gradient-hero">
+                      <thead>
+                        <tr className="border-b border-terminal-border bg-terminal-bg/50">
+                          <th className="text-left text-terminal-muted font-mono font-medium px-5 py-2 text-xs min-w-[160px]">Plan</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">Size</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">Eval Price</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">Activation</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">All-In Cost</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">You Save</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">Split</th>
+                          <th className="text-center text-terminal-muted font-mono font-medium px-3 py-2 text-xs">Code</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.rows.map((row, i) => {
+                          const savings = getSavings(row.account);
+                          const allInCost = getEvalPrice(row.account) + getActivationFee(row.account);
+                          return (
+                            <tr
+                              key={row.account.id}
+                              className={`border-b border-terminal-border last:border-b-0 ${
+                                i % 2 === 0 ? '' : 'bg-terminal-card/30'
+                              }`}
+                            >
+                              <td className="px-5 py-3 text-sm font-mono text-terminal-text">{row.account.plan_name}</td>
+                              <td className="px-3 py-3 text-center font-mono text-terminal-muted text-sm">{row.account.size_label}</td>
+                              <td className="px-3 py-3 text-center font-mono text-sm">
+                                {hasEvalDiscount(row.account) ? (
+                                  <>
+                                    <span className="text-terminal-muted/60 line-through text-xs">{formatMoney(row.account.price ?? 0)}</span>
+                                    <span className="text-terminal-text font-medium ml-1">{formatMoney(getEvalPrice(row.account))}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-terminal-text">{formatMoney(row.account.price ?? 0)}</span>
+                                )}
+                              </td>
+                              <td className="px-3 py-3 text-center font-mono text-sm">
+                                {(row.account.activation_fee ?? 0) === 0 && !hasActivationDiscount(row.account) ? (
+                                  <span className="text-terminal-muted">Free</span>
+                                ) : hasActivationDiscount(row.account) ? (
+                                  <>
+                                    <span className="text-terminal-muted/60 line-through text-xs">{formatMoney(row.account.activation_fee ?? 0)}</span>
+                                    <span className="text-terminal-text font-medium ml-1">{getActivationFee(row.account) === 0 ? 'Free' : formatMoney(getActivationFee(row.account))}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-terminal-text">{formatMoney(row.account.activation_fee ?? 0)}</span>
+                                )}
+                              </td>
+                              <td className="px-3 py-3 text-center font-mono text-sm">
+                                <span className="text-terminal-text font-semibold">{formatMoney(allInCost)}</span>
+                              </td>
+                              <td className="px-3 py-3 text-center font-mono text-sm">
+                                {savings > 0 ? (
+                                  <span className="text-profit font-semibold">{formatMoney(savings)}</span>
+                                ) : (
+                                  <span className="text-terminal-muted">—</span>
+                                )}
+                              </td>
+                              <td className="px-3 py-3 text-center font-mono text-terminal-muted text-sm">
+                                {row.account.profit_split ?? '—'}
+                              </td>
+                              <td className="px-3 py-3 text-center">
+                                {row.account.promo_code ? (
+                                  <PromoCodeBadge code={row.account.promo_code} />
+                                ) : (
+                                  <span className="text-terminal-muted text-xs">Auto</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                    )}
+                  </div>
+                  );
+                })}
+              </div>
+
+              {/* Mobile Cards — grouped by firm */}
+              <div className="md:hidden space-y-4">
+                {groupedByFirm.map((group) => {
+                  const isExpanded = expandedFirms.has(group.firm.slug);
+                  const uniqueCodes = Array.from(new Set(group.rows.map((r) => r.account.promo_code).filter(Boolean))) as string[];
+
+                  return (
+                  <div key={`m-${group.firm.slug}`} className="rounded-lg border border-terminal-border overflow-hidden">
+                    {/* Firm header — tap to expand */}
+                    <button
+                      onClick={() => toggleFirm(group.firm.slug)}
+                      className="w-full flex items-center justify-between px-4 py-3 bg-terminal-card text-left"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
+                          {group.firm.logo_url ? (
+                            <img src={group.firm.logo_url} alt={`${group.firm.name} logo`} className="w-full h-full object-contain p-0.5" />
+                          ) : (
+                            <span className="text-[10px] font-bold font-mono text-profit">{group.firm.name.slice(0, 2)}</span>
+                          )}
                         </div>
-                      )}
+                        <div>
+                          <span className="text-terminal-text font-semibold text-sm">{group.firm.name}</span>
+                          <span className="text-profit font-mono font-semibold text-xs ml-2">
+                            Save up to {formatMoney(group.bestSavings)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {uniqueCodes.slice(0, 2).map((code) => (
+                          <span key={code} onClick={(e) => e.stopPropagation()}>
+                            <PromoCodeBadge code={code} />
+                          </span>
+                        ))}
+                        <span className={`text-terminal-muted text-xs transition-transform ${isExpanded ? 'rotate-180' : ''}`}>▼</span>
+                      </div>
+                    </button>
+
+                    {/* Account cards — collapsible */}
+                    {isExpanded && (
+                    <div className="space-y-2 p-3 border-t border-terminal-border">
+                      {group.rows.map((row) => {
+                        const savings = getSavings(row.account);
+                        return (
+                          <div
+                            key={`m-${row.account.id}`}
+                            className="bg-terminal-card rounded-lg border border-terminal-border p-4"
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div>
+                                <span className="text-terminal-text font-medium text-sm">{row.account.plan_name}</span>
+                                <span className="text-terminal-muted font-mono text-xs ml-2">{row.account.size_label}</span>
+                              </div>
+                              {savings > 0 && (
+                                <span className="text-profit font-mono font-semibold text-xs">Save {formatMoney(savings)}</span>
+                              )}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                              <div className="bg-terminal-bg rounded px-3 py-2">
+                                <span className="block text-terminal-muted mb-0.5">Eval</span>
+                                {hasEvalDiscount(row.account) ? (
+                                  <>
+                                    <span className="text-terminal-muted/60 line-through text-[10px]">{formatMoney(row.account.price ?? 0)}</span>
+                                    <span className="block text-terminal-text font-medium">{formatMoney(getEvalPrice(row.account))}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-terminal-text">{formatMoney(row.account.price ?? 0)}</span>
+                                )}
+                              </div>
+                              <div className="bg-terminal-bg rounded px-3 py-2">
+                                <span className="block text-terminal-muted mb-0.5">Activation</span>
+                                {(row.account.activation_fee ?? 0) === 0 && !hasActivationDiscount(row.account) ? (
+                                  <span className="text-terminal-muted">Free</span>
+                                ) : hasActivationDiscount(row.account) ? (
+                                  <>
+                                    <span className="text-terminal-muted/60 line-through text-[10px]">{formatMoney(row.account.activation_fee ?? 0)}</span>
+                                    <span className="block text-terminal-text font-medium">{getActivationFee(row.account) === 0 ? 'Free' : formatMoney(getActivationFee(row.account))}</span>
+                                  </>
+                                ) : (
+                                  <span className="text-terminal-text">{formatMoney(row.account.activation_fee ?? 0)}</span>
+                                )}
+                              </div>
+                              <div className="bg-terminal-bg rounded px-3 py-2">
+                                <span className="block text-terminal-muted mb-0.5">All-In</span>
+                                <span className="text-terminal-text font-semibold">{formatMoney(getEvalPrice(row.account) + getActivationFee(row.account))}</span>
+                              </div>
+                              <div className="bg-terminal-bg rounded px-3 py-2">
+                                <span className="block text-terminal-muted mb-0.5">Split</span>
+                                <span className="text-terminal-muted">{row.account.profit_split ?? '—'}</span>
+                              </div>
+                            </div>
+
+                            {row.account.promo_code && (
+                              <div className="mt-3 pt-3 border-t border-terminal-border">
+                                <PromoCodeBadge code={row.account.promo_code} />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
+                    )}
+                  </div>
                   );
                 })}
               </div>
