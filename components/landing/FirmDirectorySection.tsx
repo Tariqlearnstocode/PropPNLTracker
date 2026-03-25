@@ -46,7 +46,7 @@ export function FirmDirectorySection({ firms }: { firms: FirmWithAccounts[] }) {
             const lowestPrice = evalAccounts.length > 0
               ? Math.min(...evalAccounts.map(a => a.price ?? Infinity))
               : null;
-            const splitValues = [...new Set(evalAccounts.map(a => a.profit_split).filter(Boolean))];
+            const splitValues = Array.from(new Set(evalAccounts.map(a => a.profit_split).filter(Boolean)));
 
             return (
               <Link
