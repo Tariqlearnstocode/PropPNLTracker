@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import Script from 'next/script';
 import { getURL } from '@/utils/helpers';
 import { homepageFAQs } from '@/lib/faq-data';
+import { getFirmsWithAccounts } from '@/lib/firms.server';
+import type { FirmWithAccounts } from '@/lib/firms';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { ProblemSection } from '@/components/landing/ProblemSection';
 import { SolutionSection } from '@/components/landing/SolutionSection';
@@ -9,6 +11,8 @@ import { FeaturesSection } from '@/components/landing/FeaturesSection';
 import { HowItWorksSection } from '@/components/landing/HowItWorksSection';
 import { ShareableLinkSection } from '@/components/landing/ShareableLinkSection';
 import { SecuritySection } from '@/components/landing/SecuritySection';
+import { FirmDirectorySection } from '@/components/landing/FirmDirectorySection';
+import { ActiveDealsSection } from '@/components/landing/ActiveDealsSection';
 import { PricingSection } from '@/components/landing/PricingSection';
 import { FAQSection } from '@/components/landing/FAQSection';
 import { CTASection } from '@/components/landing/CTASection';
@@ -106,6 +110,36 @@ function buildSoftwareAppSchema() {
   };
 }
 
+function buildFirmListSchema(firms: FirmWithAccounts[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Verified Futures Prop Firms',
+    description: 'Curated list of vetted futures prop trading firms with pricing, rules, and ratings.',
+    numberOfItems: firms.length,
+    itemListElement: firms.map((firm, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Organization',
+        name: firm.name,
+        url: firm.website ?? `${siteUrl}/firms/${firm.slug}`,
+        ...(firm.logo_url ? { logo: firm.logo_url } : {}),
+        ...(firm.rating
+          ? {
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: firm.rating,
+                bestRating: 5,
+                worstRating: 1,
+              },
+            }
+          : {}),
+      },
+    })),
+  };
+}
+
 function buildFaqSchema() {
   return {
     '@context': 'https://schema.org',
@@ -121,7 +155,9 @@ function buildFaqSchema() {
   };
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const firms = await getFirmsWithAccounts();
+
   return (
     <>
       <Script
@@ -133,6 +169,11 @@ export default function LandingPage() {
         id="software-app-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSoftwareAppSchema()) }}
+      />
+      <Script
+        id="homepage-firms-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFirmListSchema(firms)) }}
       />
       <Script
         id="homepage-faq-schema"
@@ -147,6 +188,8 @@ export default function LandingPage() {
         <HowItWorksSection />
         <ShareableLinkSection />
         <SecuritySection />
+        <FirmDirectorySection firms={firms} />
+        <ActiveDealsSection firms={firms} />
         <PricingSection />
         <FAQSection />
         <CTASection />
