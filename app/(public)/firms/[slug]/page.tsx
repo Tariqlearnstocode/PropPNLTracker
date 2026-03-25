@@ -246,7 +246,7 @@ export default async function FirmDetailPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start gap-6">
             {/* Logo */}
-            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-terminal-card border border-terminal-border flex items-center justify-center overflow-hidden">
+            <div className="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
               {firm.logo_url ? (
                 <img src={firm.logo_url} alt={`${firm.name} logo`} className="w-full h-full object-contain p-3" />
               ) : (

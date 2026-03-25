@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prop PNL — Light Theme Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f8f9fb;
+    --bg-card: #ffffff;
+    --bg-card-alt: #f3f4f6;
+    --text: #111827;
+    --text-muted: #6b7280;
+    --text-faint: #9ca3af;
+    --border: #e5e7eb;
+    --border-hover: #d1d5db;
+    --accent: #00c853;
+    --accent-hover: #00b548;
+    --accent-bg: rgba(0, 200, 83, 0.08);
+    --accent-border: rgba(0, 200, 83, 0.2);
+    --loss: #ef4444;
+    --gradient-start: rgba(0, 200, 83, 0.06);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-left { display: flex; align-items: center; gap: 24px; }
+  .nav-logo { font-weight: 700; color: var(--accent); font-size: 14px; }
+  .nav-link { font-size: 12px; color: var(--text-muted); text-decoration: none; }
+  .nav-link:hover { color: var(--accent); }
+  .nav-right { display: flex; gap: 8px; }
+  .btn-outline {
+    padding: 8px 16px; font-size: 12px; border: 1px solid var(--border);
+    border-radius: 8px; background: transparent; color: var(--text);
+    cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    padding: 8px 16px; font-size: 12px; border: none;
+    border-radius: 8px; background: var(--accent); color: #fff;
+    cursor: pointer; font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+
+  /* HERO */
+  .hero {
+    padding: 80px 24px 48px;
+    text-align: center;
+    background: linear-gradient(to bottom, var(--gradient-start) 0%, transparent 100%);
+  }
+  .hero h1 { font-size: 48px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+  .hero p { font-size: 17px; color: var(--text-muted); max-width: 560px; margin: 0 auto 32px; }
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; background: var(--accent); color: #fff;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+  }
+  .hero-btn:hover { background: var(--accent-hover); }
+
+  /* TABS */
+  .tabs {
+    max-width: 1200px; margin: 0 auto; padding: 24px 24px 0;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+  .tab {
+    padding: 8px 20px; border-radius: 8px; font-size: 13px;
+    border: 1px solid var(--border); background: var(--bg-card);
+    color: var(--text-muted); cursor: pointer;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--text); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* FIRM CARDS */
+  .firms-grid {
+    max-width: 1200px; margin: 0 auto; padding: 32px 24px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  @media (max-width: 768px) { .firms-grid { grid-template-columns: 1fr; } }
+
+  .firm-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    transition: all 0.2s;
+    text-decoration: none; color: inherit;
+    display: block;
+  }
+  .firm-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 24px rgba(0,200,83,0.08);
+    transform: translateY(-1px);
+  }
+
+  .rank-badge {
+    position: absolute; top: 0; right: 24px;
+    background: var(--accent); color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 4px 10px; border-radius: 0 0 8px 8px;
+  }
+
+  .firm-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .firm-logo {
+    width: 64px; height: 64px; border-radius: 12px;
+    background: var(--bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: var(--accent); flex-shrink: 0;
+  }
+  .firm-name { font-size: 20px; font-weight: 700; color: var(--text); }
+  .firm-rating { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .firm-rating .num { font-size: 14px; color: var(--text); }
+  .firm-rating .stars { color: var(--accent); font-size: 14px; }
+
+  .firm-details { display: flex; flex-direction: column; gap: 10px; }
+  .detail-row { display: flex; align-items: center; gap: 8px; }
+  .detail-label { width: 110px; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+  .badge {
+    display: inline-flex; align-items: center;
+    font-size: 11px; padding: 3px 10px; border-radius: 6px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .badge-accent {
+    background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent);
+  }
+  .detail-value { font-size: 13px; color: var(--accent); font-weight: 500; }
+
+  .firm-footer {
+    margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  /* COMPARE TABLE */
+  .table-wrap {
+    max-width: 1200px; margin: 0 auto; padding: 24px;
+  }
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .compare-table th {
+    text-align: center; padding: 14px 16px;
+    font-size: 12px; color: var(--text-muted); font-weight: 600;
+    background: var(--bg-card-alt); border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .compare-table th:first-child { text-align: left; }
+  .compare-table th:hover { color: var(--accent); }
+  .compare-table td {
+    text-align: center; padding: 14px 16px;
+    font-size: 13px; border-bottom: 1px solid var(--border);
+  }
+  .compare-table td:first-child { text-align: left; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) { background: var(--bg); }
+  .compare-table tr:hover { background: rgba(0,200,83,0.03); }
+
+  .table-firm {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .table-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--accent);
+  }
+  .table-firm-name { font-weight: 600; color: var(--text); }
+  .table-firm-cat { font-size: 10px; color: var(--text-faint); }
+  .price { color: var(--accent); font-weight: 600; }
+  .drawdown-type { font-size: 10px; color: var(--text-faint); display: block; }
+
+  /* DETAIL PAGE */
+  .breadcrumb {
+    max-width: 1200px; margin: 0 auto; padding: 24px 24px 0;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .current { color: var(--text); }
+
+  .detail-hero {
+    max-width: 1200px; margin: 0 auto; padding: 20px 24px 32px;
+    display: flex; align-items: flex-start; gap: 24px;
+  }
+  .detail-logo {
+    width: 80px; height: 80px; border-radius: 16px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: var(--accent);
+  }
+  .detail-hero h1 { font-size: 32px; font-weight: 800; }
+  .quick-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 16px;
+  }
+  .stat-label { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 15px; font-weight: 700; color: var(--text); }
+  .stat-value.accent { color: var(--accent); }
+
+  .detail-grid {
+    max-width: 1200px; margin: 0 auto; padding: 0 24px 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } }
+
+  .info-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px;
+  }
+  .info-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { width: 130px; font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+  .info-value { font-size: 13px; color: var(--text); }
+
+  /* RULES TABLE */
+  .rules-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; margin-bottom: 32px;
+  }
+  .rules-table th {
+    text-align: left; padding: 14px 16px;
+    font-size: 12px; color: var(--text-muted); font-weight: 600;
+    background: var(--bg-card-alt); border-bottom: 1px solid var(--border);
+  }
+  .rules-table td {
+    padding: 12px 16px; font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rules-table tr:last-child td { border-bottom: none; }
+  .rules-table tr:nth-child(even) { background: var(--bg); }
+  .rule-allowed { color: var(--accent); }
+  .rule-denied { color: var(--loss); }
+
+  /* CTA */
+  .cta {
+    padding: 80px 24px; text-align: center;
+    background: linear-gradient(135deg, rgba(0,200,83,0.06) 0%, rgba(0,200,83,0.02) 50%, var(--bg) 100%);
+    border-top: 1px solid var(--border);
+  }
+  .cta h2 { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .cta p { font-size: 16px; color: var(--text-muted); max-width: 520px; margin: 0 auto 28px; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border); padding: 20px 24px;
+    background: var(--bg-card);
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo { font-weight: 700; color: var(--accent); font-size: 14px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { font-size: 12px; color: var(--text-muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
+
+  .section-title {
+    max-width: 1200px; margin: 0 auto; padding: 32px 24px 0;
+    font-size: 22px; font-weight: 700;
+  }
+  .section-sub {
+    max-width: 1200px; margin: 0 auto; padding: 4px 24px 0;
+    font-size: 13px; color: var(--text-muted);
+  }
+
+  .page-break {
+    max-width: 1200px; margin: 64px auto 0;
+    border-top: 3px solid var(--accent);
+    padding-top: 12px; padding-left: 24px;
+    font-size: 11px; color: var(--accent); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  .platform-badge {
+    display: inline-flex; align-items: center;
+    font-size: 12px; padding: 6px 14px; border-radius: 8px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    margin: 3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      <span class="nav-logo mono">Prop PNL</span>
+      <a href="#" class="nav-link mono">Leaderboard</a>
+      <a href="#" class="nav-link mono">Firms</a>
+      <a href="#" class="nav-link mono">Compare</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-outline mono">Sign In</button>
+      <button class="btn-primary mono">Get Started</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== FIRMS DIRECTORY ===================== -->
+<section class="hero">
+  <h1>Prop Firms</h1>
+  <p>Compare prop firms by drawdown model, payout frequency, pricing, and platform support to find the right fit for your trading style.</p>
+  <a href="#compare" class="hero-btn mono">Compare Side by Side →</a>
+</section>
+
+<div class="firms-grid">
+  <!-- Card 1 -->
+  <div class="firm-card">
+    <div class="rank-badge mono">TOP 1</div>
+    <div class="firm-header">
+      <div class="firm-logo mono">AF</div>
+      <div>
+        <div class="firm-name">Alpha Futures</div>
+        <div class="firm-rating">
+          <span class="num mono">4.9</span>
+          <span class="stars">★★★★★</span>
+        </div>
+      </div>
+    </div>
+    <div class="firm-details">
+      <div class="detail-row">
+        <span class="detail-label mono">Account type :</span>
+        <span class="badge">evaluation</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Drawdown :</span>
+        <span class="badge">EOD</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Max Funded :</span>
+        <span class="badge">$450,000</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Profit Split :</span>
+        <span class="detail-value mono">90/10</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">From :</span>
+        <span class="detail-value mono">$99</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Platforms :</span>
+        <span class="badge">NT</span>
+        <span class="badge">TV</span>
+        <span class="badge">TO</span>
+        <span class="badge">QT</span>
+      </div>
+    </div>
+    <div class="firm-footer">
+      <span class="badge badge-accent">Futures</span>
+      <span style="font-size:12px; color:var(--text-faint);" class="mono">via Rise</span>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="firm-card">
+    <div class="rank-badge mono">TOP 2</div>
+    <div class="firm-header">
+      <div class="firm-logo mono">MF</div>
+      <div>
+        <div class="firm-name">MyFundedFutures</div>
+        <div class="firm-rating">
+          <span class="num mono">4.9</span>
+          <span class="stars">★★★★★</span>
+        </div>
+      </div>
+    </div>
+    <div class="firm-details">
+      <div class="detail-row">
+        <span class="detail-label mono">Account type :</span>
+        <span class="badge">evaluation</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Drawdown :</span>
+        <span class="badge">EOD</span>
+        <span class="badge">Trailing</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Max Funded :</span>
+        <span class="badge">$150,000</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Profit Split :</span>
+        <span class="detail-value mono">90/10</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">From :</span>
+        <span class="detail-value mono">$77</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Platforms :</span>
+        <span class="badge">TO</span>
+        <span class="badge">NT</span>
+        <span class="badge">TV</span>
+        <span class="badge" style="color:var(--text-faint);">+3</span>
+      </div>
+    </div>
+    <div class="firm-footer">
+      <span class="badge badge-accent">Futures</span>
+      <span style="font-size:12px; color:var(--text-faint);" class="mono">via Bank Transfer</span>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="firm-card">
+    <div class="rank-badge mono">TOP 3</div>
+    <div class="firm-header">
+      <div class="firm-logo mono">Tr</div>
+      <div>
+        <div class="firm-name">Tradeify</div>
+        <div class="firm-rating">
+          <span class="num mono">4.8</span>
+          <span class="stars">★★★★<span style="opacity:0.3">★</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="firm-details">
+      <div class="detail-row">
+        <span class="detail-label mono">Account type :</span>
+        <span class="badge">evaluation</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Drawdown :</span>
+        <span class="badge">EOD</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Max Funded :</span>
+        <span class="badge">$150,000</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Profit Split :</span>
+        <span class="detail-value mono">90/10</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">From :</span>
+        <span class="detail-value mono">$139</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Platforms :</span>
+        <span class="badge">TO</span>
+        <span class="badge">NT</span>
+        <span class="badge">TV</span>
+      </div>
+    </div>
+    <div class="firm-footer">
+      <span class="badge badge-accent">Futures</span>
+      <span style="font-size:12px; color:var(--text-faint);" class="mono">via ACH</span>
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="firm-card">
+    <div class="rank-badge mono">TOP 4</div>
+    <div class="firm-header">
+      <div class="firm-logo mono">Lu</div>
+      <div>
+        <div class="firm-name">Lucid Trading</div>
+        <div class="firm-rating">
+          <span class="num mono">4.8</span>
+          <span class="stars">★★★★<span style="opacity:0.3">★</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="firm-details">
+      <div class="detail-row">
+        <span class="detail-label mono">Account type :</span>
+        <span class="badge">evaluation</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Drawdown :</span>
+        <span class="badge">EOD</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Max Funded :</span>
+        <span class="badge">$150,000</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Profit Split :</span>
+        <span class="detail-value mono">90/10</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">From :</span>
+        <span class="detail-value mono">$130</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label mono">Platforms :</span>
+        <span class="badge">NT</span>
+        <span class="badge">TO</span>
+        <span class="badge">TV</span>
+        <span class="badge" style="color:var(--text-faint);">+4</span>
+      </div>
+    </div>
+    <div class="firm-footer">
+      <span class="badge badge-accent">Futures</span>
+      <span style="font-size:12px; color:var(--text-faint);" class="mono">via ACH</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== COMPARE TABLE ===================== -->
+<div class="page-break" id="compare">Compare Table Preview</div>
+
+<section class="hero" style="padding-top:48px; padding-bottom:32px;">
+  <h1 style="font-size:36px;">Prop Firm Compare</h1>
+  <p>Compare top prop firms side by side. Review pricing, drawdown limits, and payout rules.</p>
+</section>
+
+<div class="tabs">
+  <button class="tab active mono">All Firms</button>
+  <button class="tab mono">Futures</button>
+  <button class="tab mono">Forex</button>
+  <button class="tab mono">Best Value</button>
+  <button class="tab mono">Easiest to Pass</button>
+</div>
+
+<div class="table-wrap">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="text-align:left" class="mono">PropFirm</th>
+        <th class="mono">Account Info</th>
+        <th class="mono">All-In Price ↕</th>
+        <th class="mono">Days to Pass ↕</th>
+        <th class="mono">Max Drawdown ↕</th>
+        <th class="mono">Profit Split ↕</th>
+        <th class="mono">Rating ↕</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="table-firm"><div class="table-logo mono">MF</div><div><div class="table-firm-name">MyFundedFutures</div><div class="table-firm-cat mono">Futures</div></div></div></td>
+        <td class="mono" style="font-size:12px;">Rapid<br><select style="font-size:11px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; margin-top:4px;"><option>$50,000</option><option>$100,000</option><option>$150,000</option></select></td>
+        <td class="price mono">$97</td>
+        <td class="mono">2</td>
+        <td class="mono">$2,000<span class="drawdown-type">Trailing</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">4.9 <span style="color:var(--accent)">★</span></td>
+      </tr>
+      <tr>
+        <td><div class="table-firm"><div class="table-logo mono">AF</div><div><div class="table-firm-name">Alpha Futures</div><div class="table-firm-cat mono">Futures</div></div></div></td>
+        <td class="mono" style="font-size:12px;">Zero Plan<br><select style="font-size:11px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; margin-top:4px;"><option>$50,000</option><option>$100,000</option></select></td>
+        <td class="price mono">$99</td>
+        <td class="mono">1</td>
+        <td class="mono">$2,000<span class="drawdown-type">EOD</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">4.9 <span style="color:var(--accent)">★</span></td>
+      </tr>
+      <tr>
+        <td><div class="table-firm"><div class="table-logo mono">Lu</div><div><div class="table-firm-name">Lucid Trading</div><div class="table-firm-cat mono">Futures</div></div></div></td>
+        <td class="mono" style="font-size:12px;">LucidFlex<br><select style="font-size:11px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; margin-top:4px;"><option>$50,000</option></select></td>
+        <td class="price mono">$130</td>
+        <td class="mono">2</td>
+        <td class="mono">$2,000<span class="drawdown-type">EOD</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">4.8 <span style="color:var(--accent)">★</span></td>
+      </tr>
+      <tr>
+        <td><div class="table-firm"><div class="table-logo mono">Tr</div><div><div class="table-firm-name">Tradeify</div><div class="table-firm-cat mono">Futures</div></div></div></td>
+        <td class="mono" style="font-size:12px;">Growth<br><select style="font-size:11px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; margin-top:4px;"><option>$50,000</option><option>$100,000</option><option>$150,000</option></select></td>
+        <td class="price mono">$139</td>
+        <td class="mono">1</td>
+        <td class="mono">$2,000<span class="drawdown-type">EOD</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">4.8 <span style="color:var(--accent)">★</span></td>
+      </tr>
+      <tr>
+        <td><div class="table-firm"><div class="table-logo mono">TP</div><div><div class="table-firm-name">TakeProfitTrader</div><div class="table-firm-cat mono">Futures</div></div></div></td>
+        <td class="mono" style="font-size:12px;">1-Step Test<br><select style="font-size:11px; padding:2px 6px; border:1px solid var(--border); border-radius:4px; margin-top:4px;"><option>$25,000</option><option>$50,000</option><option>$100,000</option></select></td>
+        <td class="price mono">$150</td>
+        <td class="mono">5</td>
+        <td class="mono">$1,500<span class="drawdown-type">EOD</span></td>
+        <td class="price mono">80/20</td>
+        <td class="mono">4.4 <span style="color:var(--accent)">★</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== FIRM DETAIL PAGE ===================== -->
+<div class="page-break">Firm Detail Page Preview</div>
+
+<div class="breadcrumb mono">
+  <a href="#">Home</a> / <a href="#">Firms</a> / <span class="current">Alpha Futures</span>
+</div>
+
+<div class="detail-hero">
+  <div class="detail-logo mono">AF</div>
+  <div style="flex:1">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
+      <h1 class="detail-hero" style="font-size:32px; font-weight:800; padding:0;">Alpha Futures</h1>
+      <span class="badge badge-accent">Futures</span>
+    </div>
+    <div class="firm-rating" style="margin-bottom:16px;">
+      <span class="num mono" style="font-size:16px;">4.9</span>
+      <span class="stars" style="font-size:18px;">★★★★★</span>
+    </div>
+    <div class="quick-stats">
+      <div class="stat-card">
+        <div class="stat-label mono">From</div>
+        <div class="stat-value accent mono">$99</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label mono">Max Funded</div>
+        <div class="stat-value mono">$450,000</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label mono">Drawdown</div>
+        <div class="stat-value mono">EOD</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label mono">Account Types</div>
+        <div class="stat-value mono">Evaluation</div>
+      </div>
+    </div>
+  </div>
+  <a href="#" class="hero-btn mono" style="margin-top:8px; flex-shrink:0;">Visit Alpha Futures ↗</a>
+</div>
+
+<div class="section-title">Challenges & Pricing</div>
+<div class="section-sub">All-in price includes evaluation cost plus any activation fees.</div>
+<div class="table-wrap">
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="text-align:left" class="mono">Plan</th>
+        <th class="mono">Size</th>
+        <th class="mono">All-In Price</th>
+        <th class="mono">Profit Target</th>
+        <th class="mono">Max Drawdown</th>
+        <th class="mono">Type</th>
+        <th class="mono">Split</th>
+        <th class="mono">Min Days</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="text-align:left"><strong>Zero Plan</strong><br><span style="font-size:10px; color:var(--text-faint)">evaluation</span></td>
+        <td class="mono">$50,000</td>
+        <td class="price mono">$99</td>
+        <td class="mono">$3,000</td>
+        <td class="mono">$2,000</td>
+        <td><span class="badge">EOD</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">1</td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><strong>Zero Plan</strong><br><span style="font-size:10px; color:var(--text-faint)">evaluation</span></td>
+        <td class="mono">$100,000</td>
+        <td class="price mono">$199</td>
+        <td class="mono">$6,000</td>
+        <td class="mono">$3,000</td>
+        <td><span class="badge">EOD</span></td>
+        <td class="price mono">90/10</td>
+        <td class="mono">1</td>
+      </tr>
+      <tr>
+        <td style="text-align:left"><strong>Standard Plan</strong><br><span style="font-size:10px; color:var(--text-faint)">evaluation</span></td>
+        <td class="mono">$50,000</td>
+        <td class="price mono">$228<br><span style="font-size:10px; color:var(--text-faint)">($79 + $149 fee)</span></td>
+        <td class="mono">$3,000</td>
+        <td class="mono">$2,000</td>
+        <td><span class="badge">EOD</span></td>
+        <td class="price mono">70/30</td>
+        <td class="mono">3</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section-title">Account Rules</div>
+<div class="section-sub">Rules shown are per-plan. Always confirm with Alpha Futures before trading.</div>
+<div class="table-wrap">
+  <table class="rules-table">
+    <thead>
+      <tr>
+        <th class="mono" style="width:180px">Rule</th>
+        <th class="mono">Zero Plan</th>
+        <th class="mono">Standard Plan</th>
+        <th class="mono">Advanced Plan</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono" style="color:var(--text-muted)">Consistency Rule</td>
+        <td style="font-size:12px;">No single day can exceed 40% of total net profits (qualified accounts)</td>
+        <td style="font-size:12px;">No single day can exceed 50% of total net profits</td>
+        <td style="font-size:12px;">No single day can exceed 50% of total net profits</td>
+      </tr>
+      <tr>
+        <td class="mono" style="color:var(--text-muted)">News Trading</td>
+        <td><span class="rule-allowed">✓</span> Allowed</td>
+        <td><span class="rule-allowed">✓</span> Allowed</td>
+        <td><span class="rule-allowed">✓</span> Allowed</td>
+      </tr>
+      <tr>
+        <td class="mono" style="color:var(--text-muted)">Algo Trading</td>
+        <td><span class="rule-allowed">✓</span> Semi-automated with oversight</td>
+        <td><span class="rule-allowed">✓</span> Semi-automated with oversight</td>
+        <td><span class="rule-allowed">✓</span> Semi-automated with oversight</td>
+      </tr>
+      <tr>
+        <td class="mono" style="color:var(--text-muted)">Scalping</td>
+        <td><span class="rule-denied">✗</span> Tick/micro scalping prohibited</td>
+        <td><span class="rule-denied">✗</span> Tick/micro scalping prohibited</td>
+        <td><span class="rule-denied">✗</span> Tick/micro scalping prohibited</td>
+      </tr>
+      <tr>
+        <td class="mono" style="color:var(--text-muted)">Reset Cost</td>
+        <td class="mono">$99</td>
+        <td class="mono">$59</td>
+        <td class="mono">$139</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="detail-grid">
+  <div class="info-card">
+    <h3>Firm Details</h3>
+    <div class="info-row"><span class="info-label mono">Founded</span><span class="info-value">2024</span></div>
+    <div class="info-row"><span class="info-label mono">Country</span><span class="info-value">United Kingdom</span></div>
+    <div class="info-row"><span class="info-label mono">Founders</span><span class="info-value">George Kohler & Andrew Blaylock</span></div>
+    <div class="info-row"><span class="info-label mono">Max Accounts</span><span class="info-value">3 funded accounts</span></div>
+    <div class="info-row"><span class="info-label mono">Inactivity</span><span class="info-value">10 trading days</span></div>
+    <div class="info-row"><span class="info-label mono">Copy Trading</span><span class="info-value">Own accounts only</span></div>
+    <div class="info-row"><span class="info-label mono">Path to Live</span><span class="info-value">5 payouts or $120,000</span></div>
+    <div class="info-row"><span class="info-label mono">Last Verified</span><span class="info-value">March 2026</span></div>
+  </div>
+  <div class="info-card">
+    <h3>Payout Info</h3>
+    <div class="info-row"><span class="info-label mono">Profit Split</span><span class="info-value">Standard: 70/30 → tiered. Zero: 90/10 flat</span></div>
+    <div class="info-row"><span class="info-label mono">Frequency</span><span class="info-value">Every 14 days (Standard), every 5 winning days (Zero)</span></div>
+    <div class="info-row">
+      <span class="info-label mono">Methods</span>
+      <span class="info-value">
+        <span class="badge">Rise</span>
+        <span class="badge">ACH</span>
+        <span class="badge">Wise</span>
+        <span class="badge">SWIFT</span>
+      </span>
+    </div>
+    <h3 style="margin-top:28px;">Platforms</h3>
+    <div style="margin-top:8px;">
+      <span class="platform-badge mono">NinjaTrader</span>
+      <span class="platform-badge mono">Tradovate</span>
+      <span class="platform-badge mono">TradingView</span>
+      <span class="platform-badge mono">Quantower</span>
+    </div>
+    <h3 style="margin-top:28px;">Support</h3>
+    <div class="info-row"><span class="info-label mono">Email</span><span class="info-value">support@alpha-futures.com</span></div>
+    <div class="info-row"><span class="info-label mono">Discord</span><span class="info-value" style="color:var(--accent)">Join Discord</span></div>
+    <div class="info-row"><span class="info-label mono">Help Center</span><span class="info-value" style="color:var(--accent)">Visit Help Center</span></div>
+    <div class="info-row"><span class="info-label mono">Live Chat</span><span class="info-value">Available</span></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Track your Alpha Futures P&L</h2>
+  <p>Connect your bank and see every payout, fee, and withdrawal in one verified report. Share it with a link.</p>
+  <a href="#" class="hero-btn mono">Connect Your Bank →</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo mono">Prop PNL &copy; 2026</span>
+    <div class="footer-links mono">
+      <a href="#">Connect Bank</a>
+      <a href="#">Leaderboard</a>
+      <a href="#">Firms</a>
+      <a href="#">Compare</a>
+      <a href="#">Security</a>
+      <a href="#">Disclaimers</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

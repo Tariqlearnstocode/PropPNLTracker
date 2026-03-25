@@ -259,7 +259,7 @@ export default async function FirmsPage() {
                     {/* Header */}
                     <div className="flex items-start gap-4 mb-5">
                       {/* Logo */}
-                      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-terminal-bg border border-terminal-border flex items-center justify-center overflow-hidden">
+                      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
                         {firm.logo_url ? (
                           <img src={firm.logo_url} alt={`${firm.name} logo`} className="w-full h-full object-contain p-2" />
                         ) : (

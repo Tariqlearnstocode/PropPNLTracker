@@ -537,7 +537,7 @@ export function CompareClient({ firms }: CompareClientProps) {
                             >
                               <td className="px-4 py-3.5">
                                 <Link href={`/firms/${row.firm.slug}`} className="flex items-center gap-3 group">
-                                  <div className="flex-shrink-0 w-9 h-9 rounded-md bg-terminal-card border border-terminal-border flex items-center justify-center overflow-hidden">
+                                  <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
                                     {row.firm.logo_url ? (
                                       <img src={row.firm.logo_url} alt={`${row.firm.name} logo`} className="w-full h-full object-contain p-1" />
                                     ) : (
@@ -629,7 +629,7 @@ export function CompareClient({ firms }: CompareClientProps) {
                             >
                               <td className="px-4 py-3.5">
                                 <Link href={`/firms/${row.firm.slug}`} className="flex items-center gap-3 group">
-                                  <div className="flex-shrink-0 w-9 h-9 rounded-md bg-terminal-card border border-terminal-border flex items-center justify-center overflow-hidden">
+                                  <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
                                     {row.firm.logo_url ? (
                                       <img src={row.firm.logo_url} alt={`${row.firm.name} logo`} className="w-full h-full object-contain p-1" />
                                     ) : (
@@ -686,7 +686,7 @@ export function CompareClient({ firms }: CompareClientProps) {
                       {/* Header */}
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-md bg-terminal-bg border border-terminal-border flex items-center justify-center overflow-hidden">
+                          <div className="w-9 h-9 rounded-md bg-gray-900 border border-terminal-border flex items-center justify-center overflow-hidden">
                             {row.firm.logo_url ? (
                               <img src={row.firm.logo_url} alt={`${row.firm.name} logo`} className="w-full h-full object-contain p-1" />
                             ) : (
