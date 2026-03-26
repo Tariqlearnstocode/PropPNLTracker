@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
+import Link from 'next/link';
 import { formatDate } from '@/lib/pnl-calculations';
-import { CombinedDateSelector } from './CombinedDateSelector';
-import { FirmFilter } from './FirmFilter';
-import { ExportDropdown } from './ExportDropdown';
 import { ExportBlockedPopup } from '@/components/report/public/ExportBlockedPopup';
 import { ShareModal } from '@/components/report/public/ShareModal';
 import { useToast } from '@/components/ui/Toasts/use-toast';
+import { CombinedDateSelector } from './CombinedDateSelector';
+import { FirmFilter } from './FirmFilter';
+import { ExportDropdown } from './ExportDropdown';
 
 interface ReportHeaderProps {
   report: {
@@ -71,7 +72,7 @@ export function ReportHeader({
   tabs,
   activeTab,
   onTabChange,
-  canRefreshDaily = false,
+  canRefreshDaily: _canRefreshDaily = false,
   lastRefreshAttempt = null,
   lastSyncedAt = null,
   onRefreshData,
@@ -79,7 +80,7 @@ export function ReportHeader({
   onGetStarted,
   shareUrl = '',
   isPublicView = false,
-  reportId,
+  reportId: _reportId,
   shareSlug = null,
   onShareSlugSave,
   enrollmentDisconnected = false,
@@ -181,12 +182,12 @@ export function ReportHeader({
                 Bank connection lost. Auto-sync is paused.
               </span>
             </div>
-            <a
+            <Link
               href="/connect"
               className="shrink-0 px-3 py-1 text-[11px] font-mono font-medium rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition-colors"
             >
               Reconnect
-            </a>
+            </Link>
           </div>
         )}
         <div className="flex items-center justify-between flex-wrap gap-3 opacity-0 animate-fade-in stagger-2">
