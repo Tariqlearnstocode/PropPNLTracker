@@ -1050,6 +1050,33 @@ export function CompareClient({ firms }: CompareClientProps) {
         </div>
       </section>
 
+      {/* Cross-links */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link
+            href="/leaderboard"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">Leaderboard</span>
+            <span className="block text-xs text-terminal-muted mt-1">See real trader results</span>
+          </Link>
+          <Link
+            href="/discounts"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">Active Deals</span>
+            <span className="block text-xs text-terminal-muted mt-1">Promo codes & discounts</span>
+          </Link>
+          <Link
+            href="/firms"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">All Firms</span>
+            <span className="block text-xs text-terminal-muted mt-1">Full firm directory</span>
+          </Link>
+        </div>
+      </div>
+
       {/* CTA */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 sm:p-12 max-w-2xl mx-auto text-center">

@@ -35,7 +35,7 @@ export default function GlobalNavbar() {
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <span className="relative flex h-6 w-6">
-                <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+                <Image src="/logo.svg" alt="Prop PNL logo" width={24} height={24} className="object-contain" />
               </span>
               <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
             </Link>
@@ -75,7 +75,7 @@ export default function GlobalNavbar() {
           <div className="flex items-center gap-6 min-w-0">
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
               <span className="relative flex h-6 w-6">
-                <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+                <Image src="/logo.svg" alt="Prop PNL logo" width={24} height={24} className="object-contain" />
               </span>
               <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
             </Link>
@@ -132,7 +132,7 @@ export default function GlobalNavbar() {
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <span className="relative flex h-6 w-6">
-              <Image src="/logo.svg" alt="" width={24} height={24} className="object-contain" />
+              <Image src="/logo.svg" alt="Prop PNL logo" width={24} height={24} className="object-contain" />
             </span>
             <span className="text-sm font-mono font-semibold text-profit tracking-tight">Prop PNL</span>
           </Link>

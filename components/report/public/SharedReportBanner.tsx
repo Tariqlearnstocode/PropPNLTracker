@@ -14,7 +14,7 @@ export function SharedReportBanner({ displayName, onGetStarted }: SharedReportBa
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <span className="relative flex h-5 w-5">
-              <Image src="/logo.svg" alt="" width={20} height={20} className="object-contain" />
+              <Image src="/logo.svg" alt="Prop PNL logo" width={20} height={20} className="object-contain" />
             </span>
             <span className="text-xs font-mono font-semibold text-profit tracking-tight">
               Prop PNL

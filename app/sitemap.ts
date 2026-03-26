@@ -99,6 +99,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  // Firm alternatives pages
+  const alternativesPages: MetadataRoute.Sitemap = firms.map((firm) => ({
+    url: `${siteUrl}/${firm.slug}-alternatives`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
+  // Firm vs firm comparison pages (all unique pairs, alphabetically sorted)
+  const slugs = firms.map((f) => f.slug).sort();
+  const vsPages: MetadataRoute.Sitemap = [];
+  for (let i = 0; i < slugs.length; i++) {
+    for (let j = i + 1; j < slugs.length; j++) {
+      vsPages.push({
+        url: `${siteUrl}/${slugs[i]}-vs-${slugs[j]}`,
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.7,
+      });
+    }
+  }
+
   // Blog posts
   const blogSlugs = getAllBlogSlugs();
   const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
@@ -117,5 +139,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...firmPages, ...blogPages, ...guidePages];
+  return [...staticPages, ...firmPages, ...alternativesPages, ...vsPages, ...blogPages, ...guidePages];
 }

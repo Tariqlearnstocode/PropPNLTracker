@@ -20,7 +20,7 @@ import { CTASection } from '@/components/landing/CTASection';
 const siteUrl = getURL();
 
 export const metadata: Metadata = {
-  title: { absolute: 'Prop PNL | Prop Firm P&L Tracker' },
+  title: { absolute: 'Prop Firm Profit & Loss Tracker — See Your True Payouts & Fees' },
   description:
     'Prop firm P&L tracker that pulls real payouts and fees directly from your bank. Works with Topstep, FTMO, Apex, Rise. Set up in 60 seconds.',
   alternates: {

@@ -1,0 +1,38 @@
+# Prop PNL
+
+> Prop firm profit and loss tracker that pulls real payouts and fees directly from your bank.
+
+Prop PNL is a web application for prop traders to track their true profit and loss across multiple prop trading firms. It connects to bank accounts via Teller, auto-detects transactions from 47+ prop firms, and generates verified P&L reports.
+
+## Core Features
+
+- Bank-verified P&L tracking (not self-reported)
+- Auto-detection and categorization of prop firm payouts and fees
+- Support for up to 5 bank accounts
+- Shareable public P&L links
+- CSV and PDF export
+- Monthly and per-firm profit breakdowns
+- Leaderboard for verified traders
+
+## Prop Firm Directory
+
+Prop PNL maintains a curated, verified directory of futures prop trading firms. Each firm is reviewed for payout reliability, fair rules, and transparent pricing before being listed.
+
+- [Compare Prop Firms](https://proppnl.com/compare)
+- [Firm Directory](https://proppnl.com/firms)
+- [Discounts & Promo Codes](https://proppnl.com/discounts)
+
+## Guides & Resources
+
+- [Blog](https://proppnl.com/blog)
+- [Guides](https://proppnl.com/guide)
+- [FAQ](https://proppnl.com/faq)
+
+## Documentation
+
+- [Pricing](https://proppnl.com/pricing)
+- [Security](https://proppnl.com/security)
+- [Contact](https://proppnl.com/contact)
+- [Disclaimers](https://proppnl.com/disclaimers)
+- [Partner Program](https://proppnl.com/partner)
+- [Leaderboard](https://proppnl.com/leaderboard)

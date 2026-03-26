@@ -305,6 +305,31 @@ export default function LeaderboardContent() {
           </div>
         </div>
 
+        {/* Explore Links */}
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link
+            href="/firms"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">Browse Firms</span>
+            <span className="block text-xs text-terminal-muted mt-1">Pricing, rules & payouts</span>
+          </Link>
+          <Link
+            href="/compare"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">Compare Firms</span>
+            <span className="block text-xs text-terminal-muted mt-1">Side-by-side breakdown</span>
+          </Link>
+          <Link
+            href="/discounts"
+            className="bg-terminal-card border border-terminal-border rounded-lg p-4 hover:border-profit/50 transition-colors text-center"
+          >
+            <span className="block text-sm font-mono text-profit font-medium">Active Deals</span>
+            <span className="block text-xs text-terminal-muted mt-1">Promo codes & discounts</span>
+          </Link>
+        </div>
+
         {/* CTA */}
         <div className="mt-16 text-center">
           <div className="bg-terminal-card rounded-2xl border border-terminal-border p-8 sm:p-12 max-w-2xl mx-auto">

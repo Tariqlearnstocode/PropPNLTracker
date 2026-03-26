@@ -4,7 +4,7 @@ import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { getURL } from '@/utils/helpers';
 import { getCategoryLabel, getAllInPrice, getEvalPrice, getActivationFee, hasEvalDiscount, type FirmAccount, type FirmWithAccounts } from '@/lib/firms';
-import { getFirmBySlug } from '@/lib/firms.server';
+import { getFirmBySlug, getFirmsWithAccounts } from '@/lib/firms.server';
 import { AccountTable } from './account-table';
 
 export const dynamic = 'force-dynamic';
@@ -187,6 +187,54 @@ function PlatformBadge({ name }: { name: string }) {
     <span className="inline-flex items-center text-xs font-mono px-3 py-1.5 rounded-md bg-terminal-bg border border-terminal-border text-terminal-text">
       {name}
     </span>
+  );
+}
+
+async function CompareAlternativesSection({ firmSlug, firmName }: { firmSlug: string; firmName: string }) {
+  const allFirms = await getFirmsWithAccounts();
+  const otherFirms = allFirms
+    .filter((f) => f.slug !== firmSlug)
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    .slice(0, 4);
+
+  return (
+    <div className="bg-terminal-card rounded-lg border border-terminal-border p-6">
+      <h3 className="text-lg font-bold text-terminal-text mb-2">How does {firmName} stack up?</h3>
+      <p className="text-sm text-terminal-muted mb-5">
+        Compare {firmName} head-to-head with other verified prop firms, or browse all alternatives.
+      </p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        {otherFirms.map((other) => {
+          const slugs = [firmSlug, other.slug].sort();
+          return (
+            <Link
+              key={other.slug}
+              href={`/${slugs.join('-vs-')}`}
+              className="bg-terminal-bg border border-terminal-border rounded-lg px-3 py-2.5 text-center hover:border-profit/50 transition-colors"
+            >
+              <span className="block text-xs text-terminal-muted font-mono mb-1">vs</span>
+              <span className="block text-sm font-mono text-terminal-text truncate">{other.name}</span>
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          href={`/${firmSlug}-alternatives`}
+          className="text-sm font-mono text-profit hover:text-profit/80 transition-colors"
+        >
+          All {firmName} alternatives →
+        </Link>
+        <Link
+          href="/leaderboard"
+          className="text-sm font-mono text-profit hover:text-profit/80 transition-colors"
+        >
+          See trader results →
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -422,6 +470,9 @@ export default async function FirmDetailPage({ params }: PageProps) {
             </div>
           </div>
 
+          {/* Compare & Alternatives */}
+          <CompareAlternativesSection firmSlug={slug} firmName={firm.name} />
+
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4 border-t border-terminal-border">
             <Link
@@ -430,12 +481,26 @@ export default async function FirmDetailPage({ params }: PageProps) {
             >
               ← Back to all firms
             </Link>
-            <Link
-              href="/compare"
-              className="text-sm font-mono text-terminal-muted hover:text-profit transition-colors"
-            >
-              Compare {firm.name} with others →
-            </Link>
+            <div className="flex items-center gap-6">
+              <Link
+                href="/leaderboard"
+                className="text-sm font-mono text-terminal-muted hover:text-profit transition-colors"
+              >
+                Leaderboard
+              </Link>
+              <Link
+                href="/discounts"
+                className="text-sm font-mono text-terminal-muted hover:text-profit transition-colors"
+              >
+                Discounts
+              </Link>
+              <Link
+                href="/compare"
+                className="text-sm font-mono text-terminal-muted hover:text-profit transition-colors"
+              >
+                Compare →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
